@@ -216,12 +216,299 @@ if (!$db->tableExists('rep_robj_xlvo_player_n')) {
     $db->addPrimaryKey('rep_robj_xlvo_player_n', ['id']);
     $db->createSequence('rep_robj_xlvo_player_n');
 }
-// Pendiente: rep_robj_xlvo_round_n
-// Pendiente: rep_robj_xlvo_votehist
-// Pendiente: rep_robj_xlvo_vote_n
-// Pendiente: rep_robj_xlvo_voting_n
-// Pendiente: xlvo_config
-// Pendiente: xlvo_voter
+if (!$db->tableExists('rep_robj_xlvo_round_n')) {
+    $fields = [
+        'id' => [
+            'type' => 'integer',
+            'length' => 8,
+            'notnull' => true
+        ],
+        'obj_id' => [
+            'type' => 'integer',
+            'length' => 8,
+            'notnull' => false
+        ],
+        'round_number' => [
+            'type' => 'integer',
+            'length' => 8,
+            'notnull' => false
+        ],
+        'title' => [
+            'type' => 'text',
+            'length' => 256,
+            'notnull' => false
+        ]
+    ];
+
+    $db->createTable('rep_robj_xlvo_round_n', $fields);
+    $db->addPrimaryKey('rep_robj_xlvo_round_n', ['id']);
+    $db->createSequence('rep_robj_xlvo_round_n');
+}
+if (!$db->tableExists('rep_robj_xlvo_votehist')) {
+    $fields = [
+        'id' => [
+            'type' => 'integer',
+            'length' => 8,
+            'notnull' => true
+        ],
+        'user_id_type' => [
+            'type' => 'integer',
+            'length' => 11,
+            'notnull' => false
+        ],
+        'user_id' => [
+            'type' => 'integer',
+            'length' => 20,
+            'notnull' => false
+        ],
+        'user_identifier' => [
+            'type' => 'text',
+            'length' => 256,
+            'notnull' => false
+        ],
+        'voting_id' => [
+            'type' => 'integer',
+            'length' => 20,
+            'notnull' => false
+        ],
+        'timestamp' => [
+            'type' => 'integer',
+            'length' => 20,
+            'notnull' => false
+        ],
+        'round_id' => [
+            'type' => 'integer',
+            'length' => 20,
+            'notnull' => false
+        ],
+        'answer' => [
+            'type' => 'text',
+            'length' => 4000,
+            'notnull' => false
+        ]
+    ];
+
+    $db->createTable('rep_robj_xlvo_votehist', $fields);
+    $db->addPrimaryKey('rep_robj_xlvo_votehist', ['id']);
+    $db->createSequence('rep_robj_xlvo_votehist');
+}
+if (!$db->tableExists('rep_robj_xlvo_vote_n')) {
+    $fields = [
+        'id' => [
+            'type' => 'integer',
+            'length' => 8,
+            'notnull' => true
+        ],
+        'type' => [
+            'type' => 'integer',
+            'length' => 8,
+            'notnull' => false
+        ],
+        'status' => [
+            'type' => 'integer',
+            'length' => 8,
+            'notnull' => false
+        ],
+        'option_id' => [
+            'type' => 'integer',
+            'length' => 8,
+            'notnull' => false
+        ],
+        'voting_id' => [
+            'type' => 'integer',
+            'length' => 8,
+            'notnull' => false
+        ],
+        'user_id_type' => [
+            'type' => 'integer',
+            'length' => 8,
+            'notnull' => false
+        ],
+        'user_identifier' => [
+            'type' => 'text',
+            'length' => 256,
+            'notnull' => false
+        ],
+        'user_id' => [
+            'type' => 'integer',
+            'length' => 8,
+            'notnull' => false
+        ],
+        'last_update' => [
+            'type' => 'integer',
+            'length' => 8,
+            'notnull' => false
+        ],
+        'round_id' => [
+            'type' => 'integer',
+            'length' => 8,
+            'notnull' => false
+        ],
+        'free_input' => [
+            'type' => 'text',
+            'length' => 2000,
+            'notnull' => false
+        ],
+        'free_input_category' => [
+            'type' => 'integer',
+            'length' => 8,
+            'notnull' => false
+        ]
+    ];
+
+    $db->createTable('rep_robj_xlvo_vote_n', $fields);
+    $db->addPrimaryKey('rep_robj_xlvo_vote_n', ['id']);
+    $db->createSequence('rep_robj_xlvo_vote_n');
+}
+if (!$db->tableExists('rep_robj_xlvo_voting_n')) {
+    $fields = [
+        'id' => [
+            'type' => 'integer',
+            'length' => 8,
+            'notnull' => true
+        ],
+        'multi_selection' => [
+            'type' => 'integer',
+            'length' => 4,
+            'notnull' => false
+        ],
+        'colors' => [
+            'type' => 'integer',
+            'length' => 4,
+            'notnull' => false
+        ],
+        'multi_free_input' => [
+            'type' => 'integer',
+            'length' => 4,
+            'notnull' => false
+        ],
+        'obj_id' => [
+            'type' => 'integer',
+            'length' => 8,
+            'notnull' => false
+        ],
+        'title' => [
+            'type' => 'text',
+            'length' => 256,
+            'notnull' => false
+        ],
+        'description' => [
+            'type' => 'text',
+            'length' => 4000,
+            'notnull' => false
+        ],
+        'question' => [
+            'type' => 'text',
+            'length' => 4000,
+            'notnull' => false
+        ],
+        'voting_type' => [
+            'type' => 'integer',
+            'length' => 8,
+            'notnull' => false
+        ],
+        'voting_status' => [
+            'type' => 'integer',
+            'length' => 8,
+            'notnull' => false
+        ],
+        'position' => [
+            'type' => 'integer',
+            'length' => 8,
+            'notnull' => false
+        ],
+        'columns' => [
+            'type' => 'integer',
+            'length' => 6,
+            'notnull' => false
+        ],
+        'percentage' => [
+            'type' => 'integer',
+            'length' => 4,
+            'notnull' => false
+        ],
+        'start_range' => [
+            'type' => 'integer',
+            'length' => 8,
+            'notnull' => false
+        ],
+        'end_range' => [
+            'type' => 'integer',
+            'length' => 8,
+            'notnull' => false
+        ],
+        'step_range' => [
+            'type' => 'integer',
+            'length' => 8,
+            'notnull' => false
+        ],
+        'alt_result_display_mode' => [
+            'type' => 'integer',
+            'length' => 4,
+            'notnull' => false
+        ],
+        'randomise_option_sequence' => [
+            'type' => 'integer',
+            'length' => 4,
+            'notnull' => false
+        ],
+        'answer_field' => [
+            'type' => 'integer',
+            'length' => 4,
+            'notnull' => false
+        ]
+    ];
+
+    $db->createTable('rep_robj_xlvo_voting_n', $fields);
+    $db->addPrimaryKey('rep_robj_xlvo_voting_n', ['id']);
+    $db->createSequence('rep_robj_xlvo_voting_n');
+}
+if (!$db->tableExists('xlvo_config')) {
+    $fields = [
+        'name' => [
+            'type' => 'text',
+            'length' => 250,
+            'notnull' => true
+        ],
+        'value' => [
+            'type' => 'text',
+            'length' => 4000,
+            'notnull' => false
+        ]
+    ];
+
+    $db->createTable('xlvo_config', $fields);
+    $db->addPrimaryKey('xlvo_config', ['name']);
+}
+if (!$db->tableExists('xlvo_voter')) {
+    $fields = [
+        'id' => [
+            'type' => 'integer',
+            'length' => 8,
+            'notnull' => true
+        ],
+        'player_id' => [
+            'type' => 'integer',
+            'length' => 8,
+            'notnull' => false
+        ],
+        'user_identifier' => [
+            'type' => 'text',
+            'length' => 256,
+            'notnull' => false
+        ],
+        'last_access' => [
+            'type' => 'timestamp',
+            'notnull' => false
+        ]
+    ];
+
+    $db->createTable('xlvo_voter', $fields);
+    $db->addPrimaryKey('xlvo_voter', ['id']);
+    $db->addIndex('xlvo_voter', ['player_id'], 'player_id');
+    $db->addIndex('xlvo_voter', ['user_identifier'], 'user_identifier');
+    $db->createSequence('xlvo_voter');
+}
 ?>
 <#2>
 <?php
