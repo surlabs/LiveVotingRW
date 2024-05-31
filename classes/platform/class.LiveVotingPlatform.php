@@ -24,5 +24,22 @@ declare(strict_types=1);
  */
 class LiveVotingPlatform
 {
+    /**
+     * Gets the platform translation of a string
+     * @param string $str
+     * @param array|null $params
+     * @return string|null
+     */
+    public static function getTranslation(string $str, ?array $params = null): ?string
+    {
+        global $DIC;
 
+        $txt = $DIC->language()->txt($str);
+
+        if (isset($params)) {
+            $txt = vsprintf($txt, $params);
+        }
+
+        return $txt;
+    }
 }
