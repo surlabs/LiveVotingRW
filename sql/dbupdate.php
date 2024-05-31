@@ -192,7 +192,7 @@ if (!$db->tableExists('rep_robj_xlvo_player_n')) {
         ],
         'countdown' => [
             'type' => 'integer',
-            'length' => 6,
+            'length' => 8,
             'notnull' => false
         ],
         'countdown_start' => [
@@ -253,12 +253,12 @@ if (!$db->tableExists('rep_robj_xlvo_votehist')) {
         ],
         'user_id_type' => [
             'type' => 'integer',
-            'length' => 11,
+            'length' => 8,
             'notnull' => false
         ],
         'user_id' => [
             'type' => 'integer',
-            'length' => 20,
+            'length' => 8,
             'notnull' => false
         ],
         'user_identifier' => [
@@ -268,17 +268,17 @@ if (!$db->tableExists('rep_robj_xlvo_votehist')) {
         ],
         'voting_id' => [
             'type' => 'integer',
-            'length' => 20,
+            'length' => 8,
             'notnull' => false
         ],
         'timestamp' => [
             'type' => 'integer',
-            'length' => 20,
+            'length' => 8,
             'notnull' => false
         ],
         'round_id' => [
             'type' => 'integer',
-            'length' => 20,
+            'length' => 8,
             'notnull' => false
         ],
         'answer' => [
@@ -419,7 +419,7 @@ if (!$db->tableExists('rep_robj_xlvo_voting_n')) {
         ],
         'columns' => [
             'type' => 'integer',
-            'length' => 6,
+            'length' => 8,
             'notnull' => false
         ],
         'percentage' => [
@@ -505,8 +505,7 @@ if (!$db->tableExists('xlvo_voter')) {
 
     $db->createTable('xlvo_voter', $fields);
     $db->addPrimaryKey('xlvo_voter', ['id']);
-    $db->addIndex('xlvo_voter', ['player_id'], 'player_id');
-    $db->addIndex('xlvo_voter', ['user_identifier'], 'user_identifier');
+    $db->addIndex('xlvo_voter', ['player_id', 'user_identifier'], 'in1_idx');
     $db->createSequence('xlvo_voter');
 }
 ?>
