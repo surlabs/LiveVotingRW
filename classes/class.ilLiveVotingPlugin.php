@@ -25,6 +25,8 @@ declare(strict_types=1);
 class ilLiveVotingPlugin extends ilRepositoryObjectPlugin
 {
 
+    const PLUGIN_ID = 'xlvo';
+
     const PLUGIN_NAME = 'LiveVoting';
 
     protected function uninstallCustom(): void

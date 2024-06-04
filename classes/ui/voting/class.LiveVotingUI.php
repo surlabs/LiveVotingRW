@@ -18,26 +18,30 @@ declare(strict_types=1);
  *
  */
 
+namespace LiveVoting\UI;
+
 /**
- * Class ilObjLiveVotingListGUI
+ * Class LiveVotingUI
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
+ * @ilCtrl_IsCalledBy  ilObjLiveVotingGUI: ilObjPluginGUI
  */
-class ilObjLiveVotingListGUI extends ilObjectPluginListGUI
+class LiveVotingUI
 {
-    public function getGuiClass(): string
+/*
+    public function executeCommand(): void
     {
-        // TODO: Implement getGuiClass() method.
-        return "ilObjLiveVotingGUI";
-    }
+        GLOBAL $DIC;
+        $nextClass = $DIC->ctrl()->getNextClass();
+        switch ($nextClass) {
+            default:
+                $cmd = $DIC->ctrl()->getCmd('showContent');
+                $this->{$cmd}();
+                break;
+        }
+    }*/
 
-    public function initCommands(): array
+    public static function showContent(): string
     {
-        // TODO: Implement initCommands() method.
-        return [];
-    }
-
-    public function initType()
-    {
-        $this->setType("xlvo");
+        return "Llego";
     }
 }

@@ -14,15 +14,17 @@ declare(strict_types=1);
  * https://github.com/surlabs/LiveVoting
  *
  * If you need support, please contact the maintainer of this software at:
- * info@surlabs.es
+ * info@surlabs.esr
  *
  */
+
+use LiveVoting\UI\LiveVotingUI;
 
 /**
  * Class ilObjLiveVotingGUI
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
- * @ilCtrl_isCalledBy ilObjLiveVotingGUI: ilRepositoryGUI, ilObjPluginDispatchGUI, ilAdministrationGUI
- * @ilCtrl_Calls      ilObjLiveVotingGUI: ilObjectCopyGUI, ilPermissionGUI, ilInfoScreenGUI, ilCommonActionDispatcherGUI
+ * @ilCtrl_isCalledBy ilObjLiveVotingGUI: ilRepositoryGUI, ilObjPluginDispatchGUI, ilAdministrationGUI, LiveVotingUI
+ * @ilCtrl_Calls      ilObjLiveVotingGUI: ilObjectCopyGUI, ilPermissionGUI, ilInfoScreenGUI, ilCommonActionDispatcherGUI, LiveVotingUI
  */
 class ilObjLiveVotingGUI extends ilObjectPluginGUI
 {
@@ -34,16 +36,98 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
     public function getAfterCreationCmd(): string
     {
-        // TODO: Implement getAfterCreationCmd() method.
+        return 'showContentAfterCreation';
     }
 
     public function getStandardCmd(): string
     {
-        // TODO: Implement getStandardCmd() method.
+        return 'showContent';
     }
 
     public function performCommand(string $cmd): void
     {
-        // TODO: Implement performCommand() method.
+        global $DIC;
+        $DIC->help()->setScreenIdComponent(ilLiveVotingPlugin::PLUGIN_ID);
+        $cmd = $DIC->ctrl()->getCmd('showContent');
+        $DIC->ui()->mainTemplate()->setPermanentLink(ilLiveVotingPlugin::PLUGIN_ID, $this->ref_id);
+
+        $this->initHeaderAndLocator();
+
+        switch ($cmd){
+            case 'showContent':
+            case 'showContentAfterCreation':
+            case 'editProperties':
+            case 'updateProperties':
+                $this->{$cmd}();
+                break;
+        }
     }
+
+    public function showContentAfterCreation(): void
+    {
+        GLOBAL $DIC;
+        $liveVotingUI = new LiveVotingUI();
+        $this->tpl->setContent($liveVotingUI->showContent());
+    }
+
+    public function showContent(): void
+    {
+        GLOBAL $DIC;
+        $liveVotingUI = new LiveVotingUI();
+        $this->tpl->setContent($liveVotingUI->showContent());
+    }
+
+    /**
+     * @throws ilCtrlException
+     */
+    protected function initHeaderAndLocator(): void
+    {
+        global $DIC;
+        $this->setTitleAndDescription();
+        if(!$this->getCreationMode()) {
+            $DIC->ui()->mainTemplate()->setTitle($this->object->getTitle());
+            $DIC->ui()->mainTemplate()->setTitleIcon(IlObject::_getIcon($this->object->getId()));
+            //$DIC->ui()->saveParameterByClass("CLASE RESULTS, PARÁMETRO round_id");
+
+            //TODO: Aquí hay un if en el original que comprueba si el parámetro baseClass es igual a la clase GUI de administración.
+            //$this->setTabs();
+
+            //TODO: Comprobación de permisos
+        } else {
+            $DIC->ui()->mainTemplate()->setTitle(ilObject::_lookupTitle(ilObject::_lookupObjId($this->ref_id)));
+            //TODO: Añadir icono?
+        }
+        $this->setLocator();
+    }
+
+    /**
+     * @throws ilCtrlException
+     */
+    protected function setTabs(): void
+    {
+        global $DIC;
+        $DIC->tabs()->addTab('tab_content', $this->txt('content'), $DIC->ctrl()->getLinkTarget($this, 'showContent'));
+        $this->addInfoTab();
+        parent::setTabs();
+    }
+
+/*    protected function triageCmdClass($next_class, $cmd): void
+    {
+        switch($next_class){
+            default:
+                if (strcasecmp($_GET['baseClass'], ilAdministrationGUI::class) == 0) {
+                    $this->viewObject();
+                    return;
+                }
+                if (!$cmd) {
+                    $cmd = $this->getStandardCmd();
+                }
+                if ($this->getCreationMode()) {
+                    $this->$cmd();
+                } else {
+                    $this->performCommand($cmd);
+                }
+                break;
+        }
+    }*/
 }
