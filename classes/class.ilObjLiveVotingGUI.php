@@ -44,11 +44,14 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         return 'showContent';
     }
 
+    /**
+     * @throws ilCtrlException
+     */
     public function performCommand(string $cmd): void
     {
         global $DIC;
         $DIC->help()->setScreenIdComponent(ilLiveVotingPlugin::PLUGIN_ID);
-        $cmd = $DIC->ctrl()->getCmd('showContent');
+        //$cmd = $DIC->ctrl()->getCmd('showContent');
         $DIC->ui()->mainTemplate()->setPermanentLink(ilLiveVotingPlugin::PLUGIN_ID, $this->ref_id);
 
         $this->initHeaderAndLocator();
@@ -65,21 +68,22 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
     public function showContentAfterCreation(): void
     {
-        GLOBAL $DIC;
+        global $DIC;
         $liveVotingUI = new LiveVotingUI();
-        $this->tpl->setContent($liveVotingUI->showContent());
-    }
 
-    public function showContent(): void
-    {
-        GLOBAL $DIC;
-        $liveVotingUI = new LiveVotingUI();
         $this->tpl->setContent($liveVotingUI->showContent());
     }
 
     /**
      * @throws ilCtrlException
      */
+    public function showContent(): void
+    {
+        $liveVotingUI = new LiveVotingUI();
+        $this->setSubTabs('tab_content', 'subtab_show');
+        $this->tpl->setContent($liveVotingUI->showContent());
+    }
+
     protected function initHeaderAndLocator(): void
     {
         global $DIC;
@@ -106,9 +110,34 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
     protected function setTabs(): void
     {
         global $DIC;
-        $DIC->tabs()->addTab('tab_content', $this->txt('content'), $DIC->ctrl()->getLinkTarget($this, 'showContent'));
+
+        $this->tabs->addTab('tab_content', $this->txt('tab_content'), $DIC->ctrl()->getLinkTarget($this, 'showContent'));
         $this->addInfoTab();
         parent::setTabs();
+    }
+
+    /**
+     * @throws ilCtrlException
+     */
+    protected function setSubTabs($tab, $active_subtab = null): void
+    {
+        global $DIC;
+        $this->tabs->activateTab($tab);
+        if($tab == 'tab_content'){
+            $this->tabs->addSubTab('subtab_show', $this->txt('subtab_show'), $this->ctrl->getLinkTarget($this, "index"));
+/*            if (ilObjLiveVotingAccess::hasWriteAccess()) {
+                self::dic()->tabs()->addSubTab(self::SUBTAB_EDIT, self::plugin()->translate(self::SUBTAB_EDIT), self::dic()->ctrl()
+                    ->getLinkTargetByClass(xlvoVotingGUI::class, xlvoVotingGUI::CMD_STANDARD));
+            }*/
+            //TODO: Implementación de hasWriteAccess()
+        }
+
+
+        if($active_subtab){
+            $this->tabs->activateSubTab($active_subtab);
+
+        }
+
     }
 
 /*    protected function triageCmdClass($next_class, $cmd): void

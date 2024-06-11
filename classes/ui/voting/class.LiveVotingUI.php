@@ -20,6 +20,11 @@ declare(strict_types=1);
 
 namespace LiveVoting\UI;
 
+use ilLiveVotingPlugin;
+use ilSystemStyleException;
+use ilTemplate;
+use ilTemplateException;
+
 /**
  * Class LiveVotingUI
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
@@ -27,6 +32,11 @@ namespace LiveVoting\UI;
  */
 class LiveVotingUI
 {
+    /**
+     * @var ilLiveVotingPlugin
+     */
+    protected ilLiveVotingPlugin $pl;
+
 /*
     public function executeCommand(): void
     {
@@ -40,8 +50,24 @@ class LiveVotingUI
         }
     }*/
 
-    public static function showContent(): string
+    /**
+     * @throws ilTemplateException
+     * @throws ilSystemStyleException
+     */
+    public function showContent(): string
     {
-        return "Llego";
+        $this->pl = ilLiveVotingPlugin::getInstance();
+        $template = new ilTemplate($this->pl->getDirectory()."/templates/default/Player/tpl.start.html", true, true );
+        $template->setVariable('PIN',"1234");
+
+        $template->setVariable('QR-CODE', "1234");
+
+        $template->setVariable('SHORTLINK', "TEST");
+        $template->setVariable('MODAL', "TEST");
+        $template->setVariable("ONLINE_TEXT", "TEST");
+        $template->setVariable("ZOOM_TEXT", "TEST");
+        return '<div>Hola'.$template->get().'</div>';
     }
+
+
 }
