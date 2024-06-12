@@ -181,9 +181,9 @@ results_title#:#Resultate
 root_create_xlvo#:#LiveVoting erstellen
 show_attendees#:#Anzahl Teilnehmende (Online)
 show_attendees_info#:#Die Anzahl der aktuell teilnehmenden Personen wird im Präsentationsmodus angezeigt. Diese Funktion hat einen Einfluss auf die Geschwindigkeit des Systems und sollte nur bei LiveVotings mit geringer Anzahl Teilnehmenden (abhängig von der Installationsgröße) verwendet werden.
-subtab_edit#:#Verwalten
 subtab_show#:#Zeigen
 tab_content#:#Inhalt
+tab_manage#:#Verwalten
 tab_edit#:#Einstellungen
 tab_results#:#Resultate
 voter_answer#:#Eingabe

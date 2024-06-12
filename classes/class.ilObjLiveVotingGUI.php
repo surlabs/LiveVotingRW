@@ -18,13 +18,14 @@ declare(strict_types=1);
  *
  */
 
+use LiveVoting\UI\LiveVotingManageUI;
 use LiveVoting\UI\LiveVotingUI;
 
 /**
  * Class ilObjLiveVotingGUI
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
- * @ilCtrl_isCalledBy ilObjLiveVotingGUI: ilRepositoryGUI, ilObjPluginDispatchGUI, ilAdministrationGUI, LiveVotingUI
- * @ilCtrl_Calls      ilObjLiveVotingGUI: ilObjectCopyGUI, ilPermissionGUI, ilInfoScreenGUI, ilCommonActionDispatcherGUI, LiveVotingUI
+ * @ilCtrl_isCalledBy ilObjLiveVotingGUI: ilRepositoryGUI, ilObjPluginDispatchGUI, ilAdministrationGUI, LiveVotingUI, LiveVotingManageUI
+ * @ilCtrl_Calls      ilObjLiveVotingGUI: ilObjectCopyGUI, ilPermissionGUI, ilInfoScreenGUI, ilCommonActionDispatcherGUI, LiveVotingUI, LiveVotingManageUI
  */
 class ilObjLiveVotingGUI extends ilObjectPluginGUI
 {
@@ -57,21 +58,34 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         $this->initHeaderAndLocator();
 
         switch ($cmd){
-            case 'showContent':
+            case 'index':
+                $this->showContent();
+                break;
             case 'showContentAfterCreation':
             case 'editProperties':
+            case 'manage':
+            case 'selectType':
             case 'updateProperties':
                 $this->{$cmd}();
                 break;
         }
     }
 
+    /**
+     * @throws ilCtrlException
+     */
     public function showContentAfterCreation(): void
     {
         global $DIC;
         $liveVotingUI = new LiveVotingUI();
+        //$this->setSubTabs('tab_content', 'subtab_show');
+        $this->tabs->activateTab("tab_content");
 
-        $this->tpl->setContent($liveVotingUI->showContent());
+        try {
+            $this->tpl->setContent($liveVotingUI->showIndex());
+        } catch (ilSystemStyleException|ilTemplateException $e) {
+            //TODO: Mostrar error
+        }
     }
 
     /**
@@ -80,8 +94,50 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
     public function showContent(): void
     {
         $liveVotingUI = new LiveVotingUI();
-        $this->setSubTabs('tab_content', 'subtab_show');
-        $this->tpl->setContent($liveVotingUI->showContent());
+        $this->tabs->activateTab("tab_content");
+        try {
+            $this->tpl->setContent($liveVotingUI->showIndex());
+        } catch (ilSystemStyleException|ilTemplateException $e) {
+            //TODO: Mostrar error
+
+        }
+    }
+
+    /**
+     * @throws ilCtrlException
+     */
+    public function manage(): void
+    {
+        global $DIC;
+        $this->tabs->activateTab("tab_edit");
+
+        if (!ilObjLiveVotingAccess::hasWriteAccess()) {
+            $this->tpl->setContent("Error de acceso");
+            //TODO: Mostrar error
+
+
+        } elseif (ilObjLiveVotingAccess::hasWriteAccess()) {
+            $liveVotingManageUI = new LiveVotingManageUI();
+            try {
+                $DIC->toolbar()->addComponent($DIC->ui()->factory()->button()->primary($this->txt('voting_add'), $this->ctrl->getLinkTarget($this, "selectType")));
+                $DIC->toolbar()->addComponent($DIC->ui()->factory()->button()->standard($this->txt('voting_reset_all'), $this->ctrl->getLinkTarget($this, "selectType")));
+
+                $this->tpl->setContent($liveVotingManageUI->showManage());
+            } catch (ilSystemStyleException|ilTemplateException $e) {
+                //TODO: Mostrar error
+            }
+
+
+        }
+        //$this->tpl->setContent("Contenido de la pestaña de edición");
+    }
+
+    public function selectType(): void
+    {
+        //TODO: Se requiere revisar permisos, aunque lo suyo igual es simplemente no pintar la pestaña Manage si no se tienen permisos antes de llegar aquí.
+        $this->tabs->activateTab("tab_edit");
+        $liveVotingManageUI = new LiveVotingManageUI();
+        $this->tpl->setContent($liveVotingManageUI->renderSelectTypeForm());
     }
 
     protected function initHeaderAndLocator(): void
@@ -109,7 +165,8 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
      */
     protected function setTabs(): void
     {
-        $this->tabs->addTab("tab_content", $this->lng->txt("tab_content"), $this->ctrl->getLinkTarget($this, "showContent"));
+        $this->tabs->addTab("tab_content", $this->lng->txt("tab_content"), $this->ctrl->getLinkTarget($this, "index"));
+        $this->tabs->addTab("tab_edit", $this->lng->txt("tab_manage"), $this->ctrl->getLinkTarget($this, "manage"));
         $this->tabs->addTab("info_short", $this->lng->txt('info_short'), $this->ctrl->getLinkTargetByClass(array(
             get_class($this),
             "ilInfoScreenGUI",
@@ -136,6 +193,10 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             $this->tabs->addSubTab("subtab_show",
                 $this->plugin->txt('subtab_show'),
                 $this->ctrl->getLinkTarget($this, "index")
+            );
+            $this->tabs->addSubTab("subtab_edit",
+                $this->plugin->txt('subtab_edit'),
+                $this->ctrl->getLinkTarget($this, "content")
             );
 
 //            if (ilObjLiveVotingAccess::hasWriteAccess()) {

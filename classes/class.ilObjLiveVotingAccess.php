@@ -24,5 +24,18 @@ declare(strict_types=1);
  */
 class ilObjLiveVotingAccess extends ilObjectPluginAccess
 {
+    public static function hasWriteAccess($ref_id = null, $user_id = null): bool
+    {
+        return self::hasAccess('write', $ref_id, $user_id);
+    }
+
+    protected static function hasAccess(string $permission, $ref_id = null, $user_id = null): bool
+    {
+        global $DIC;
+        $ref_id = (int)$ref_id ?: (int)$_GET['ref_id'];
+        $user_id = $user_id ?: $DIC->user()->getId();
+
+        return $DIC->access()->checkAccessOfUser($user_id, $permission, '', $ref_id);
+    }
 
 }

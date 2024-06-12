@@ -173,10 +173,10 @@ qtype_6_display_mode_nr_2#:#MISSING qtype_6_display_mode_nr_2
 results_title#:#Eredmények
 rminable_select_start_time#:#Indítás
 root_create_xlvo#:#Élőszavazás létrehozása
-subtab_edit#:#Kezelés
 subtab_show#:#Megjelenítés
 tab_content#:#Tartalom
 tab_edit#:#Beállítások
+tab_manage#:#Kezelés
 tab_results#:#Eredmények
 voter_answer#:#Válasz
 voter_delete#:#Törlés

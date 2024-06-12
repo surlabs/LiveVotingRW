@@ -54,7 +54,7 @@ class LiveVotingUI
      * @throws ilTemplateException
      * @throws ilSystemStyleException
      */
-    public function showContent(): string
+    public function showIndex(): string
     {
         $this->pl = ilLiveVotingPlugin::getInstance();
         $template = new ilTemplate($this->pl->getDirectory()."/templates/default/Player/tpl.start.html", true, true );
@@ -68,6 +68,5 @@ class LiveVotingUI
         $template->setVariable("ZOOM_TEXT", "TEST");
         return '<div>Hola'.$template->get().'</div>';
     }
-
 
 }
