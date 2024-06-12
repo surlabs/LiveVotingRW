@@ -109,35 +109,44 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
      */
     protected function setTabs(): void
     {
-        global $DIC;
+        $this->tabs->addTab("tab_content", $this->lng->txt("tab_content"), $this->ctrl->getLinkTarget($this, "showContent"));
+        $this->tabs->addTab("info_short", $this->lng->txt('info_short'), $this->ctrl->getLinkTargetByClass(array(
+            get_class($this),
+            "ilInfoScreenGUI",
+        ), "showSummary"));
 
-        $this->tabs->addTab('tab_content', $this->txt('tab_content'), $DIC->ctrl()->getLinkTarget($this, 'showContent'));
-        $this->addInfoTab();
-        parent::setTabs();
+        if ($this->checkPermissionBool("edit_permission")) {
+            $this->tabs->addTab("perm_settings", $this->lng->txt("perm_settings"), $this->ctrl->getLinkTargetByClass(array(
+                get_class($this),
+                "ilPermissionGUI",
+            ), "perm"));
+        }
     }
 
     /**
+     * Add sub tabs and activate the forwarded sub tab in the parameter.
+     *
+     * @param string $tab
+     * @param string $active_sub_tab
      * @throws ilCtrlException
      */
-    protected function setSubTabs($tab, $active_subtab = null): void
+    protected function setSubTabs(string $tab, string $active_sub_tab): void
     {
-        global $DIC;
-        $this->tabs->activateTab($tab);
         if($tab == 'tab_content'){
-            $this->tabs->addSubTab('subtab_show', $this->txt('subtab_show'), $this->ctrl->getLinkTarget($this, "index"));
-/*            if (ilObjLiveVotingAccess::hasWriteAccess()) {
-                self::dic()->tabs()->addSubTab(self::SUBTAB_EDIT, self::plugin()->translate(self::SUBTAB_EDIT), self::dic()->ctrl()
-                    ->getLinkTargetByClass(xlvoVotingGUI::class, xlvoVotingGUI::CMD_STANDARD));
-            }*/
-            //TODO: Implementación de hasWriteAccess()
+            $this->tabs->addSubTab("subtab_show",
+                $this->plugin->txt('subtab_show'),
+                $this->ctrl->getLinkTarget($this, "index")
+            );
+
+//            if (ilObjLiveVotingAccess::hasWriteAccess()) {
+//                $this->tabs->addSubTab("subtab_edit",
+//                    $this->plugin->txt('subtab_edit'),
+//                    $this->ctrl->getLinkTargetByClass("LiveVotingUI", "showContent")
+//                );
+//            }
         }
 
-
-        if($active_subtab){
-            $this->tabs->activateSubTab($active_subtab);
-
-        }
-
+        $this->tabs->activateSubTab($active_sub_tab);
     }
 
 /*    protected function triageCmdClass($next_class, $cmd): void
