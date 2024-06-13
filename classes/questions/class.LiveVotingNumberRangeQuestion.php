@@ -25,13 +25,19 @@ declare(strict_types=1);
 class LiveVotingNumberRangeQuestion extends LiveVotingOrderQuestion
 {
 
-    public function hasCorrectSolution(): bool
-    {
+    public function hasCorrectSolution(): bool {
         return true;
     }
 
-    public function getQuestionType(): string
-    {
+    public function getQuestionType(): string {
         return "NumberRange";
+    }
+
+    public function save(?int $obj_id): int {
+        $id = parent::save($obj_id);
+
+        // TODO: Save specific data for this question type
+
+        return  $id;
     }
 }

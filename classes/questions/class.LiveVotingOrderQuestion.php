@@ -25,14 +25,20 @@ declare(strict_types=1);
 class LiveVotingOrderQuestion extends LiveVotingQuestion
 {
 
-    public function hasCorrectSolution(): bool
-    {
+    public function hasCorrectSolution(): bool {
         //TODO Esta pregunta tiene los dos modos de corrección, por lo que se debe implementar la lógica de corrección
         return true;
     }
 
-    public function getQuestionType(): string
-    {
+    public function getQuestionType(): string {
         return "Order";
+    }
+
+    public function save(?int $obj_id): int {
+        $id = parent::save($obj_id);
+
+        // TODO: Save specific data for this question type
+
+        return  $id;
     }
 }
