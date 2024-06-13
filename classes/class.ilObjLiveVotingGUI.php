@@ -65,6 +65,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             case 'editProperties':
             case 'manage':
             case 'selectType':
+            case 'selectedType1':
             case 'updateProperties':
                 $this->{$cmd}();
                 break;
@@ -119,8 +120,8 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         } elseif (ilObjLiveVotingAccess::hasWriteAccess()) {
             $liveVotingManageUI = new LiveVotingManageUI();
             try {
-                $DIC->toolbar()->addComponent($DIC->ui()->factory()->button()->primary($this->txt('voting_add'), $this->ctrl->getLinkTarget($this, "selectType")));
-                $DIC->toolbar()->addComponent($DIC->ui()->factory()->button()->standard($this->txt('voting_reset_all'), $this->ctrl->getLinkTarget($this, "selectType")));
+/*                $DIC->toolbar()->addComponent($DIC->ui()->factory()->button()->primary($this->txt('voting_add'), $this->ctrl->getLinkTarget($this, "selectType")));
+                $DIC->toolbar()->addComponent($DIC->ui()->factory()->button()->standard($this->txt('voting_reset_all'), $this->ctrl->getLinkTarget($this, "selectType")));*/
 
                 $this->tpl->setContent($liveVotingManageUI->showManage());
             } catch (ilSystemStyleException|ilTemplateException $e) {
@@ -135,9 +136,19 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
     public function selectType(): void
     {
         //TODO: Se requiere revisar permisos, aunque lo suyo igual es simplemente no pintar la pestaña Manage si no se tienen permisos antes de llegar aquí.
-        $this->tabs->activateTab("tab_edit");
+        $this->tabs->activateTab("tab_manage");
         $liveVotingManageUI = new LiveVotingManageUI();
         $this->tpl->setContent($liveVotingManageUI->renderSelectTypeForm());
+    }
+
+    /**
+     * @throws ilException
+     */
+    public function selectedType1(): void
+    {
+        $this->tabs->activateTab("tab_edit");
+        $liveVotingManageUI = new LiveVotingManageUI();
+        $this->tpl->setContent($liveVotingManageUI->renderSelectType1Form());
     }
 
     protected function initHeaderAndLocator(): void

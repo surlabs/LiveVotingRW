@@ -20,14 +20,21 @@ declare(strict_types=1);
 
 namespace LiveVoting\UI;
 
+use Exception;
 use ilCtrlInterface;
+use ilException;
+use ilHtmlPurifierFactory;
 use ILIAS\UI\Factory;
+use ILIAS\UI\Renderer;
 use ilLiveVotingPlugin;
+use ilObject;
 use ilObjLiveVotingGUI;
 use ilPlugin;
+use ilPropertyFormGUI;
 use ilSystemStyleException;
 use ilTemplate;
 use ilTemplateException;
+use ilTextAreaInputGUI;
 
 /**
  * Class LiveVotingManageUI
@@ -49,14 +56,25 @@ class LiveVotingManageUI
      * @var ilPlugin
      */
     protected ilPlugin $plugin;
+    protected renderer $renderer;
+    protected $request;
+
+    public function __construct()
+    {
+        global $DIC;
+
+        $this->plugin = ilLiveVotingPlugin::getInstance();
+        $this->control = $DIC->ctrl();
+        $this->request = $DIC->http()->request();
+        $this->factory = $DIC->ui()->factory();
+        $this->renderer = $DIC->ui()->renderer();
+    }
 
     /**
      * @throws \ilCtrlException
      */
     public function showManage(): string{
         global $DIC;
-        $this->plugin = ilLiveVotingPlugin::getInstance();
-        $this->control = $DIC->ctrl();
 
         $f = $DIC->ui()->factory();
         $renderer = $DIC->ui()->renderer();
@@ -93,15 +111,11 @@ class LiveVotingManageUI
 
         return $renderer->render($dd);
 
-        return "TEST";
-
     }
 
-    public function renderSelectTypeForm(): string{
+    public function renderSelectTypeForm(): string
+    {
         global $DIC;
-        $this->factory = $DIC->ui()->factory();
-        $this->control = $DIC->ctrl();
-        $this->plugin = ilLiveVotingPlugin::getInstance();
 
         $form_fields = [];
 
@@ -120,5 +134,164 @@ class LiveVotingManageUI
 
         return $DIC->ui()->renderer()->render($form);
 
+    }
+
+    public function renderSelectType1Form(): string
+    {
+        global $DIC;
+        try {
+            $form_questions = [];
+
+            $field_title = $this->factory->input()->field()->text(
+                $this->plugin->txt('voting_title'))
+                ->withValue("TEST")
+                ->withRequired(true);
+/*                ->withAdditionalTransformation($DIC->refinery()->custom()->transformation(
+                    function ($v) use ($object) {
+
+                    }
+                ));*/
+
+
+            $form_questions["title"] = $field_title;
+
+
+            $field_question = $this->factory->input()->field()->textarea(
+                $this->plugin->txt('voting_question'))
+                ->withValue("TEST")
+                ->withRequired(true);
+            /*                ->withAdditionalTransformation($DIC->refinery()->custom()->transformation(
+                                function ($v) use ($object) {
+
+                                }
+                            ));*/
+
+            $form_questions["question"] = $field_question;
+
+            $field_columns = $this->factory->input()->field()->select(
+                $this->plugin->txt('voting_columns'),
+                [1 => "1", 2 => "2", 3 => "3", 4 => "4", 5 => "5", 6 => "6", 7 => "7", 8 => "8", 9 => "9", 10 => "10"])
+                ->withValue(1)
+                ->withRequired(true);
+
+            $form_questions["columns"] = $field_columns;
+
+
+            $section_questions = $this->factory->input()->field()->section($form_questions, $this->plugin->txt("player_voting_list"), $this->plugin->txt("voting_type_1"));
+
+
+            //REST API section
+            $form_fields_rest = [];
+
+            $field_rest_api_user = $this->factory->input()->field()->text(
+                $this->plugin->txt('conf_rest_api_user'),
+                $this->plugin->txt('conf_rest_api_user_info'))
+                ->withValue("TEST")
+                ->withRequired(true);
+                /*->withAdditionalTransformation($DIC->refinery()->custom()->transformation(
+                    function ($v) use ($object) {
+
+                    }
+                ));*/
+
+            $form_fields_rest["rest_api_user"] = $field_rest_api_user;
+
+
+            $section_rest = $this->factory->input()->field()->section($form_fields_rest, $this->plugin->txt("conf_header_rest"), "");
+
+           $sections =  [
+                "config_soap" => $section_questions,
+                "config_rest" => $section_rest
+            ];
+
+            $form_action = $this->control->getLinkTargetByClass(ilObjLiveVotingGUI::class, "configure");
+            return $this->renderForm($form_action, $sections);
+
+
+        } catch (Exception $e) {
+            throw new ilException($e->getMessage());
+        }
+    }
+
+
+    /**
+     * @throws \ilHtmlPurifierNotFoundException
+     */
+    private function renderForm(string $form_action, array $sections): string
+    {
+
+        $r = new ilTextAreaInputGUI($this->plugin->txt('question'), 'question');
+        $r->addPlugin('latex');
+        $r->addButton('latex');
+        $r->addButton('pastelatex');
+        $r->setRequired(true);
+        $r->setRTESupport(ilObject::_lookupObjId((int)$_GET['ref_id']), "dcl", ilLiveVotingPlugin::PLUGIN_ID, null, false);
+        $r->setUseRte(true);
+        $r->setRteTags(array(
+            'p',
+            'a',
+            'br',
+            'strong',
+            'b',
+            'i',
+            'em',
+            'span',
+            'img',
+        ));
+        $r->usePurifier(false);
+        $r->setPurifier(ilHtmlPurifierFactory::getInstanceByType('frm_post'));
+        $r->disableButtons(array(
+            'charmap',
+            'undo',
+            'redo',
+            'justifyleft',
+            'justifycenter',
+            'justifyright',
+            'justifyfull',
+            'anchor',
+            'fullscreen',
+            'cut',
+            'copy',
+            'paste',
+            'pastetext',
+            'formatselect',
+            'bullist',
+            'hr',
+            'sub',
+            'sup',
+            'numlist',
+            'cite',
+        ));
+
+        $r->setRows(5);
+
+        $form = new ilPropertyFormGUI();
+        $form->addItem($r);
+
+
+        $field_question = $this->factory->legacy($form->getHTML());
+
+        $modal = $this->factory->modal()->roundtrip('My Modal 1', $field_question);
+        $modal = $modal->withCloseWithKeyboard(false);
+        $button1 = $this->factory->button()->standard('Open Modal 1', '#')
+            ->withOnClick($modal->getShowSignal());
+        //Create the form
+        $form = $this->factory->input()->container()->form()->standard(
+            $form_action,
+            $sections,
+        );
+
+        $saving_info = "";
+
+        //Check if the form has been submitted
+        if ($this->request->getMethod() == "POST") {
+            $form = $form->withRequest($this->request);
+            $result = $form->getData();
+            if ($result) {
+                //$saving_info = $this->save();
+            }
+        }
+
+        return $saving_info . $this->renderer->render($form);
     }
 }
