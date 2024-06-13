@@ -38,9 +38,11 @@ abstract class LiveVotingQuestion
 
 
 
-    public function __construct(?int $id = null) {
-        if ($id !== null) {
-            $this->id = $id;
+    public function __construct(array $data = null) {
+        if ($data !== null) {
+            $this->id = $data["id"];
+            $this->title = $data["title"];
+            $this->question = $data["question"];
         }
     }
 
@@ -52,25 +54,34 @@ abstract class LiveVotingQuestion
         return self::QUESTION_TYPES_IDS[$this->getQuestionType()];
     }
 
+    /**
+     * @throws LiveVotingException
+     */
     public static function loadQuestionById(int $id) : ?LiveVotingQuestion {
-        // TODO: Get the question data from the database using $id
-
         $question = null;
 
-        switch ($id) {
-            case self::QUESTION_TYPES_IDS["Choices"]:
-                $question = new LiveVotingChoicesQuestion($id);
-                break;
-            case self::QUESTION_TYPES_IDS["FreeText"]:
-                $question = new LiveVotingFreeTextQuestion($id);
-                break;
-            case self::QUESTION_TYPES_IDS["Order"]:
-            case self::QUESTION_TYPES_IDS["Priorities"]:
-                $question = new LiveVotingOrderQuestion($id);
-                break;
-            case self::QUESTION_TYPES_IDS["NumberRange"]:
-                $question = new LiveVotingNumberRangeQuestion($id);
-                break;
+        $database = new LiveVotingDatabase();
+
+        $result = $database->select("rep_robj_xlvo_voting_n", array(
+            "id" => $id
+        ));
+
+        if ($result && isset($result[0])) {
+            switch ($result[0]["voting_type"]) {
+                case self::QUESTION_TYPES_IDS["Choices"]:
+                    $question = new LiveVotingChoicesQuestion($result[0]);
+                    break;
+                case self::QUESTION_TYPES_IDS["FreeText"]:
+                    $question = new LiveVotingFreeTextQuestion($result[0]);
+                    break;
+                case self::QUESTION_TYPES_IDS["Order"]:
+                case self::QUESTION_TYPES_IDS["Priorities"]:
+                    $question = new LiveVotingOrderQuestion($result[0]);
+                    break;
+                case self::QUESTION_TYPES_IDS["NumberRange"]:
+                    $question = new LiveVotingNumberRangeQuestion($result[0]);
+                    break;
+            }
         }
 
         return $question;
@@ -105,22 +116,65 @@ abstract class LiveVotingQuestion
         return $question;
     }
 
-    public function delete() {
-        // TODO: Delete the question from the database using $this->id
-    }
-
     /**
      * @throws LiveVotingException
      */
+    public function delete(): void
+    {
+        $database = new LiveVotingDatabase();
+
+        $database->delete("rep_robj_xlvo_voting_n", array(
+            "id" => $this->id
+        ));
+        $database->delete("rep_robj_xlvo_option_n", array(
+            "voting_id" => $this->id
+        ));
+        $database->delete("rep_robj_xlvo_vote_n", array(
+            "voting_id" => $this->id
+        ));
+    }
+
+    /**
+     * In this method we only save common data for all question types, specific data is saved in the child classes
+     *
+     * @throws LiveVotingException
+     */
     public function save(?int $obj_id) : int {
+        $database = new LiveVotingDatabase();
+
         if ($this->id != 0) {
-            // TODO: Update the question in the database using $this->id
+            $database->update("rep_robj_xlvo_voting_n", array(
+                "title" => $this->title,
+                "question" => $this->question
+            ), array(
+                "id" => $this->id
+            ));
         } else if ($obj_id !== null && $obj_id != 0) {
-            // TODO: Insert the question into the database
+            $this->id = $database->nextId("rep_robj_xlvo_voting_n");
+
+            $database->insert("rep_robj_xlvo_voting_n", array(
+                "id" => $this->id,
+                "obj_id" => $obj_id,
+                "title" => $this->title,
+                "question" => $this->question,
+                "voting_type" => $this->getQuestionTypeId()
+            ));
         } else {
             throw new LiveVotingException("Invalid object id");
         }
 
         return $this->id;
+    }
+
+    /**
+     * @throws LiveVotingException
+     */
+    public function reset(): void
+    {
+        $database = new LiveVotingDatabase();
+
+        $database->delete("rep_robj_xlvo_vote_n", array(
+            "voting_id" => $this->id
+        ));
     }
 }
