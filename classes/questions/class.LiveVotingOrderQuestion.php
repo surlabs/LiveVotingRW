@@ -22,7 +22,7 @@ declare(strict_types=1);
  * Class LiveVotingOrderQuestion
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
  */
-class LiveVotingOrderQuestion implements LiveVotingQuestion
+class LiveVotingOrderQuestion extends LiveVotingQuestion
 {
 
     public function hasCorrectSolution(): bool
@@ -31,4 +31,8 @@ class LiveVotingOrderQuestion implements LiveVotingQuestion
         return true;
     }
 
+    public function getQuestionType(): string
+    {
+        return "Order";
+    }
 }

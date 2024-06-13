@@ -22,12 +22,17 @@ declare(strict_types=1);
  * Class LiveVotingChoicesQuestion
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
  */
-class LiveVotingChoicesQuestion implements LiveVotingQuestion
+class LiveVotingChoicesQuestion extends LiveVotingQuestion
 {
 
     public function hasCorrectSolution(): bool
     {
         //TODO Esta pregunta tiene los dos modos de corrección, por lo que se debe implementar la lógica de corrección
         return true;
+    }
+
+    public function getQuestionType(): string
+    {
+        return "Choices";
     }
 }

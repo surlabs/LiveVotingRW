@@ -19,12 +19,19 @@ declare(strict_types=1);
  */
 
 /**
- * Interface LiveVotingQuestion
+ * Class LiveVotingOrderQuestion
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
  */
-interface LiveVotingQuestion
+class LiveVotingNumberRangeQuestion extends LiveVotingOrderQuestion
 {
 
-    public function hasCorrectSolution() : bool;
+    public function hasCorrectSolution(): bool
+    {
+        return true;
+    }
 
+    public function getQuestionType(): string
+    {
+        return "NumberRange";
+    }
 }
