@@ -38,7 +38,6 @@ abstract class LiveVotingQuestion
     public int $position = 99;
     public int $voting_status = 5;
 
-
     public function __construct(?array $data = null) {
         if ($data !== null) {
             $this->id = (int) $data["id"];
