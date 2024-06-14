@@ -63,6 +63,28 @@ class LiveVotingQuestionOption
         return $option;
     }
 
+    /**
+     * @throws LiveVotingException
+     */
+    public static function loadAllOptionsByVotingId(int $voting_id) : array
+    {
+        $options = array();
+
+        $database = new LiveVotingDatabase();
+
+        $result = $database->select("rep_robj_xlvo_option_n", array(
+            "voting_id" => $voting_id
+        ));
+
+        if ($result) {
+            foreach ($result as $row) {
+                $options[] = new LiveVotingQuestionOption($row);
+            }
+        }
+
+        return $options;
+    }
+
     public static function loadNewOption(int $type) : ?LiveVotingQuestionOption {
         $option = new LiveVotingQuestionOption();
 

@@ -46,6 +46,7 @@ abstract class LiveVotingQuestion
             $this->question = (string) $data["question"];
             $this->position = (int) $data["position"];
             $this->voting_status = (int) $data["voting_status"];
+            $this->options = $data["options"];
         }
     }
 
@@ -67,7 +68,10 @@ abstract class LiveVotingQuestion
             "id" => $id
         ));
 
+
         if ($result && isset($result[0])) {
+            $result[0]["options"] = LiveVotingQuestionOption::loadAllOptionsByVotingId($id);
+
             switch ($result[0]["voting_type"]) {
                 case self::QUESTION_TYPES_IDS["Choices"]:
                     $question = new LiveVotingChoicesQuestion($result[0]);
