@@ -37,6 +37,7 @@ abstract class LiveVotingQuestion
     public string $question = "";
     public int $position = 99;
     public int $voting_status = 5;
+    public array $options = array();
 
     public function __construct(?array $data = null) {
         if ($data !== null) {
@@ -165,6 +166,10 @@ abstract class LiveVotingQuestion
             ));
         } else {
             throw new LiveVotingException("Invalid object id");
+        }
+
+        foreach ($this->options as $option) {
+            $option->save($this->id);
         }
 
         return $this->id;
