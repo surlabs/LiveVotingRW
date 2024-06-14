@@ -24,8 +24,8 @@ declare(strict_types=1);
  */
 class LiveVotingOrderQuestion extends LiveVotingQuestion
 {
-    public int $columns = 1;
-    public bool $randomise_option_sequence = false;
+    private int $columns = 1;
+    private bool $randomise_option_sequence = false;
 
     public function __construct(?array $data = null) {
         parent::__construct($data);
@@ -53,5 +53,25 @@ class LiveVotingOrderQuestion extends LiveVotingQuestion
         ));
 
         return  $id;
+    }
+
+    public function getColumns(): int
+    {
+        return $this->columns;
+    }
+
+    public function setColumns(int $columns): void
+    {
+        $this->columns = $columns;
+    }
+
+    public function isRandomiseOptionSequence(): bool
+    {
+        return $this->randomise_option_sequence;
+    }
+
+    public function setRandomiseOptionSequence(bool $randomise_option_sequence): void
+    {
+        $this->randomise_option_sequence = $randomise_option_sequence;
     }
 }

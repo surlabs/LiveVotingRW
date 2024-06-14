@@ -24,11 +24,11 @@ declare(strict_types=1);
  */
 class LiveVotingNumberRangeQuestion extends LiveVotingQuestion
 {
-    public bool $percentage = true;
-    public int $start_range = 0;
-    public int $end_range = 100;
-    public int $step_range = 1;
-    public ?int $alt_result_display_mode = null;
+    private bool $percentage = true;
+    private int $start_range = 0;
+    private int $end_range = 100;
+    private int $step_range = 1;
+    private ?int $alt_result_display_mode = null;
 
     public function __construct(?array $data = null) {
         parent::__construct($data);
@@ -62,5 +62,55 @@ class LiveVotingNumberRangeQuestion extends LiveVotingQuestion
         ));
 
         return  $id;
+    }
+
+    public function isPercentage(): bool
+    {
+        return $this->percentage;
+    }
+
+    public function setPercentage(bool $percentage): void
+    {
+        $this->percentage = $percentage;
+    }
+
+    public function getStartRange(): int
+    {
+        return $this->start_range;
+    }
+
+    public function setStartRange(int $start_range): void
+    {
+        $this->start_range = $start_range;
+    }
+
+    public function getEndRange(): int
+    {
+        return $this->end_range;
+    }
+
+    public function setEndRange(int $end_range): void
+    {
+        $this->end_range = $end_range;
+    }
+
+    public function getStepRange(): int
+    {
+        return $this->step_range;
+    }
+
+    public function setStepRange(int $step_range): void
+    {
+        $this->step_range = $step_range;
+    }
+
+    public function getAltResultDisplayMode(): ?int
+    {
+        return $this->alt_result_display_mode;
+    }
+
+    public function setAltResultDisplayMode(?int $alt_result_display_mode): void
+    {
+        $this->alt_result_display_mode = $alt_result_display_mode;
     }
 }

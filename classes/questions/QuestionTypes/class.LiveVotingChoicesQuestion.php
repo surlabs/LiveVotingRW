@@ -24,8 +24,8 @@ declare(strict_types=1);
  */
 class LiveVotingChoicesQuestion extends LiveVotingQuestion
 {
-    public bool $multi_selection = false;
-    public int $columns = 1;
+    private bool $multi_selection = false;
+    private int $columns = 1;
 
     public function __construct(?array $data = null) {
         parent::__construct($data);
@@ -53,5 +53,25 @@ class LiveVotingChoicesQuestion extends LiveVotingQuestion
         ));
 
         return  $id;
+    }
+
+    public function isMultiSelection(): bool
+    {
+        return $this->multi_selection;
+    }
+
+    public function setMultiSelection(bool $multi_selection): void
+    {
+        $this->multi_selection = $multi_selection;
+    }
+
+    public function getColumns(): int
+    {
+        return $this->columns;
+    }
+
+    public function setColumns(int $columns): void
+    {
+        $this->columns = $columns;
     }
 }

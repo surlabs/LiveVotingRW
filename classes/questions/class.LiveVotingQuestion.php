@@ -32,12 +32,12 @@ abstract class LiveVotingQuestion
         "NumberRange" => 6,
     );
 
-    public int $id = 0;
-    public string $title = "";
-    public string $question = "";
-    public int $position = 99;
-    public int $voting_status = 5;
-    public array $options = array();
+    protected int $id = 0;
+    protected string $title = "";
+    protected string $question = "";
+    protected int $position = 99;
+    protected int $voting_status = 5;
+    protected array $options = array();
 
     public function __construct(?array $data = null) {
         if ($data !== null) {
@@ -185,5 +185,65 @@ abstract class LiveVotingQuestion
         $database->delete("rep_robj_xlvo_vote_n", array(
             "voting_id" => $this->id
         ));
+    }
+
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function setId(int $id): void
+    {
+        $this->id = $id;
+    }
+
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(string $title): void
+    {
+        $this->title = $title;
+    }
+
+    public function getQuestion(): string
+    {
+        return $this->question;
+    }
+
+    public function setQuestion(string $question): void
+    {
+        $this->question = $question;
+    }
+
+    public function getPosition(): int
+    {
+        return $this->position;
+    }
+
+    public function setPosition(int $position): void
+    {
+        $this->position = $position;
+    }
+
+    public function getVotingStatus(): int
+    {
+        return $this->voting_status;
+    }
+
+    public function setVotingStatus(int $voting_status): void
+    {
+        $this->voting_status = $voting_status;
+    }
+
+    public function getOptions(): array
+    {
+        return $this->options;
+    }
+
+    public function setOptions(array $options): void
+    {
+        $this->options = $options;
     }
 }

@@ -24,8 +24,8 @@ declare(strict_types=1);
  */
 class LiveVotingFreeTextQuestion extends LiveVotingQuestion
 {
-    public bool $multi_free_input = false;
-    public int $answer_field = 1;
+    private bool $multi_free_input = false;
+    private int $answer_field = 1;
 
     public function __construct(?array $data = null) {
         parent::__construct($data);
@@ -53,5 +53,25 @@ class LiveVotingFreeTextQuestion extends LiveVotingQuestion
         ));
 
         return  $id;
+    }
+
+    public function isMultiFreeInput(): bool
+    {
+        return $this->multi_free_input;
+    }
+
+    public function setMultiFreeInput(bool $multi_free_input): void
+    {
+        $this->multi_free_input = $multi_free_input;
+    }
+
+    public function getAnswerField(): int
+    {
+        return $this->answer_field;
+    }
+
+    public function setAnswerField(int $answer_field): void
+    {
+        $this->answer_field = $answer_field;
     }
 }

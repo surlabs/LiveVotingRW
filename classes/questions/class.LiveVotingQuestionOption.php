@@ -24,12 +24,12 @@ declare(strict_types=1);
  */
 class LiveVotingQuestionOption
 {
-    public int $id = 0;
-    public ?string $text = null;
-    public int $type;
-    public int $status = 1;
-    public ?int $position = null;
-    public ?int $correct_position = null;
+    private int $id = 0;
+    private ?string $text = null;
+    private int $type;
+    private int $status = 1;
+    private ?int $position = null;
+    private ?int $correct_position = null;
 
     public function __construct(?array $data = null)
     {
@@ -66,7 +66,7 @@ class LiveVotingQuestionOption
     public static function loadNewOption(int $type) : ?LiveVotingQuestionOption {
         $option = new LiveVotingQuestionOption();
 
-        $option->type = $type;
+        $option->setType($type);
 
         return $option;
     }
@@ -116,5 +116,65 @@ class LiveVotingQuestionOption
         }
 
         return $this->id;
+    }
+
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function setId(int $id): void
+    {
+        $this->id = $id;
+    }
+
+    public function getText(): ?string
+    {
+        return $this->text;
+    }
+
+    public function setText(?string $text): void
+    {
+        $this->text = $text;
+    }
+
+    public function getType(): int
+    {
+        return $this->type;
+    }
+
+    public function setType(int $type): void
+    {
+        $this->type = $type;
+    }
+
+    public function getStatus(): int
+    {
+        return $this->status;
+    }
+
+    public function setStatus(int $status): void
+    {
+        $this->status = $status;
+    }
+
+    public function getPosition(): ?int
+    {
+        return $this->position;
+    }
+
+    public function setPosition(?int $position): void
+    {
+        $this->position = $position;
+    }
+
+    public function getCorrectPosition(): ?int
+    {
+        return $this->correct_position;
+    }
+
+    public function setCorrectPosition(?int $correct_position): void
+    {
+        $this->correct_position = $correct_position;
     }
 }
