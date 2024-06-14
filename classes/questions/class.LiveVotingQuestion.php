@@ -19,7 +19,7 @@ declare(strict_types=1);
  */
 
 /**
- * Interface LiveVotingQuestion
+ * Abstract Class LiveVotingQuestion
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
  */
 abstract class LiveVotingQuestion

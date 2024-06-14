@@ -19,7 +19,7 @@ declare(strict_types=1);
  */
 
 /**
- * Class LiveVotingOrderQuestion
+ * Class LiveVotingNumberRangeQuestion
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
  */
 class LiveVotingNumberRangeQuestion extends LiveVotingQuestion
