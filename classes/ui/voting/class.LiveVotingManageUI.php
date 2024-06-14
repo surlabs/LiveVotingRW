@@ -24,6 +24,7 @@ use Exception;
 use ilCtrlInterface;
 use ilException;
 use ilHtmlPurifierFactory;
+use ilHtmlPurifierNotFoundException;
 use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
 use ilLiveVotingPlugin;
@@ -171,8 +172,7 @@ class LiveVotingManageUI
             $field_columns = $this->factory->input()->field()->select(
                 $this->plugin->txt('voting_columns'),
                 [1 => "1", 2 => "2", 3 => "3", 4 => "4", 5 => "5", 6 => "6", 7 => "7", 8 => "8", 9 => "9", 10 => "10"])
-                ->withValue(1)
-                ->withRequired(true);
+                ->withValue(1);
 
             $form_questions["columns"] = $field_columns;
 
@@ -180,31 +180,46 @@ class LiveVotingManageUI
             $section_questions = $this->factory->input()->field()->section($form_questions, $this->plugin->txt("player_voting_list"), $this->plugin->txt("voting_type_1"));
 
 
-            //REST API section
-            $form_fields_rest = [];
+            //Answers section
+            $form_answers = [];
 
-            $field_rest_api_user = $this->factory->input()->field()->text(
-                $this->plugin->txt('conf_rest_api_user'),
-                $this->plugin->txt('conf_rest_api_user_info'))
+            $field_selection = $this->factory->input()->field()->checkbox(
+                $this->plugin->txt('qtype_1_multi_selection'),
+                $this->plugin->txt('qtype_1_multi_selection_info'));
+
+            $form_answers["selection"] = $field_selection;
+
+            $field_input = $this->factory->input()->field()->text(
+                $this->plugin->txt('qtype_1_options'))
                 ->withValue("TEST")
+                ->withLabel('option_1')
                 ->withRequired(true);
-                /*->withAdditionalTransformation($DIC->refinery()->custom()->transformation(
-                    function ($v) use ($object) {
-
-                    }
-                ));*/
-
-            $form_fields_rest["rest_api_user"] = $field_rest_api_user;
 
 
-            $section_rest = $this->factory->input()->field()->section($form_fields_rest, $this->plugin->txt("conf_header_rest"), "");
+            $form_answers["input"] = $field_input;
+
+            $field_hidden = $this->factory->input()->field()->hidden()
+                ->withValue("")
+                ->withOnLoadCode(function ($id) {
+                    return "xlvo.initMultipleInputs('".$id."')";
+                })
+                ->withLabel('options');
+
+            $form_answers["hidden"] = $field_hidden;
+
+
+            $section_answers = $this->factory->input()->field()->section($form_answers, $this->plugin->txt("qtype_form_header"), "");
 
            $sections =  [
-                "config_soap" => $section_questions,
-                "config_rest" => $section_rest
+                "config_question" => $section_questions,
+                "config_answers" => $section_answers
             ];
 
-            $form_action = $this->control->getLinkTargetByClass(ilObjLiveVotingGUI::class, "configure");
+            $form_action = $this->control->getFormActionByClass(ilObjLiveVotingGUI::class, "selectedType1");
+
+            $DIC->ui()->mainTemplate()->addJavaScript($this->plugin->getDirectory() . "/templates/js/xlvo.js");
+
+
             return $this->renderForm($form_action, $sections);
 
 
@@ -215,7 +230,7 @@ class LiveVotingManageUI
 
 
     /**
-     * @throws \ilHtmlPurifierNotFoundException
+     * @throws ilHtmlPurifierNotFoundException
      */
     private function renderForm(string $form_action, array $sections): string
     {
@@ -269,6 +284,7 @@ class LiveVotingManageUI
         $form->addItem($r);
 
 
+
         $field_question = $this->factory->legacy($form->getHTML());
 
         $modal = $this->factory->modal()->roundtrip('My Modal 1', $field_question);
@@ -286,10 +302,19 @@ class LiveVotingManageUI
         //Check if the form has been submitted
         if ($this->request->getMethod() == "POST") {
             $form = $form->withRequest($this->request);
-            $result = $form->getData();
-            if ($result) {
-                //$saving_info = $this->save();
+            //$result = $form->getData();
+            dump($_POST);
+            //Recorremos los valores que llegan de $_POST y los mostramos en un dump sin utilizar $result
+            for($i = 0; $i < count($_POST); $i++){
+                if(isset($_POST["option_".($i+1)])){
+                    dump($_POST["option_".($i+1)]);
+                }
             }
+
+            exit;
+            //$saving_info = $this->save();
+
+
         }
 
         return $saving_info . $this->renderer->render($form);
