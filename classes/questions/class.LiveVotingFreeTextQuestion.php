@@ -24,9 +24,16 @@ declare(strict_types=1);
  */
 class LiveVotingFreeTextQuestion extends LiveVotingQuestion
 {
+    public bool $multi_free_input = false;
+    public int $answer_field = 1;
 
-    public function hasCorrectSolution(): bool {
-        return false;
+    public function __construct(?array $data = null) {
+        parent::__construct($data);
+
+        if ($data !== null) {
+            $this->multi_free_input = (bool) $data["multi_free_input"];
+            $this->answer_field = (int) $data["answer_field"];
+        }
     }
 
     public function getQuestionType(): string {
@@ -36,7 +43,14 @@ class LiveVotingFreeTextQuestion extends LiveVotingQuestion
     public function save(?int $obj_id): int {
         $id = parent::save($obj_id);
 
-        // TODO: Save specific data for this question type
+        $database = new LiveVotingDatabase();
+
+        $database->update("rep_robj_xlvo_voting_n", array(
+            "multi_free_input" => (int) $this->multi_free_input,
+            "answer_field" => $this->answer_field,
+        ), array(
+            "id" => $id
+        ));
 
         return  $id;
     }

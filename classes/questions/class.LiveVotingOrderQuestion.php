@@ -24,10 +24,16 @@ declare(strict_types=1);
  */
 class LiveVotingOrderQuestion extends LiveVotingQuestion
 {
+    public int $columns = 1;
+    public bool $randomise_option_sequence = false;
 
-    public function hasCorrectSolution(): bool {
-        //TODO Esta pregunta tiene los dos modos de corrección, por lo que se debe implementar la lógica de corrección
-        return true;
+    public function __construct(?array $data = null) {
+        parent::__construct($data);
+
+        if ($data !== null) {
+            $this->columns = (int) $data["columns"];
+            $this->randomise_option_sequence = (bool) $data["randomise_option_sequence"];
+        }
     }
 
     public function getQuestionType(): string {
@@ -37,7 +43,14 @@ class LiveVotingOrderQuestion extends LiveVotingQuestion
     public function save(?int $obj_id): int {
         $id = parent::save($obj_id);
 
-        // TODO: Save specific data for this question type
+        $database = new LiveVotingDatabase();
+
+        $database->update("rep_robj_xlvo_voting_n", array(
+            "columns" => $this->columns,
+            "randomise_option_sequence" => (int) $this->randomise_option_sequence,
+        ), array(
+            "id" => $id
+        ));
 
         return  $id;
     }

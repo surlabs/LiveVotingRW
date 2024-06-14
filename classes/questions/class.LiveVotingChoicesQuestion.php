@@ -24,10 +24,16 @@ declare(strict_types=1);
  */
 class LiveVotingChoicesQuestion extends LiveVotingQuestion
 {
+    public bool $multi_selection = false;
+    public int $columns = 1;
 
-    public function hasCorrectSolution(): bool {
-        //TODO Esta pregunta tiene los dos modos de corrección, por lo que se debe implementar la lógica de corrección
-        return true;
+    public function __construct(?array $data = null) {
+        parent::__construct($data);
+
+        if ($data !== null) {
+            $this->multi_selection = (bool) $data["multi_selection"];
+            $this->columns = (int) $data["columns"];
+        }
     }
 
     public function getQuestionType(): string {
@@ -37,7 +43,14 @@ class LiveVotingChoicesQuestion extends LiveVotingQuestion
     public function save(?int $obj_id): int {
         $id = parent::save($obj_id);
 
-        // TODO: Save specific data for this question type
+        $database = new LiveVotingDatabase();
+
+        $database->update("rep_robj_xlvo_voting_n", array(
+            "multi_selection" => (int) $this->multi_selection,
+            "columns" => $this->columns,
+        ), array(
+            "id" => $id
+        ));
 
         return  $id;
     }

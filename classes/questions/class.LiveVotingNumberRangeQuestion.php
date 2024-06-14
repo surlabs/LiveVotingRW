@@ -22,11 +22,24 @@ declare(strict_types=1);
  * Class LiveVotingOrderQuestion
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
  */
-class LiveVotingNumberRangeQuestion extends LiveVotingOrderQuestion
+class LiveVotingNumberRangeQuestion extends LiveVotingQuestion
 {
+    public bool $percentage = true;
+    public int $start_range = 0;
+    public int $end_range = 100;
+    public int $step_range = 1;
+    public ?int $alt_result_display_mode = null;
 
-    public function hasCorrectSolution(): bool {
-        return true;
+    public function __construct(?array $data = null) {
+        parent::__construct($data);
+
+        if ($data !== null) {
+            $this->percentage = (bool) $data["percentage"];
+            $this->start_range = (int) $data["start_range"];
+            $this->end_range = (int) $data["end_range"];
+            $this->step_range = (int) $data["step_range"];
+            $this->alt_result_display_mode = isset($data["alt_result_display_mode"]) ? (int) $data["alt_result_display_mode"] : null;
+        }
     }
 
     public function getQuestionType(): string {
@@ -36,7 +49,17 @@ class LiveVotingNumberRangeQuestion extends LiveVotingOrderQuestion
     public function save(?int $obj_id): int {
         $id = parent::save($obj_id);
 
-        // TODO: Save specific data for this question type
+        $database = new LiveVotingDatabase();
+
+        $database->update("rep_robj_xlvo_voting_n", array(
+            "percentage" => (int) $this->percentage,
+            "start_range" => $this->start_range,
+            "end_range" => $this->end_range,
+            "step_range" => $this->step_range,
+            "alt_result_display_mode" => $this->alt_result_display_mode,
+        ), array(
+            "id" => $id
+        ));
 
         return  $id;
     }

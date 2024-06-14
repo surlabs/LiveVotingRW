@@ -35,18 +35,19 @@ abstract class LiveVotingQuestion
     public int $id = 0;
     public string $title = "";
     public string $question = "";
+    public int $position = 99;
+    public int $voting_status = 5;
 
 
-
-    public function __construct(array $data = null) {
+    public function __construct(?array $data = null) {
         if ($data !== null) {
-            $this->id = $data["id"];
-            $this->title = $data["title"];
-            $this->question = $data["question"];
+            $this->id = (int) $data["id"];
+            $this->title = (string) $data["title"];
+            $this->question = (string) $data["question"];
+            $this->position = (int) $data["position"];
+            $this->voting_status = (int) $data["voting_status"];
         }
     }
-
-    public abstract function hasCorrectSolution() : bool;
 
     public abstract function getQuestionType() : string;
 
@@ -145,7 +146,9 @@ abstract class LiveVotingQuestion
         if ($this->id != 0) {
             $database->update("rep_robj_xlvo_voting_n", array(
                 "title" => $this->title,
-                "question" => $this->question
+                "question" => $this->question,
+                "voting_status" => $this->voting_status,
+                "position" => $this->position
             ), array(
                 "id" => $this->id
             ));
@@ -157,7 +160,9 @@ abstract class LiveVotingQuestion
                 "obj_id" => $obj_id,
                 "title" => $this->title,
                 "question" => $this->question,
-                "voting_type" => $this->getQuestionTypeId()
+                "voting_type" => $this->getQuestionTypeId(),
+                "voting_status" => $this->voting_status,
+                "position" => $this->position
             ));
         } else {
             throw new LiveVotingException("Invalid object id");
