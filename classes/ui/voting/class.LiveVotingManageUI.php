@@ -191,17 +191,19 @@ class LiveVotingManageUI
 
             $field_input = $this->factory->input()->field()->text(
                 $this->plugin->txt('qtype_1_options'))
-                ->withValue("TEST")
-                ->withLabel('option_1')
+                ->withValue("TESTS")
+                ->withOnLoadCode(function ($id) {
+                    return "xlvo.initMultipleInputs('".$id."')";
+                })
                 ->withRequired(true);
 
 
             $form_answers["input"] = $field_input;
 
-            $field_hidden = $this->factory->input()->field()->hidden()
+            $field_hidden = $this->factory->input()->field()->text("test")
                 ->withValue("")
                 ->withOnLoadCode(function ($id) {
-                    return "xlvo.initMultipleInputs('".$id."')";
+                    return "xlvo.initHiddenInput('".$id."')";
                 })
                 ->withLabel('options');
 
@@ -302,15 +304,9 @@ class LiveVotingManageUI
         //Check if the form has been submitted
         if ($this->request->getMethod() == "POST") {
             $form = $form->withRequest($this->request);
-            //$result = $form->getData();
-            dump($_POST);
-            //Recorremos los valores que llegan de $_POST y los mostramos en un dump sin utilizar $result
-            for($i = 0; $i < count($_POST); $i++){
-                if(isset($_POST["option_".($i+1)])){
-                    dump($_POST["option_".($i+1)]);
-                }
-            }
-
+            $result = $form->getData();
+            $options = json_decode($result["config_answers"]["hidden"]);
+            dump($options, $options[0], $options[1]);
             exit;
             //$saving_info = $this->save();
 

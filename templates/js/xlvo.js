@@ -1,15 +1,40 @@
 const xlvo = {
+
+
+    hiddenId: "",
+
     initMultipleInputs: function (id) {
         const cont = $("#" + id).parent();
-        const inputs = cont.find("input");
+        const input = $("#"+id);
+        //const inputs = cont.find("input");
 
         cont.html("");  // Limpia el contenedor
 
-        // Recorre todos los inputs existentes
-        inputs.each(function (index) {
-            const newInput = xlvo.addMultipleInput($(this), index + 1);
-            cont.append(newInput);
+        const newInput = xlvo.addMultipleInput(input, $(".option-input").length + 1);
+        cont.append(newInput);
+        console.log("Cargo input");
+
+    },
+
+    initHiddenInput: function (id) {
+
+
+        this.hiddenId = "#" + id;
+
+        $(document).on("change" ,".option-input", function(){
+            xlvo.updateInputs();
         });
+
+    },
+
+    updateInputs: function(){
+        let multipleInputs= [];
+        $(".option-input").each(function(i, element){
+            if($(element).val() != ""){
+                multipleInputs.push($(element).val());
+            }
+        });
+        $(this.hiddenId).val(JSON.stringify(multipleInputs));
 
     },
 
@@ -20,6 +45,10 @@ const xlvo = {
         // Clonar el input y actualizar su ID
         const newInputHtml = $(input.prop("outerHTML"));
         newInputHtml.attr('id', newId);
+        newInputHtml.addClass("option-input")
+        xlvo.updateInputs();
+
+
 
         return `
             <div class="row multiple-input">
@@ -47,20 +76,24 @@ const xlvo = {
                 //newInputHTML.attr('name', newInputHTML.attr('name') + '_' + newIndex);
                 const newInput = xlvo.addMultipleInput(newInputHTML, newIndex);
                 parent.append(newInput);
+
                 break;
             case 'remove':
                 if ($(".multiple-input").length > 1) {
                     parent.remove();
+                    xlvo.updateInputs();
                 }
                 break;
             case 'up':
                 if ($(".multiple-input").length > 1) {
                     parent.prev().before(parent);
+                    xlvo.updateInputs();
                 }
                 break;
             case 'down':
                 if ($(".multiple-input").length > 1) {
                     parent.next().after(parent);
+                    xlvo.updateInputs();
                 }
                 break;
         }
