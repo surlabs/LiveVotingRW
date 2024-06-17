@@ -140,7 +140,13 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
     public function selectedChoices(): void
     {
         $this->tabs->activateTab("tab_edit");
-        $liveVotingChoicesUI = new LiveVotingChoicesUI();
+        $id = 0;
+
+        if (isset($_GET["id"])) {
+            $id = (int) $_GET["id"];
+        }
+
+        $liveVotingChoicesUI = new LiveVotingChoicesUI($id);
         $this->tpl->setContent($liveVotingChoicesUI->renderChoicesForm());
     }
 

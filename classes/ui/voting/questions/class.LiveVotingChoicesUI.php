@@ -47,6 +47,10 @@ use LiveVotingQuestionOption;
 class LiveVotingChoicesUI
 {
     /**
+     * @var int
+     */
+    private int $question_id;
+    /**
      * @var ilCtrlInterface
      */
     protected ilCtrlInterface $control;
@@ -62,7 +66,7 @@ class LiveVotingChoicesUI
     protected renderer $renderer;
     protected $request;
 
-    public function __construct()
+    public function __construct(?int $question_id = null)
     {
         global $DIC;
 
@@ -71,6 +75,8 @@ class LiveVotingChoicesUI
         $this->request = $DIC->http()->request();
         $this->factory = $DIC->ui()->factory();
         $this->renderer = $DIC->ui()->renderer();
+
+        $this->question_id = $question_id;
     }
 
     public function renderChoicesForm(): string
