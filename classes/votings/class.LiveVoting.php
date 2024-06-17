@@ -36,12 +36,6 @@ class LiveVoting
     private LiveVotingMode $mode;
 
     /**
-     * The pin to access the voting for non-registered users
-     * @var LiveVotingPin
-     */
-    private LiveVotingPin $pin;
-
-    /**
      * The log of the voting
      * @var LiveVotingLog
      */
@@ -63,6 +57,14 @@ class LiveVoting
      * @var bool Whether the voting is active or not
      */
     private bool $is_active;
+    private string $pin;
+    private bool $online;
+    private bool $anonymous;
+    private bool $voting_history;
+    private bool $show_attendees;
+    private int $frozen_behaviour;
+    private int $results_behaviour;
+    private string $puk;
 
     /**
      * LiveVoting constructor.
@@ -73,7 +75,7 @@ class LiveVoting
         $this->setId($id);
     }
 
-    private function init(): bool
+    private function init(): void
     {
 
     }
@@ -96,16 +98,6 @@ class LiveVoting
     public function setMode(LiveVotingMode $mode): void
     {
         $this->mode = $mode;
-    }
-
-    public function getPin(): LiveVotingPin
-    {
-        return $this->pin;
-    }
-
-    public function setPin(LiveVotingPin $pin): void
-    {
-        $this->pin = $pin;
     }
 
     public function getLog(): LiveVotingLog
@@ -148,5 +140,106 @@ class LiveVoting
         $this->is_active = $is_active;
     }
 
+    public function getPin(): string
+    {
+        return $this->pin;
+    }
 
+    public function setPin(string $pin): void
+    {
+        $this->pin = $pin;
+    }
+
+    public function isOnline(): bool
+    {
+        return $this->online;
+    }
+
+    public function setOnline(bool $online): void
+    {
+        $this->online = $online;
+    }
+
+    public function isAnonymous(): bool
+    {
+        return $this->anonymous;
+    }
+
+    public function setAnonymous(bool $anonymous): void
+    {
+        $this->anonymous = $anonymous;
+    }
+
+    public function isVotingHistory(): bool
+    {
+        return $this->voting_history;
+    }
+
+    public function setVotingHistory(bool $voting_history): void
+    {
+        $this->voting_history = $voting_history;
+    }
+
+    public function isShowAttendees(): bool
+    {
+        return $this->show_attendees;
+    }
+
+    public function setShowAttendees(bool $show_attendees): void
+    {
+        $this->show_attendees = $show_attendees;
+    }
+
+    public function getFrozenBehaviour(): int
+    {
+        return $this->frozen_behaviour;
+    }
+
+    public function setFrozenBehaviour(int $frozen_behaviour): void
+    {
+        $this->frozen_behaviour = $frozen_behaviour;
+    }
+
+    public function getresultsBehaviour(): int
+    {
+        return $this->results_behaviour;
+    }
+
+    public function setresultsBehaviour(int $results_behaviour): void
+    {
+        $this->results_behaviour = $results_behaviour;
+    }
+
+    public function getPuk(): string {
+        return $this->puk;
+    }
+
+    public function setPuk(string $puk): void {
+        $this->puk = $puk;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function save(): int {
+        if (!isset($this->id) || $this->id == 0) {
+            throw new Exception("LiveVoting::save() - LiveVoting ID is 0");
+        }
+
+        $database = new LiveVotingDatabase();
+
+        $database->insertOnDuplicatedKey("rep_robj_xlvo_config_n", array(
+            "obj_id" => $this->id,
+            "pin" => $this->pin,
+            "obj_online" => (int) $this->online,
+            "anonymous" => (int) $this->anonymous,
+            "frozen_behaviour" => $this->frozen_behaviour,
+            "results_behaviour" => $this->results_behaviour,
+            "voting_history" => (int) $this->voting_history,
+            "show_attendees" => (int) $this->show_attendees,
+            "puk" => $this->puk
+        ));
+
+        return $this->id;
+    }
 }

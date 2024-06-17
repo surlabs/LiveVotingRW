@@ -19,10 +19,10 @@ declare(strict_types=1);
  */
 
 /**
- * Class LiveVotingPin
+ * Class LiveVotingParticipant
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
  */
-class LiveVotingPin
+class LiveVotingParticipant
 {
 
 }
