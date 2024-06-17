@@ -274,15 +274,11 @@ class LiveVotingChoicesUI
 
             $id = ilObject::_lookupObjId((int)$_GET['ref_id']);
 
-            // TODO: Poner el id del repositorio en ->save(------);
-            // Aqui se haria el guardado (aun faltan datos por asignar, no descomentar)
-//            if ($question->save() != 0) {
-//                $saving_info = "Question saved";
-//            } else {
-//                $saving_info = "Error saving question";
-//            }
-
-            dump($question_data, $options_data, $question, $id); exit();
+            if ($question->save($id) != 0) {
+                $saving_info = $this->renderer->render($this->factory->messageBox()->success("Question saved successfully"));
+            } else {
+                $saving_info = $this->renderer->render($this->factory->messageBox()->failure("Error saving question"));
+            }
         }
 
         return $saving_info . $this->renderer->render($form);
