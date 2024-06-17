@@ -246,9 +246,6 @@ class LiveVotingChoicesUI
             $question_data = $result["config_question"];
             $options_data = json_decode($result["config_answers"]["hidden"]);
 
-            //TODO: Choices no debe ser siempre el tipo de pregunta, deberia
-            // de llegar un parametro mas en $question_data por ejemplo con
-            // el tipo de pregunta (Choices, FreeText, Order o NumberRange)
             $question = LiveVotingQuestion::loadNewQuestion("Choices");
 
             if (isset($question_data["title"])) {
