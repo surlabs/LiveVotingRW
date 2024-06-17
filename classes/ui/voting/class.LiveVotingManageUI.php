@@ -36,6 +36,8 @@ use ilSystemStyleException;
 use ilTemplate;
 use ilTemplateException;
 use ilTextAreaInputGUI;
+use LiveVotingQuestion;
+use LiveVotingQuestionOption;
 
 /**
  * Class LiveVotingManageUI
@@ -233,6 +235,7 @@ class LiveVotingManageUI
 
     /**
      * @throws ilHtmlPurifierNotFoundException
+     * @throws \LiveVotingException
      */
     private function renderForm(string $form_action, array $sections): string
     {
@@ -305,12 +308,45 @@ class LiveVotingManageUI
         if ($this->request->getMethod() == "POST") {
             $form = $form->withRequest($this->request);
             $result = $form->getData();
-            $options = json_decode($result["config_answers"]["hidden"]);
-            dump($options, $options[0], $options[1]);
-            exit;
-            //$saving_info = $this->save();
 
+            $question_data = $result["config_question"];
+            $options_data = json_decode($result["config_answers"]["hidden"]);
 
+            //TODO: Choices no debe ser siempre el tipo de pregunta, deberia
+            // de llegar un parametro mas en $question_data por ejemplo con
+            // el tipo de pregunta (Choices, FreeText, Order o NumberRange)
+            $question = LiveVotingQuestion::loadNewQuestion("Choices");
+
+            if (isset($question_data["title"])) {
+                $question->setTitle($question_data["title"]);
+            }
+
+            if (isset($question_data["question"])) {
+                $question->setQuestion($question_data["question"]);
+            }
+
+            if (isset($question_data["columns"])) {
+                $question->setColumns((int) $question_data["columns"]);
+            }
+
+            foreach ($options_data as $index => $option_name) {
+                $option = LiveVotingQuestionOption::loadNewOption($question->getQuestionTypeId());
+
+                $option->setText($option_name);
+                $option->setPosition($index);
+
+                $question->addOption($option);
+            }
+
+            // TODO: Poner el id del repositorio en ->save(------);
+            // Aqui se haria el guardado (aun faltan datos por asignar, no descomentar)
+//            if ($question->save() != 0) {
+//                $saving_info = "Question saved";
+//            } else {
+//                $saving_info = "Error saving question";
+//            }
+
+            dump($question_data, $options_data, $question); exit();
         }
 
         return $saving_info . $this->renderer->render($form);
