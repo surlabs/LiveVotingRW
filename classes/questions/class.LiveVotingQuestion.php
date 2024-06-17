@@ -250,4 +250,19 @@ abstract class LiveVotingQuestion
     {
         $this->options = $options;
     }
+
+    public function addOption(LiveVotingQuestionOption $option): void
+    {
+        $this->options[] = $option;
+    }
+
+    public function removeOption(int $option_id): void
+    {
+        foreach ($this->options as $key => $option) {
+            if ($option->getId() == $option_id) {
+                unset($this->options[$key]);
+                break;
+            }
+        }
+    }
 }
