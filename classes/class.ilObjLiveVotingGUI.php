@@ -106,7 +106,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
     }
 
     /**
-     * @throws ilCtrlException
+     * @throws ilCtrlException|ilException
      */
     public function manage(): void
     {
@@ -124,7 +124,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 /*                $DIC->toolbar()->addComponent($DIC->ui()->factory()->button()->primary($this->txt('voting_add'), $this->ctrl->getLinkTarget($this, "selectType")));
                 $DIC->toolbar()->addComponent($DIC->ui()->factory()->button()->standard($this->txt('voting_reset_all'), $this->ctrl->getLinkTarget($this, "selectType")));*/
 
-                $this->tpl->setContent($liveVotingManageUI->showManage());
+                $this->tpl->setContent($liveVotingManageUI->showManage($this));
             } catch (ilSystemStyleException|ilTemplateException $e) {
                 //TODO: Mostrar error
             }
@@ -243,6 +243,11 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
                 break;
         }
     }*/
+
+    public function getObjId(): int
+    {
+        return $this->object->getId();
+    }
 
     public function editProperties(): void
     {

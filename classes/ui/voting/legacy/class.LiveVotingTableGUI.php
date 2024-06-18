@@ -22,6 +22,7 @@ namespace LiveVoting\legacy;
 
 use ilAdvancedSelectionListGUI;
 use ilCheckboxInputGUI;
+use ilCtrlException;
 use ilException;
 use ilFormPropertyGUI;
 use ilLiveVotingPlugin;
@@ -30,21 +31,25 @@ use ilObjLiveVotingGUI;
 use ilSelectInputGUI;
 use ilTable2GUI;
 use ilUtil;
+use JsonException;
 use LiveVoting\Js\xlvoJs;
 use LiveVoting\QuestionTypes\xlvoQuestionTypes;
 use LiveVoting\Utils\LiveVotingTrait;
+use LiveVotingDatabase;
+use LiveVotingException;
+use LiveVotingQuestion;
 use srag\CustomInputGUIs\LiveVoting\TextInputGUI\TextInputGUI;
 use ilLegacyFormElementsUtil;
 
 /**
- * Class xlvoVotingTableGUI
+ * Class liveVotingTableGUI
  *
  * @package LiveVoting\Voting
  * @author  Daniel Aemmer <daniel.aemmer@phbern.ch>
  * @author  Fabian Schmid <fs@studer-raimann.ch>
  * @version 1.0.0
  */
-class xlvoVotingTableGUI extends ilTable2GUI
+class liveVotingTableGUI extends ilTable2GUI
 {
 
 
@@ -71,6 +76,7 @@ class xlvoVotingTableGUI extends ilTable2GUI
 
     /**
      * @throws ilException
+     * @throws LiveVotingException
      */
     public function __construct(ilObjLiveVotingGUI $a_parent_obj, $a_parent_cmd)
     {
@@ -89,7 +95,7 @@ class xlvoVotingTableGUI extends ilTable2GUI
 
         parent::__construct($a_parent_obj, $a_parent_cmd);
 
-        $this->setRowTemplate('tpl.tbl_voting.html', self::plugin()->directory());
+        $this->setRowTemplate('tpl.tbl_voting.html', $this->pl->getDirectory());
         $this->setExternalSorting(true);
         $this->setExternalSegmentation(true);
         $this->initColums();
@@ -108,7 +114,7 @@ class xlvoVotingTableGUI extends ilTable2GUI
      */
     protected function txt(string $key): string
     {
-        return $this->voting_gui->txt($key);
+        return $this->pl->txt($key);
     }
 
 
@@ -161,87 +167,91 @@ class xlvoVotingTableGUI extends ilTable2GUI
 
     /**
      * @param array $a_set
+     * @throws LiveVotingException
      */
     protected function fillRow(array $a_set): void
     {
-        /**
-         * @var xlvoVoting $xlvoVoting
-         */
-        $xlvoVoting = xlvoVoting::find($a_set['id']);
-        $this->tpl->setVariable('TITLE', $this->shorten($xlvoVoting->getTitle()));
-        $this->tpl->setVariable('DESCRIPTION', $this->shorten($xlvoVoting->getDescription()));
+        $question = LiveVotingQuestion::loadQuestionById((int)$a_set['id']);
+        $this->tpl->setVariable('TITLE', $question->getTitle());
+        //->tpl->setVariable('DESCRIPTION', $this->shorten($question->getQuestion()));
 
-        $question = strip_tags($xlvoVoting->getQuestion());
+        //$question = strip_tags("QUESTION TEST");
 
-        $question = $this->shorten($question);
-        $this->tpl->setVariable('QUESTION', ilLegacyFormElementsUtil::prepareTextareaOutput($question, true));
-        $this->tpl->setVariable('TYPE', $this->txt('type_' . $xlvoVoting->getVotingType()));
+        //$question = $this->shorten($question);
+        $this->tpl->setVariable('QUESTION', ilLegacyFormElementsUtil::prepareTextareaOutput($this->shorten($question->getQuestion()), true));
+        $this->tpl->setVariable('TYPE', $this->txt('voting_type_1'));
 
-        $voting_status = $this->getVotingStatus($xlvoVoting->getVotingStatus());
+        $voting_status = $this->getVotingStatus("STATUS");
         //		$this->tpl->setVariable('STATUS', $voting_status); // deactivated at the moment
 
-        $this->tpl->setVariable('ID', $xlvoVoting->getId());
+        $this->tpl->setVariable('ID', "ID");
 
-        $this->addActionMenu($xlvoVoting);
+        $this->addActionMenu($question);
     }
 
 
     protected function initColums()
     {
         $this->addColumn('', 'position', '20px');
-        $this->addColumn($this->txt('title'));
-        $this->addColumn($this->txt('question'));
-        $this->addColumn($this->txt('type'));
+        $this->addColumn($this->txt('voting_title'));
+        $this->addColumn($this->txt('voting_question'));
+        $this->addColumn($this->txt('voting_type'));
         //		$this->addColumn($this->txt('status'));
         $this->addColumn($this->txt('actions'), '', '150px');
     }
 
 
     /**
-     * @param xlvoVoting $xlvoVoting
+     * @param LiveVotingQuestion $question
+     * @throws ilCtrlException
+     * @throws JsonException
      */
-    protected function addActionMenu(xlvoVoting $xlvoVoting)
+    protected function addActionMenu(LiveVotingQuestion $question)
     {
+        global $DIC;
         $current_selection_list = new ilAdvancedSelectionListGUI();
-        $current_selection_list->setListTitle($this->txt('actions'));
-        $current_selection_list->setId('xlvo_actions_' . $xlvoVoting->getId());
+        $current_selection_list->setListTitle($this->txt('common_actions'));
+        $current_selection_list->setId('xlvo_actions_' . $question->getId());
         $current_selection_list->setUseImages(false);
 
-        self::dic()->ctrl()->setParameter($this->voting_gui, xlvoVotingGUI::IDENTIFIER, $xlvoVoting->getId());
+        $DIC->ctrl()->setParameter($this->voting_gui, 'xlvoVot', $question->getId());
         if ($this->access->hasWriteAccess()) {
-            $current_selection_list->addItem($this->txt('edit'), xlvoVotingGUI::CMD_EDIT, self::dic()->ctrl()
-                ->getLinkTarget($this->voting_gui, xlvoVotingGUI::CMD_EDIT));
-            $current_selection_list->addItem($this->txt('reset'), xlvoVotingGUI::CMD_CONFIRM_RESET, self::dic()->ctrl()
-                ->getLinkTarget($this->voting_gui, xlvoVotingGUI::CMD_CONFIRM_RESET));
-            $current_selection_list->addItem($this->txt(xlvoVotingGUI::CMD_DUPLICATE), xlvoVotingGUI::CMD_DUPLICATE, self::dic()->ctrl()
-                ->getLinkTarget($this->voting_gui, xlvoVotingGUI::CMD_DUPLICATE));
-            $current_selection_list->addItem($this->txt(xlvoVotingGUI::CMD_DUPLICATE_TO_ANOTHER_OBJECT), xlvoVotingGUI::CMD_DUPLICATE_TO_ANOTHER_OBJECT_SELECT, self::dic()->ctrl()
-                ->getLinkTarget($this->voting_gui, xlvoVotingGUI::CMD_DUPLICATE_TO_ANOTHER_OBJECT_SELECT));
-            $current_selection_list->addItem($this->txt('delete'), xlvoVotingGUI::CMD_CONFIRM_DELETE, self::dic()->ctrl()
-                ->getLinkTarget($this->voting_gui, xlvoVotingGUI::CMD_CONFIRM_DELETE));
+            $current_selection_list->addItem($this->txt('voting_edit'), 'edit',$DIC->ctrl()
+                ->getLinkTarget($this->voting_gui, 'edit'));
+            $current_selection_list->addItem($this->txt('voting_reset'), 'confirmDelete', $DIC->ctrl()
+                ->getLinkTarget($this->voting_gui, 'confirmDelete'));
+            $current_selection_list->addItem($this->txt('voting_duplicate'), 'duplicate', $DIC->ctrl()
+                ->getLinkTarget($this->voting_gui, 'duplicate'));
+            $current_selection_list->addItem($this->txt('voting_duplicateToAnotherObject'), 'duplicateToAnotherObjectSelect', $DIC->ctrl()
+                ->getLinkTarget($this->voting_gui, 'duplicateToAnotherObjectSelect'));
+            $current_selection_list->addItem($this->txt('voting_delete'), 'confirmDelete', $DIC->ctrl()
+                ->getLinkTarget($this->voting_gui, 'confirmDelete'));
         }
         $current_selection_list->getHTML();
         $this->tpl->setVariable('ACTIONS', $current_selection_list->getHTML());
     }
 
 
+    /**
+     * @throws LiveVotingException
+     */
     protected function parseData()
     {
         // Filtern
         $this->determineOffsetAndOrder();
         $this->determineLimit();
 
-        $collection = xlvoVoting::where(array('obj_id' => $this->voting_gui->getObjId()))
-            ->where(array('voting_type' => xlvoQuestionTypes::getActiveTypes()))->orderBy('position', 'ASC');
-        $this->setMaxCount($collection->count());
+        $database = new LiveVotingDatabase();
         $sorting_column = $this->getOrderField() ? $this->getOrderField() : 'position';
         $offset = $this->getOffset() ? $this->getOffset() : 0;
 
         $sorting_direction = $this->getOrderDirection();
         $num = $this->getLimit();
 
-        $collection->orderBy($sorting_column, $sorting_direction);
-        $collection->limit($offset, $num);
+        $collection = $database->select("rep_robj_xlvo_voting_n", array(
+            "obj_id" => $this->voting_gui->getObjId(),
+        ), null, "ORDER BY ".$sorting_column." ".$sorting_direction." LIMIT ".$offset.", ".$num);
+
 
         foreach ($this->filter as $filter_key => $filter_value) {
             switch ($filter_key) {
@@ -260,7 +270,8 @@ class xlvoVotingTableGUI extends ilTable2GUI
                     break;
             }
         }
-        $this->setData($collection->getArray());
+
+        $this->setData($collection);
     }
 
 

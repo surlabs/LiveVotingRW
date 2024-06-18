@@ -37,6 +37,7 @@ use ilSystemStyleException;
 use ilTemplate;
 use ilTemplateException;
 use ilTextAreaInputGUI;
+use LiveVoting\legacy\liveVotingTableGUI;
 use LiveVotingQuestion;
 use LiveVotingQuestionOption;
 
@@ -76,8 +77,9 @@ class LiveVotingManageUI
 
     /**
      * @throws ilCtrlException
+     * @throws ilException
      */
-    public function showManage(): string{
+    public function showManage($parent): string{
         global $DIC;
 
         $f = $DIC->ui()->factory();
@@ -113,7 +115,9 @@ class LiveVotingManageUI
 
         $dd = $f->menu()->drilldown('Manage Votings (NO TRANSLATED)', $items);
 
-        return $renderer->render($dd);
+        $liveVotingTableGUI = new LiveVotingTableGUI($parent, 'showManage');
+
+        return $renderer->render($dd).$liveVotingTableGUI->getHTML();
 
     }
 
