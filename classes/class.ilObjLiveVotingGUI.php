@@ -70,6 +70,9 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             case 'updateProperties':
                 $this->{$cmd}();
                 break;
+            case 'edit':
+                $this->editQuestion();
+                break;
         }
     }
 
@@ -139,14 +142,9 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
      */
     public function selectedChoices(): void
     {
-        $this->tabs->activateTab("tab_edit");
-        $id = 0;
+        $this->tabs->activateTab("tab_manage");
 
-        if (isset($_GET["id"])) {
-            $id = (int) $_GET["id"];
-        }
-
-        $liveVotingChoicesUI = new LiveVotingChoicesUI($id);
+        $liveVotingChoicesUI = new LiveVotingChoicesUI();
         $this->tpl->setContent($liveVotingChoicesUI->renderChoicesForm());
     }
 
@@ -254,5 +252,30 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         $this->tabs->activateTab("tab_edit");
 
         // TODO: Dani trabaja
+    }
+
+    /**
+     * @throws LiveVotingException
+     * @throws ilException
+     */
+    public function editQuestion(): void
+    {
+
+        //TODO: COMPROBACIÓN DE PERMISOS
+        $this->tabs->activateTab("tab_manage");
+
+        $question = LiveVotingQuestion::loadQuestionById((int)$_GET['question_id']);
+
+        switch($question->getQuestionType()) {
+            case "Choices":
+
+                $liveVotingChoicesUI = new LiveVotingChoicesUI($question);
+                $this->tpl->setContent($liveVotingChoicesUI->renderChoicesForm());
+                break;
+        }
+        //TODO: Traer prev y next question para navegación
+
+
+
     }
 }

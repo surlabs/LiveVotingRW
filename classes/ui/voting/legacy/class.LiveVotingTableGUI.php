@@ -214,7 +214,7 @@ class liveVotingTableGUI extends ilTable2GUI
         $current_selection_list->setId('xlvo_actions_' . $question->getId());
         $current_selection_list->setUseImages(false);
 
-        $DIC->ctrl()->setParameter($this->voting_gui, 'xlvoVot', $question->getId());
+        $DIC->ctrl()->setParameter($this->voting_gui, 'question_id', $question->getId());
         if ($this->access->hasWriteAccess()) {
             $current_selection_list->addItem($this->txt('voting_edit'), 'edit',$DIC->ctrl()
                 ->getLinkTarget($this->voting_gui, 'edit'));

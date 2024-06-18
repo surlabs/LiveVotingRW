@@ -2,24 +2,42 @@ const xlvo = {
 
 
     hiddenId: "",
-
+    parent,
     initMultipleInputs: function (id) {
-        const cont = $("#" + id).parent();
+        xlvo.parent = $("#" + id).parent();
         const input = $("#"+id);
         //const inputs = cont.find("input");
 
-        cont.html("");  // Limpia el contenedor
+        xlvo.parent.html("");  // Limpia el contenedor
 
         const newInput = xlvo.addMultipleInput(input, $(".option-input").length + 1);
-        cont.append(newInput);
+        xlvo.parent.append(newInput);
+
+
         console.log("Cargo input");
 
     },
 
     initHiddenInput: function (id) {
-
-
         this.hiddenId = "#" + id;
+
+        //Comprobamos si este input tiene datos, si los datos son un array y si lo son, generamos los inputs
+        let hiddenInput = $(this.hiddenId).val();
+        if(hiddenInput.length!==0){
+            try{
+                xlvo.parent.html("");
+                hiddenInput = JSON.parse(hiddenInput);
+                console.log(hiddenInput);
+                for(let i = 0; i < hiddenInput.length; i++){
+                    const input = $("#"+id);
+                    const newInput = xlvo.addMultipleInput(input, i+1);
+                    xlvo.parent.append(newInput);
+                    $(".option-input").last().val(hiddenInput[i]);
+                }
+            }catch (e){
+                console.log("Parsing input error");
+            }
+        }
 
         $(document).on("change" ,".option-input", function(){
             xlvo.updateInputs();

@@ -47,9 +47,9 @@ use LiveVotingQuestionOption;
 class LiveVotingChoicesUI
 {
     /**
-     * @var int
+     * @var LiveVotingQuestion
      */
-    private int $question_id;
+    private LiveVotingQuestion $question;
     /**
      * @var ilCtrlInterface
      */
@@ -66,7 +66,7 @@ class LiveVotingChoicesUI
     protected renderer $renderer;
     protected $request;
 
-    public function __construct(?int $question_id = null)
+    public function __construct(?LiveVotingQuestion $question = null)
     {
         global $DIC;
 
@@ -76,18 +76,21 @@ class LiveVotingChoicesUI
         $this->factory = $DIC->ui()->factory();
         $this->renderer = $DIC->ui()->renderer();
 
-        $this->question_id = $question_id;
+        if($question) {
+            $this->question = $question;
+        }
     }
 
     public function renderChoicesForm(): string
     {
         global $DIC;
+
         try {
             $form_questions = [];
 
             $field_title = $this->factory->input()->field()->text(
                 $this->plugin->txt('voting_title'))
-                ->withValue("TEST")
+                ->withValue(isset($this->question) ? $this->question->getTitle() : "")
                 ->withRequired(true);
 /*                ->withAdditionalTransformation($DIC->refinery()->custom()->transformation(
                     function ($v) use ($object) {
@@ -101,7 +104,7 @@ class LiveVotingChoicesUI
 
             $field_question = $this->factory->input()->field()->textarea(
                 $this->plugin->txt('voting_question'))
-                ->withValue("TEST")
+                ->withValue(isset($this->question) ? $this->question->getQuestion() : "")
                 ->withRequired(true);
             /*                ->withAdditionalTransformation($DIC->refinery()->custom()->transformation(
                                 function ($v) use ($object) {
@@ -131,9 +134,13 @@ class LiveVotingChoicesUI
 
             $form_answers["selection"] = $field_selection;
 
+            if(isset($this->question)) {
+                $options = $this->question->getOptions();
+
+            }
+
             $field_input = $this->factory->input()->field()->text(
                 $this->plugin->txt('qtype_1_options'))
-                ->withValue("TESTS")
                 ->withOnLoadCode(function ($id) {
                     return "xlvo.initMultipleInputs('".$id."')";
                 })
@@ -142,8 +149,11 @@ class LiveVotingChoicesUI
 
             $form_answers["input"] = $field_input;
 
-            $field_hidden = $this->factory->input()->field()->text("test")
-                ->withValue("")
+
+            $field_hidden = $this->factory->input()->field()->text("")
+                ->withValue(isset($options) ? json_encode(array_map(function($option) {
+                    return $option->getText();
+                }, $options)) : "")
                 ->withOnLoadCode(function ($id) {
                     return "xlvo.initHiddenInput('".$id."')";
                 })
