@@ -24,6 +24,47 @@ declare(strict_types=1);
  */
 class ilObjLiveVoting extends ilObjectPlugin
 {
+    private LiveVoting $liveVoting;
+
+    /**
+     * Create a new object
+     * @param bool $clone_mode
+     * @throws LiveVotingException
+     */
+    protected function doCreate(bool $clone_mode = false): void
+    {
+        $this->liveVoting = new LiveVoting($this->getId());
+
+        $this->liveVoting->save();
+    }
+
+    /**
+     * Read the object
+     * @throws LiveVotingException
+     */
+    protected function doRead(): void
+    {
+        $this->liveVoting = new LiveVoting($this->getId(), true);
+    }
+
+    /**
+     * Delete the object
+     * @throws LiveVotingException
+     */
+    protected function doDelete(): void
+    {
+        $this->liveVoting->delete();
+    }
+
+    /**
+     * Update the object
+     * @throws LiveVotingException
+     */
+    protected function doUpdate(): void
+    {
+        $this->liveVoting->save();
+    }
+
     protected function initType(): void
     {
         $this->setType("xlvo");

@@ -40,4 +40,34 @@ class ilObjLiveVotingListGUI extends ilObjectPluginListGUI
     {
         $this->setType("xlvo");
     }
+
+    /**
+     * Get item properties
+     *
+     * @return    array        array of property arrays:
+     *                        'alert' (boolean) => display as an alert property (usually in red)
+     *                        'property' (string) => property name
+     *                        'value' (string) => property value
+     * @throws LiveVotingException
+     */
+    public function getCustomProperties(array $prop): array
+    {
+        if (!isset($this->obj_id)) {
+            return [];
+        }
+
+        $props = parent::getCustomProperties($prop);
+
+        if (ilObjLiveVotingAccess::_isOffline($this->obj_id)) {
+            $props[] = array(
+                'alert' => true,
+                'newline' => true,
+                'property' => 'Status',
+                'value' => 'Offline',
+                'propertyNameVisible' => true
+            );
+        }
+
+        return $props;
+    }
 }

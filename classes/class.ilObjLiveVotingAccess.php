@@ -38,4 +38,17 @@ class ilObjLiveVotingAccess extends ilObjectPluginAccess
         return $DIC->access()->checkAccessOfUser($user_id, $permission, '', $ref_id);
     }
 
+    /**
+     * Check if the object is offline
+     *
+     * @param int $obj_id
+     * @return bool
+     * @throws LiveVotingException
+     */
+    public static function _isOffline(int $obj_id): bool
+    {
+        $liveVoting = new LiveVoting($obj_id, true);
+
+        return !$liveVoting->isOnline();
+    }
 }

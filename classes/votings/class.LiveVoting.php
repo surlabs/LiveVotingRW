@@ -58,7 +58,7 @@ class LiveVoting
      */
     private bool $is_active;
     private string $pin;
-    private bool $online;
+    private bool $online = false;
     private bool $anonymous;
     private bool $voting_history;
     private bool $show_attendees;
@@ -69,10 +69,16 @@ class LiveVoting
     /**
      * LiveVoting constructor.
      * @param int $id
+     * @param bool|null $loadFromDB
+     * @throws LiveVotingException
      */
-    public function __construct(int $id)
+    public function __construct(int $id, ?bool $loadFromDB = false)
     {
         $this->setId($id);
+
+        if ($loadFromDB) {
+            $this->loadFromDB();
+        }
     }
 
     private function init(): void
@@ -219,11 +225,11 @@ class LiveVoting
     }
 
     /**
-     * @throws Exception
+     * @throws LiveVotingException
      */
     public function save(): int {
         if (!isset($this->id) || $this->id == 0) {
-            throw new Exception("LiveVoting::save() - LiveVoting ID is 0");
+            throw new LiveVotingException("LiveVoting::save() - LiveVoting ID is 0");
         }
 
         $database = new LiveVotingDatabase();
@@ -241,5 +247,49 @@ class LiveVoting
         ));
 
         return $this->id;
+    }
+
+    /**
+     * @throws LiveVotingException
+     */
+    public function loadFromDB(): void
+    {
+        $database = new LiveVotingDatabase();
+
+        $result = $database->select("rep_robj_xlvo_config_n", ["obj_id" => $this->getId()]);
+
+        if (isset($result[0])) {
+            $this->setPin($result[0]["pin"]);
+            $this->setOnline((bool) $result[0]["obj_online"]);
+            $this->setAnonymous((bool) $result[0]["anonymous"]);
+            $this->setFrozenBehaviour((int) $result[0]["frozen_behaviour"]);
+            $this->setresultsBehaviour((int) $result[0]["results_behaviour"]);
+            $this->setVotingHistory((bool) $result[0]["voting_history"]);
+            $this->setShowAttendees((bool) $result[0]["show_attendees"]);
+            $this->setPuk($result[0]["puk"]);
+        }
+
+        $questions_id = $database->select("rep_robj_xlvo_voting_n", array(
+            "obj_id" => $this->getId(),
+        ), ["id"]);
+
+        foreach ($questions_id as $question_id) {
+            $this->questions[] = LiveVotingQuestion::loadQuestionById((int) $question_id["id"]);
+        }
+    }
+
+    /**
+     * @return void
+     * @throws LiveVotingException
+     */
+    public function delete(): void
+    {
+        $database = new LiveVotingDatabase();
+
+        $database->delete("rep_robj_xlvo_config_n", ["obj_id" => $this->getId()]);
+
+        foreach ($this->getQuestions() as $question) {
+            $question->delete();
+        }
     }
 }
