@@ -20,13 +20,14 @@ declare(strict_types=1);
 
 use LiveVoting\UI\LiveVotingChoicesUI;
 use LiveVoting\UI\LiveVotingManageUI;
+use LiveVoting\UI\LiveVotingSettingsUI;
 use LiveVoting\UI\LiveVotingUI;
 
 /**
  * Class ilObjLiveVotingGUI
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
- * @ilCtrl_isCalledBy ilObjLiveVotingGUI: ilRepositoryGUI, ilObjPluginDispatchGUI, ilAdministrationGUI, LiveVotingUI, LiveVotingChoicesUI, LiveVotingManageUI
- * @ilCtrl_Calls      ilObjLiveVotingGUI: ilObjectCopyGUI, ilPermissionGUI, ilInfoScreenGUI, ilCommonActionDispatcherGUI, LiveVotingUI, LiveVotingChoicesUI, LiveVotingManageUI
+ * @ilCtrl_isCalledBy ilObjLiveVotingGUI: ilRepositoryGUI, ilObjPluginDispatchGUI, ilAdministrationGUI, LiveVotingUI, LiveVotingChoicesUI, LiveVotingManageUI, LiveVotingSettingsUI
+ * @ilCtrl_Calls      ilObjLiveVotingGUI: ilObjectCopyGUI, ilPermissionGUI, ilInfoScreenGUI, ilCommonActionDispatcherGUI, LiveVotingUI, LiveVotingChoicesUI, LiveVotingManageUI, LiveVotingSettingsUI
  */
 class ilObjLiveVotingGUI extends ilObjectPluginGUI
 {
@@ -268,11 +269,21 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         return $this->object->getId();
     }
 
+    /**
+     * @throws ilCtrlException
+     */
     public function editProperties(): void
     {
+        global $DIC;
         $this->tabs->activateTab("tab_edit");
 
-        // TODO: Dani trabaja
+        $liveVotingSettingsUI = new LiveVotingSettingsUI($this->getRefId());
+
+        $sections = $liveVotingSettingsUI->initPropertiesForm();
+        $form_action = $DIC->ctrl()->getLinkTargetByClass(ilObjLiveVotingGUI::class, "editProperties");
+        $rendered = $liveVotingSettingsUI->renderForm($form_action, $sections);
+
+        $this->tpl->setContent($rendered);
     }
 
     /**
