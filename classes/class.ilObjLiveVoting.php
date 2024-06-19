@@ -69,4 +69,13 @@ class ilObjLiveVoting extends ilObjectPlugin
     {
         $this->setType("xlvo");
     }
+
+    /**
+     * Get the LiveVoting object
+     * @return LiveVoting
+     */
+    public function getLiveVoting(): LiveVoting
+    {
+        return $this->liveVoting;
+    }
 }
