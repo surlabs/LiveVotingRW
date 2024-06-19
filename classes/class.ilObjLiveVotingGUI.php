@@ -296,20 +296,23 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         //TODO: COMPROBACIÓN DE PERMISOS
         $this->tabs->activateTab("tab_manage");
 
-        $question = LiveVotingQuestion::loadQuestionById((int)$_GET['question_id']);
+        $question = $this->object->getLiveVoting()->getQuestionById((int) $_GET['question_id']);
         switch($question->getQuestionType()) {
             case "Choices":
-                $liveVotingChoicesUI = new LiveVotingChoicesUI($question);
+                $liveVotingChoicesUI = new LiveVotingChoicesUI($question->getId());
                 $form = $liveVotingChoicesUI->getChoicesForm();
                 $saving_info = "";
                 if($DIC->http()->request()->getMethod() == "POST") {
 
                     $id = $liveVotingChoicesUI->save($form->withRequest($DIC->http()->request())->getData(), $question->getId());
+
                     if($id !== 0){
+                        $liveVotingChoicesUI = new LiveVotingChoicesUI($id);
+                        $form = $liveVotingChoicesUI->getChoicesForm();
+
                         $DIC->ctrl()->setParameter($this, "question_id", $id);
                         $saving_info = $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->success($this->plugin->txt('msg_success_voting_updated')));
                         $this->tpl->setContent($saving_info.$DIC->ui()->renderer()->render($form));
-
                     } else {
                         $this->tpl->setContent($DIC->ui()->renderer()->render($form->withRequest($DIC->http()->request())));
                     }

@@ -292,4 +292,15 @@ class LiveVoting
             $question->delete();
         }
     }
+
+    public function getQuestionById(int $id): ?LiveVotingQuestion
+    {
+        foreach ($this->questions as $question) {
+            if ($question->getId() === $id) {
+                return $question;
+            }
+        }
+
+        return null;
+    }
 }

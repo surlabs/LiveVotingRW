@@ -65,7 +65,10 @@ class LiveVotingChoicesUI
     protected renderer $renderer;
     protected $request;
 
-    public function __construct(?LiveVotingQuestion $question = null)
+    /**
+     * @throws LiveVotingException
+     */
+    public function __construct(?int $question_id = null)
     {
         global $DIC;
 
@@ -75,8 +78,8 @@ class LiveVotingChoicesUI
         $this->factory = $DIC->ui()->factory();
         $this->renderer = $DIC->ui()->renderer();
 
-        if($question) {
-            $this->question = $question;
+        if($question_id) {
+            $this->question = LiveVotingQuestion::loadQuestionById($question_id);
         }
     }
 
@@ -236,7 +239,8 @@ class LiveVotingChoicesUI
 
         if ($result && isset($result["config_question"], $result["config_answers"]["hidden"]) && $result["config_answers"]["hidden"] !== "") {
             $question_data = $result["config_question"];
-            $options_data = json_decode($result["config_answers"]["hidden"]);
+            $answers_data = $result["config_answers"];
+            $options_data = json_decode($answers_data["hidden"]);
 
 
             if (!empty($options_data)) {
@@ -245,7 +249,7 @@ class LiveVotingChoicesUI
                 $question->setTitle($question_data["title"] ?? null);
                 $question->setQuestion($question_data["question"] ?? null);
                 $question->setColumns((int)($question_data["columns"] ?? 0));
-                $question->setMultiSelection($question_data["selection"] ?? false);
+                $question->setMultiSelection($answers_data["selection"] ?? false);
 
                 $old_options = $question->getOptions();
 
