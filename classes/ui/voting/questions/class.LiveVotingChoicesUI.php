@@ -33,9 +33,6 @@ use ilObject;
 use ilObjLiveVotingGUI;
 use ilPlugin;
 use ilPropertyFormGUI;
-use ilSystemStyleException;
-use ilTemplate;
-use ilTemplateException;
 use ilTextAreaInputGUI;
 use LiveVotingException;
 use LiveVotingQuestion;
@@ -83,6 +80,9 @@ class LiveVotingChoicesUI
         }
     }
 
+    /**
+     * @throws ilException
+     */
     public function getChoicesForm(): Form
     {
         global $DIC;
@@ -90,38 +90,20 @@ class LiveVotingChoicesUI
         try {
             $form_questions = [];
 
-            $field_title = $this->factory->input()->field()->text(
+            $form_questions["title"] = $this->factory->input()->field()->text(
                 $this->plugin->txt('voting_title'))
                 ->withValue(isset($this->question) ? $this->question->getTitle() : "")
                 ->withRequired(true);
-/*                ->withAdditionalTransformation($DIC->refinery()->custom()->transformation(
-                    function ($v) use ($object) {
 
-                    }
-                ));*/
-
-
-            $form_questions["title"] = $field_title;
-
-
-            $field_question = $this->factory->input()->field()->textarea(
+            $form_questions["question"] = $this->factory->input()->field()->textarea(
                 $this->plugin->txt('voting_question'))
                 ->withValue(isset($this->question) ? $this->question->getQuestion() : "")
                 ->withRequired(true);
-            /*                ->withAdditionalTransformation($DIC->refinery()->custom()->transformation(
-                                function ($v) use ($object) {
 
-                                }
-                            ));*/
-
-            $form_questions["question"] = $field_question;
-
-            $field_columns = $this->factory->input()->field()->select(
+            $form_questions["columns"] = $this->factory->input()->field()->select(
                 $this->plugin->txt('voting_columns'),
-                [1 => "1", 2 => "2", 3 => "3", 4 => "4", 5 => "5", 6 => "6", 7 => "7", 8 => "8", 9 => "9", 10 => "10"])
+                [1 => "1", 2 => "2", 3 => "3", 4 => "4"])
                 ->withValue(1);
-
-            $form_questions["columns"] = $field_columns;
 
 
             $section_questions = $this->factory->input()->field()->section($form_questions, $this->plugin->txt("player_voting_list"), $this->plugin->txt("voting_type_1"));
@@ -130,18 +112,15 @@ class LiveVotingChoicesUI
             //Answers section
             $form_answers = [];
 
-            $field_selection = $this->factory->input()->field()->checkbox(
+            $form_answers["selection"] = $this->factory->input()->field()->checkbox(
                 $this->plugin->txt('qtype_1_multi_selection'),
                 $this->plugin->txt('qtype_1_multi_selection_info'));
 
-            $form_answers["selection"] = $field_selection;
-
             if(isset($this->question)) {
                 $options = $this->question->getOptions();
-
             }
 
-            $field_hidden = $this->factory->input()->field()->hidden()
+            $form_answers["hidden"] = $this->factory->input()->field()->hidden()
                 ->withValue(isset($options) ? htmlspecialchars(json_encode(array_map(function($option) {
                     return json_encode([
                         "text" => $option->getText(),
@@ -153,9 +132,7 @@ class LiveVotingChoicesUI
                 })
                 ->withLabel('options');
 
-            $form_answers["hidden"] = $field_hidden;
-
-            $field_input = $this->factory->input()->field()->text(
+            $form_answers["input"] = $this->factory->input()->field()->text(
                 $this->plugin->txt('qtype_1_options'))
                 ->withOnLoadCode(function ($id) {
                     return "xlvo.initMultipleInputs('".$id."')";
@@ -164,15 +141,9 @@ class LiveVotingChoicesUI
                 ->withRequired(true);
 
 
-            $form_answers["input"] = $field_input;
-
-
-
-
-
             $section_answers = $this->factory->input()->field()->section($form_answers, $this->plugin->txt("qtype_form_header"), "");
 
-           $sections =  [
+            $sections =  [
                 "config_question" => $section_questions,
                 "config_answers" => $section_answers
             ];
@@ -191,8 +162,6 @@ class LiveVotingChoicesUI
 
 
             return $this->createForm($form_action, $sections);
-
-
         } catch (Exception $e) {
             throw new ilException($e->getMessage());
         }
@@ -201,8 +170,6 @@ class LiveVotingChoicesUI
 
     /**
      * @throws ilHtmlPurifierNotFoundException
-     * @throws LiveVotingException
-     * @throws \ilCtrlException
      */
     private function createForm(string $form_action, array $sections): Form
     {
@@ -211,7 +178,7 @@ class LiveVotingChoicesUI
         $r->addButton('latex');
         $r->addButton('pastelatex');
         $r->setRequired(true);
-        $r->setRTESupport(ilObject::_lookupObjId((int)$_GET['ref_id']), "dcl", ilLiveVotingPlugin::PLUGIN_ID, null, false);
+        $r->setRTESupport(ilObject::_lookupObjId((int)$_GET['ref_id']), "dcl", ilLiveVotingPlugin::PLUGIN_ID);
         $r->setUseRte(true);
         $r->setRteTags(array(
             'p',
