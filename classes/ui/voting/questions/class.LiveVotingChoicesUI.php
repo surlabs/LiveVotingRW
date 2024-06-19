@@ -103,7 +103,7 @@ class LiveVotingChoicesUI
             $form_questions["columns"] = $this->factory->input()->field()->select(
                 $this->plugin->txt('voting_columns'),
                 [1 => "1", 2 => "2", 3 => "3", 4 => "4"])
-                ->withValue(1);
+                ->withValue(isset($this->question) ? $this->question->getColumns() : 1);
 
 
             $section_questions = $this->factory->input()->field()->section($form_questions, $this->plugin->txt("player_voting_list"), $this->plugin->txt("voting_type_1"));
@@ -114,7 +114,7 @@ class LiveVotingChoicesUI
 
             $form_answers["selection"] = $this->factory->input()->field()->checkbox(
                 $this->plugin->txt('qtype_1_multi_selection'),
-                $this->plugin->txt('qtype_1_multi_selection_info'));
+                $this->plugin->txt('qtype_1_multi_selection_info'))->withValue(isset($this->question) ? $this->question->isMultiSelection() : false);
 
             if(isset($this->question)) {
                 $options = $this->question->getOptions();
@@ -245,6 +245,7 @@ class LiveVotingChoicesUI
                 $question->setTitle($question_data["title"] ?? null);
                 $question->setQuestion($question_data["question"] ?? null);
                 $question->setColumns((int)($question_data["columns"] ?? 0));
+                $question->setMultiSelection($question_data["selection"] ?? false);
 
                 $old_options = $question->getOptions();
 
@@ -300,12 +301,11 @@ class LiveVotingChoicesUI
 
                 $question->setOptions($old_options);
 
-
                 $id = ilObject::_lookupObjId((int)$_GET['ref_id']);
 
+                $this->question = $question;
+
                 return $question->save($id);
-
-
             } else {
                 return 0;
             }
