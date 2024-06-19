@@ -1,0 +1,10 @@
+.multiple-input .action-buttons{
+    display:flex;
+    align-items:center;
+    gap:5px;
+    flex-shrink: 0;
+}
+
+.multiple-input .col-sm-10{
+    margin-bottom:5px;
+}

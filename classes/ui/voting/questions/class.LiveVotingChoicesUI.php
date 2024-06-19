@@ -25,6 +25,7 @@ use ilCtrlInterface;
 use ilException;
 use ilHtmlPurifierFactory;
 use ilHtmlPurifierNotFoundException;
+use ILIAS\UI\Component\Input\Container\Form\Form;
 use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
 use ilLiveVotingPlugin;
@@ -36,6 +37,7 @@ use ilSystemStyleException;
 use ilTemplate;
 use ilTemplateException;
 use ilTextAreaInputGUI;
+use LiveVotingException;
 use LiveVotingQuestion;
 use LiveVotingQuestionOption;
 
@@ -81,7 +83,7 @@ class LiveVotingChoicesUI
         }
     }
 
-    public function renderChoicesForm(): string
+    public function getChoicesForm(): Form
     {
         global $DIC;
 
@@ -139,27 +141,30 @@ class LiveVotingChoicesUI
 
             }
 
-            $field_input = $this->factory->input()->field()->text(
-                $this->plugin->txt('qtype_1_options'))
-                ->withOnLoadCode(function ($id) {
-                    return "xlvo.initMultipleInputs('".$id."')";
-                })
-                ->withRequired(true);
-
-
-            $form_answers["input"] = $field_input;
-
-
-            $field_hidden = $this->factory->input()->field()->text("")
-                ->withValue(isset($options) ? json_encode(array_map(function($option) {
+            $field_hidden = $this->factory->input()->field()->hidden()
+                ->withValue(isset($options) ? htmlspecialchars(json_encode(array_map(function($option) {
                     return $option->getText();
-                }, $options)) : "")
+                }, $options), JSON_UNESCAPED_UNICODE) ) : "")
                 ->withOnLoadCode(function ($id) {
                     return "xlvo.initHiddenInput('".$id."')";
                 })
                 ->withLabel('options');
 
             $form_answers["hidden"] = $field_hidden;
+
+            $field_input = $this->factory->input()->field()->text(
+                $this->plugin->txt('qtype_1_options'))
+                ->withOnLoadCode(function ($id) {
+                    return "xlvo.initMultipleInputs('".$id."')";
+                })
+                ->withMaxLength(255)
+                ->withRequired(true);
+
+
+            $form_answers["input"] = $field_input;
+
+
+
 
 
             $section_answers = $this->factory->input()->field()->section($form_answers, $this->plugin->txt("qtype_form_header"), "");
@@ -169,12 +174,20 @@ class LiveVotingChoicesUI
                 "config_answers" => $section_answers
             ];
 
-            $form_action = $this->control->getFormActionByClass(ilObjLiveVotingGUI::class, "selectedChoices");
+            if(isset($options)){
+                $this->control->setParameterByClass(ilObjLiveVotingGUI::class, "question_id", $this->question->getId());
+                $form_action = $this->control->getFormActionByClass(ilObjLiveVotingGUI::class, "edit");
+
+            } else {
+                $form_action = $this->control->getFormActionByClass(ilObjLiveVotingGUI::class, "selectedChoices");
+            }
 
             $DIC->ui()->mainTemplate()->addJavaScript($this->plugin->getDirectory() . "/templates/js/xlvo.js");
 
+            $DIC->ui()->mainTemplate()->addCss($this->plugin->getDirectory() . "/templates/css/livevoting.css");
 
-            return $this->renderForm($form_action, $sections);
+
+            return $this->createForm($form_action, $sections);
 
 
         } catch (Exception $e) {
@@ -185,11 +198,11 @@ class LiveVotingChoicesUI
 
     /**
      * @throws ilHtmlPurifierNotFoundException
-     * @throws \LiveVotingException
+     * @throws LiveVotingException
+     * @throws \ilCtrlException
      */
-    private function renderForm(string $form_action, array $sections): string
+    private function createForm(string $form_action, array $sections): Form
     {
-
         $r = new ilTextAreaInputGUI($this->plugin->txt('question'), 'question');
         $r->addPlugin('latex');
         $r->addButton('latex');
@@ -251,49 +264,86 @@ class LiveVotingChoicesUI
             $form_action,
             $sections,
         );
-
         $saving_info = "";
 
-        //Check if the form has been submitted
-        if ($this->request->getMethod() == "POST") {
+// Check if the form has been submitted
+       /* if ($this->request->getMethod() == "POST") {
             $form = $form->withRequest($this->request);
             $result = $form->getData();
 
+            if ($result && isset($result["config_question"], $result["config_answers"]["hidden"]) && $result["config_answers"]["hidden"] !== "") {
+                $question_data = $result["config_question"];
+                $options_data = json_decode($result["config_answers"]["hidden"],  null, 1,  JSON_INVALID_UTF8_SUBSTITUTE );
+
+
+                if (!empty($options_data)) {
+                    $question = LiveVotingQuestion::loadNewQuestion("Choices");
+
+                    $question->setTitle($question_data["title"] ?? null);
+                    $question->setQuestion($question_data["question"] ?? null);
+                    $question->setColumns((int)($question_data["columns"] ?? 0));
+
+                    foreach ($options_data as $index => $option_name) {
+                        $option = LiveVotingQuestionOption::loadNewOption($question->getQuestionTypeId());
+                        $option->setText($option_name);
+                        $option->setPosition($index);
+                        $question->addOption($option);
+                    }
+
+                    $id = ilObject::_lookupObjId((int)$_GET['ref_id']);
+                    $save = $question->save($id);
+                    $saving_info = $this->renderer->render(
+                        $this->factory->messageBox()->{$save != 0 ? 'success' : 'failure'}("Question saved successfully")
+
+                    );
+
+                } else {
+                    $saving_info = $this->renderer->render($this->factory->messageBox()->failure("Error de campos. Traducción pendiente"));
+                }
+            } else {
+                $saving_info = $this->renderer->render($this->factory->messageBox()->failure("Error de campos. Traducción pendiente 2"));
+            }
+        }*/
+        return  $form;
+    }
+
+    /**
+     * @throws LiveVotingException
+     */
+    public function save($result, ?int $question_id = null): int
+    {
+
+
+        if ($result && isset($result["config_question"], $result["config_answers"]["hidden"]) && $result["config_answers"]["hidden"] !== "") {
             $question_data = $result["config_question"];
             $options_data = json_decode($result["config_answers"]["hidden"]);
 
-            $question = LiveVotingQuestion::loadNewQuestion("Choices");
 
-            if (isset($question_data["title"])) {
-                $question->setTitle($question_data["title"]);
-            }
+            if (!empty($options_data)) {
+                $question = $question_id ? LiveVotingQuestion::loadQuestionById($question_id) : LiveVotingQuestion::loadNewQuestion("Choices");
 
-            if (isset($question_data["question"])) {
-                $question->setQuestion($question_data["question"]);
-            }
+                $question->setTitle($question_data["title"] ?? null);
+                $question->setQuestion($question_data["question"] ?? null);
+                $question->setColumns((int)($question_data["columns"] ?? 0));
 
-            if (isset($question_data["columns"])) {
-                $question->setColumns((int) $question_data["columns"]);
-            }
+                foreach ($options_data as $index => $option_name) {
+                    $option = LiveVotingQuestionOption::loadNewOption($question->getQuestionTypeId());
+                    $option->setText($option_name);
+                    $option->setPosition($index);
+                    $question->addOption($option);
+                }
 
-            foreach ($options_data as $index => $option_name) {
-                $option = LiveVotingQuestionOption::loadNewOption($question->getQuestionTypeId());
 
-                $option->setText($option_name);
-                $option->setPosition($index);
+                $id = ilObject::_lookupObjId((int)$_GET['ref_id']);
 
-                $question->addOption($option);
-            }
+                return $question->save($id);
 
-            $id = ilObject::_lookupObjId((int)$_GET['ref_id']);
 
-            if ($question->save($id) != 0) {
-                $saving_info = $this->renderer->render($this->factory->messageBox()->success("Question saved successfully"));
             } else {
-                $saving_info = $this->renderer->render($this->factory->messageBox()->failure("Error saving question"));
+                return 0;
             }
+        } else {
+            return 0;
         }
-
-        return $saving_info . $this->renderer->render($form);
     }
 }

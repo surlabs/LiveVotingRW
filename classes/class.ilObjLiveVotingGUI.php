@@ -139,13 +139,34 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
     /**
      * @throws ilException
+     * @throws LiveVotingException
      */
     public function selectedChoices(): void
     {
+        global $DIC;
         $this->tabs->activateTab("tab_manage");
 
         $liveVotingChoicesUI = new LiveVotingChoicesUI();
-        $this->tpl->setContent($liveVotingChoicesUI->renderChoicesForm());
+        $form = $liveVotingChoicesUI->getChoicesForm();
+
+        if($DIC->http()->request()->getMethod() == "POST") {
+
+            $id = $liveVotingChoicesUI->save($form->withRequest($DIC->http()->request())->getData());
+
+            if($id !== 0){
+                $DIC->ctrl()->setParameter($this, "question_id", $id);
+                $DIC->ctrl()->setParameter($this, "show_success", true);
+                $DIC->ctrl()->redirect($this, "edit");
+
+            } else {
+                $this->tpl->setContent("ERROR".$DIC->ui()->renderer()->render($form->withRequest($DIC->http()->request())));
+            }
+            //$form = $liveVotingChoicesUI->getChoicesForm();
+
+        } else {
+            $this->tpl->setContent($DIC->ui()->renderer()->render($form));
+
+        }
     }
 
     protected function initHeaderAndLocator(): void
@@ -260,17 +281,36 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
      */
     public function editQuestion(): void
     {
-
+        global $DIC;
         //TODO: COMPROBACIÓN DE PERMISOS
         $this->tabs->activateTab("tab_manage");
 
         $question = LiveVotingQuestion::loadQuestionById((int)$_GET['question_id']);
-
         switch($question->getQuestionType()) {
             case "Choices":
-
                 $liveVotingChoicesUI = new LiveVotingChoicesUI($question);
-                $this->tpl->setContent($liveVotingChoicesUI->renderChoicesForm());
+                $form = $liveVotingChoicesUI->getChoicesForm();
+                $saving_info = "";
+                if($DIC->http()->request()->getMethod() == "POST") {
+
+                    $id = $liveVotingChoicesUI->save($form->withRequest($DIC->http()->request())->getData(), $question->getId());
+                    if($id !== 0){
+                        $DIC->ctrl()->setParameter($this, "question_id", $id);
+                        $saving_info = $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->success($this->plugin->txt('msg_success_voting_updated')));
+                        $this->tpl->setContent($saving_info.$DIC->ui()->renderer()->render($form));
+
+                    } else {
+                        $this->tpl->setContent($DIC->ui()->renderer()->render($form->withRequest($DIC->http()->request())));
+                    }
+                    //$form = $liveVotingChoicesUI->getChoicesForm();
+
+                } else {
+                    if(isset($_GET['show_success'])){
+                        $saving_info = $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->success($this->plugin->txt('msg_success_voting_updated')));
+                    }
+                    $this->tpl->setContent($saving_info.$DIC->ui()->renderer()->render($form));
+
+                }
                 break;
         }
         //TODO: Traer prev y next question para navegación
