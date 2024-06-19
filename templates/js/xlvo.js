@@ -10,12 +10,17 @@ const xlvo = {
 
         if(xlvo.inputs.length>0){
             for(let i = 0; i < xlvo.inputs.length; i++){
-                const newInput = xlvo.addMultipleInput(input, i+1);
+                const data = JSON.parse(xlvo.inputs[i]);
+
+                const newInput = xlvo.addMultipleInput(input, i+1, parseInt(data.id) ?? 0);
+
                 xlvo.parent.append(newInput);
-                $(".option-input").last().val(xlvo.inputs[i]);
+
+                $(".option-input").last().val(data.text ?? data);
             }
         } else {
-            const newInput = xlvo.addMultipleInput(input, $(".option-input").length + 1);
+            const newInput = xlvo.addMultipleInput(input, $(".option-input").length + 1, 0);
+
             xlvo.parent.append(newInput);
         }
 
@@ -24,14 +29,10 @@ const xlvo = {
     initHiddenInput: function (id) {
         xlvo.hiddenId = "#" + id;
 
-        console.log(this.hiddenId, $(this.hiddenId).val());
-
         let hiddenInput = $(this.hiddenId).val();
         if(hiddenInput.length!==0){
             try{
                 xlvo.inputs = JSON.parse(hiddenInput);
-                console.log(hiddenInput);
-
             }catch (e){
                 console.log("Parsing input error");
             }
@@ -47,7 +48,10 @@ const xlvo = {
         xlvo.inputs = [];
         $(".option-input").each(function(i, element){
             if($(element).val() != ""){
-                xlvo.inputs.push($(element).val());
+                xlvo.inputs.push({
+                    "text": $(element).val(),
+                    "id": $(element).attr("option-id") ?? 0
+                });
             }
         });
 
@@ -63,7 +67,7 @@ const xlvo = {
         return xlvo.inputs;
     },
 
-    addMultipleInput: function (input, index) {
+    addMultipleInput: function (input, index, option_id) {
         const currentId = input.attr('id');
         const newId = currentId + '_' + index;
 
@@ -71,6 +75,9 @@ const xlvo = {
         newInputHtml.attr('id', newId);
         newInputHtml.addClass("option-input")
 
+        if(option_id && option_id !== 0) {
+            newInputHtml.attr('option-id', option_id);
+        }
 
 
         return `

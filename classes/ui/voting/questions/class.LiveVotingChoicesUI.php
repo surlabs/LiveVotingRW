@@ -143,7 +143,10 @@ class LiveVotingChoicesUI
 
             $field_hidden = $this->factory->input()->field()->hidden()
                 ->withValue(isset($options) ? htmlspecialchars(json_encode(array_map(function($option) {
-                    return $option->getText();
+                    return json_encode([
+                        "text" => $option->getText(),
+                        "id" => $option->getId()
+                    ]);
                 }, $options), JSON_UNESCAPED_UNICODE) ) : "")
                 ->withOnLoadCode(function ($id) {
                     return "xlvo.initHiddenInput('".$id."')";
@@ -251,60 +254,10 @@ class LiveVotingChoicesUI
         $form = new ilPropertyFormGUI();
         $form->addItem($r);
 
-
-
-        $field_question = $this->factory->legacy($form->getHTML());
-
-        $modal = $this->factory->modal()->roundtrip('My Modal 1', $field_question);
-        $modal = $modal->withCloseWithKeyboard(false);
-        $button1 = $this->factory->button()->standard('Open Modal 1', '#')
-            ->withOnClick($modal->getShowSignal());
-        //Create the form
-        $form = $this->factory->input()->container()->form()->standard(
+        return $this->factory->input()->container()->form()->standard(
             $form_action,
             $sections,
         );
-        $saving_info = "";
-
-// Check if the form has been submitted
-       /* if ($this->request->getMethod() == "POST") {
-            $form = $form->withRequest($this->request);
-            $result = $form->getData();
-
-            if ($result && isset($result["config_question"], $result["config_answers"]["hidden"]) && $result["config_answers"]["hidden"] !== "") {
-                $question_data = $result["config_question"];
-                $options_data = json_decode($result["config_answers"]["hidden"],  null, 1,  JSON_INVALID_UTF8_SUBSTITUTE );
-
-
-                if (!empty($options_data)) {
-                    $question = LiveVotingQuestion::loadNewQuestion("Choices");
-
-                    $question->setTitle($question_data["title"] ?? null);
-                    $question->setQuestion($question_data["question"] ?? null);
-                    $question->setColumns((int)($question_data["columns"] ?? 0));
-
-                    foreach ($options_data as $index => $option_name) {
-                        $option = LiveVotingQuestionOption::loadNewOption($question->getQuestionTypeId());
-                        $option->setText($option_name);
-                        $option->setPosition($index);
-                        $question->addOption($option);
-                    }
-
-                    $id = ilObject::_lookupObjId((int)$_GET['ref_id']);
-                    $save = $question->save($id);
-                    $saving_info = $this->renderer->render(
-                        $this->factory->messageBox()->{$save != 0 ? 'success' : 'failure'}("Question saved successfully")
-
-                    );
-
-                } else {
-                    $saving_info = $this->renderer->render($this->factory->messageBox()->failure("Error de campos. Traducción pendiente"));
-                }
-            } else {
-                $saving_info = $this->renderer->render($this->factory->messageBox()->failure("Error de campos. Traducción pendiente 2"));
-            }
-        }*/
-        return  $form;
     }
 
     /**
@@ -326,12 +279,59 @@ class LiveVotingChoicesUI
                 $question->setQuestion($question_data["question"] ?? null);
                 $question->setColumns((int)($question_data["columns"] ?? 0));
 
-                foreach ($options_data as $index => $option_name) {
-                    $option = LiveVotingQuestionOption::loadNewOption($question->getQuestionTypeId());
-                    $option->setText($option_name);
-                    $option->setPosition($index);
-                    $question->addOption($option);
+                $old_options = $question->getOptions();
+
+                foreach ($old_options as $old_option) {
+                    $found = false;
+
+                    foreach ($options_data as $index => $option_data) {
+                        if ($option_data) {
+                            if (is_string($option_data)) {
+                                $option_data = json_decode($option_data);
+                            }
+
+                            if (isset($option_data->id) && $option_data->id == $old_option->getId()) {
+                                $old_option->setPosition($index);
+
+                                if (isset($option_data->text)) {
+                                    $old_option->setText($option_data->text);
+                                }
+
+                                $old_option->save($question->getId());
+
+                                $found = true;
+
+                                $options_data[$index] = false;
+
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!$found) {
+                        $old_option->delete();
+                    }
                 }
+
+                foreach ($options_data as $index => $option_data) {
+                    if ($option_data) {
+                        if (is_string($option_data)) {
+                            $option_data = json_decode($option_data);
+                        }
+
+                        $option = LiveVotingQuestionOption::loadNewOption($question->getQuestionTypeId());
+
+                        if (isset($option_data->text)) {
+                            $option->setText($option_data->text);
+                        }
+
+                        $option->setPosition($index);
+
+                        $old_options[] = $option;
+                    }
+                }
+
+                $question->setOptions($old_options);
 
 
                 $id = ilObject::_lookupObjId((int)$_GET['ref_id']);
