@@ -147,7 +147,6 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
         $liveVotingChoicesUI = new LiveVotingChoicesUI();
         $form = $liveVotingChoicesUI->getChoicesForm();
-        $saving_info = "";
         if($DIC->http()->request()->getMethod() == "POST") {
 
             $id = $liveVotingChoicesUI->save($form->withRequest($DIC->http()->request())->getData());
@@ -161,8 +160,6 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
                 $saving_info = $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure($DIC->language()->txt("form_input_not_valid")));
                 $this->tpl->setContent($saving_info.$DIC->ui()->renderer()->render($form->withRequest($DIC->http()->request())));
             }
-            //$form = $liveVotingChoicesUI->getChoicesForm();
-
         } else {
             $this->tpl->setContent($DIC->ui()->renderer()->render($form));
 
@@ -179,8 +176,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         $this->tabs->activateTab("tab_manage");
 
         $liveVotingFreeInputUI = new LiveVotingFreeInputUI();
-        $form = $liveVotingFreeInputUI->getChoicesForm();
-        $saving_info = "";
+        $form = $liveVotingFreeInputUI->getFreeForm();
         if($DIC->http()->request()->getMethod() == "POST") {
 
             $id = $liveVotingFreeInputUI->save($form->withRequest($DIC->http()->request())->getData());
@@ -194,11 +190,8 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
                 $saving_info = $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure($DIC->language()->txt("form_input_not_valid")));
                 $this->tpl->setContent($saving_info.$DIC->ui()->renderer()->render($form->withRequest($DIC->http()->request())));
             }
-            //$form = $liveVotingChoicesUI->getChoicesForm();
-
         } else {
             $this->tpl->setContent($DIC->ui()->renderer()->render($form));
-
         }
     }
 
@@ -212,8 +205,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         $this->tabs->activateTab("tab_manage");
 
         $liveVotingRangeUI = new LiveVotingRangeUI();
-        $form = $liveVotingRangeUI->getChoicesForm();
-        $saving_info = "";
+        $form = $liveVotingRangeUI->getRangeForm();
         if($DIC->http()->request()->getMethod() == "POST") {
 
             $id = $liveVotingRangeUI->save($form->withRequest($DIC->http()->request())->getData());
@@ -227,8 +219,6 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
                 $saving_info = $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure($DIC->language()->txt("form_input_not_valid")));
                 $this->tpl->setContent($saving_info.$DIC->ui()->renderer()->render($form->withRequest($DIC->http()->request())));
             }
-            //$form = $liveVotingChoicesUI->getChoicesForm();
-
         } else {
             $this->tpl->setContent($DIC->ui()->renderer()->render($form));
 
@@ -374,6 +364,60 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
                     if($id !== 0){
                         $liveVotingChoicesUI = new LiveVotingChoicesUI($id);
                         $form = $liveVotingChoicesUI->getChoicesForm();
+
+                        $DIC->ctrl()->setParameter($this, "question_id", $id);
+                        $saving_info = $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->success($this->plugin->txt('msg_success_voting_updated')));
+                        $this->tpl->setContent($saving_info.$DIC->ui()->renderer()->render($form));
+                    } else {
+                        $this->tpl->setContent($DIC->ui()->renderer()->render($form->withRequest($DIC->http()->request())));
+                    }
+
+                } else {
+                    if(isset($_GET['show_success'])){
+                        $saving_info = $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->success($this->plugin->txt('msg_success_voting_created')));
+                    }
+                    $this->tpl->setContent($saving_info.$DIC->ui()->renderer()->render($form));
+
+                }
+                break;
+            case "FreeText":
+                $liveVotingFreeInputUI = new LiveVotingFreeInputUI($question->getId());
+                $form = $liveVotingFreeInputUI->getFreeForm();
+                $saving_info = "";
+                if($DIC->http()->request()->getMethod() == "POST") {
+
+                    $id = $liveVotingFreeInputUI->save($form->withRequest($DIC->http()->request())->getData(), $question->getId());
+
+                    if($id !== 0){
+                        $liveVotingFreeInputUI = new LiveVotingFreeInputUI($id);
+                        $form = $liveVotingFreeInputUI->getFreeForm();
+
+                        $DIC->ctrl()->setParameter($this, "question_id", $id);
+                        $saving_info = $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->success($this->plugin->txt('msg_success_voting_updated')));
+                        $this->tpl->setContent($saving_info.$DIC->ui()->renderer()->render($form));
+                    } else {
+                        $this->tpl->setContent($DIC->ui()->renderer()->render($form->withRequest($DIC->http()->request())));
+                    }
+
+                } else {
+                    if(isset($_GET['show_success'])){
+                        $saving_info = $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->success($this->plugin->txt('msg_success_voting_created')));
+                    }
+                    $this->tpl->setContent($saving_info.$DIC->ui()->renderer()->render($form));
+
+                }
+                break;
+            case "NumberRange":
+                $liveVotingRangeUI = new LiveVotingRangeUI($question->getId());
+                $form = $liveVotingRangeUI->getRangeForm();
+                $saving_info = "";
+                if($DIC->http()->request()->getMethod() == "POST") {
+
+                    $id = $liveVotingRangeUI->save($form->withRequest($DIC->http()->request())->getData(), $question->getId());
+
+                    if($id !== 0){
+                        $liveVotingRangeUI = new LiveVotingRangeUI($id);
+                        $form = $liveVotingRangeUI->getRangeForm();
 
                         $DIC->ctrl()->setParameter($this, "question_id", $id);
                         $saving_info = $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->success($this->plugin->txt('msg_success_voting_updated')));

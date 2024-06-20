@@ -150,7 +150,7 @@ class LiveVotingChoicesUI
                 "config_answers" => $section_answers
             ];
 
-            if(isset($options)){
+            if(isset($this->question)){
                 $this->control->setParameterByClass(ilObjLiveVotingGUI::class, "question_id", $this->question->getId());
                 $form_action = $this->control->getFormActionByClass(ilObjLiveVotingGUI::class, "edit");
 

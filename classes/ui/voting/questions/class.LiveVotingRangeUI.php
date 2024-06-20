@@ -65,7 +65,10 @@ class LiveVotingRangeUI
     protected renderer $renderer;
     protected $request;
 
-    public function __construct(?LiveVotingQuestion $question = null)
+    /**
+     * @throws LiveVotingException
+     */
+    public function __construct(?int $question_id = null)
     {
         global $DIC;
 
@@ -75,15 +78,15 @@ class LiveVotingRangeUI
         $this->factory = $DIC->ui()->factory();
         $this->renderer = $DIC->ui()->renderer();
 
-        if($question) {
-            $this->question = $question;
+        if($question_id) {
+            $this->question = LiveVotingQuestion::loadQuestionById($question_id);
         }
     }
 
     /**
      * @throws ilException
      */
-    public function getChoicesForm(): Form
+    public function getRangeForm(): Form
     {
         global $DIC;
         try {
@@ -108,32 +111,28 @@ class LiveVotingRangeUI
 
             $form_answers["percentages"] = $this->factory->input()->field()->checkbox(
                 $this->plugin->txt('qtype_6_option_percentage'),
-                $this->plugin->txt('qtype_6_option_percentage_info'))->withValue(isset($this->question) ? true : false);
-            //TODO: Cambiar el withValue por el valor de la pregunta
-
-            if(isset($this->question)) {
-                $options = $this->question->getOptions();
-            }
+                $this->plugin->txt('qtype_6_option_percentage_info'))->withValue(isset($this->question) ? $this->question->isPercentage() : false);
 
             $form_answers["display_mode"] = $DIC->ui()->factory()->input()->field()->radio($this->plugin->txt('qtype_6_option_alternative_result_display_mode'), "")
-                ->withOption('value1', $this->plugin->txt('qtype_6_display_mode_nr_0'))
-                ->withOption('value2', $this->plugin->txt('qtype_6_display_mode_nr_2'))
-                ->withOption('value3', $this->plugin->txt('qtype_6_display_mode_nr_1'));
+                ->withOption('0', $this->plugin->txt('qtype_6_display_mode_nr_0'))
+                ->withOption('2', $this->plugin->txt('qtype_6_display_mode_nr_2'))
+                ->withOption('1', $this->plugin->txt('qtype_6_display_mode_nr_1'))
+                ->withValue(isset($this->question) ? (string) $this->question->getAltResultDisplayMode() : "0");
 
             $form_answers["minimum"] = $this->factory->input()->field()->numeric(
                 $this->plugin->txt('qtype_6_option_range_start'),
                 $this->plugin->txt('qtype_6_option_range_start_info'))
-                ->withValue(isset($this->question) ? 0 : 0);
+                ->withValue(isset($this->question) ? $this->question->getStartRange() : 0);
 
             $form_answers["maximum"] = $this->factory->input()->field()->numeric(
                 $this->plugin->txt('qtype_6_option_range_end'),
                 $this->plugin->txt('qtype_6_option_range_end_info'))
-                ->withValue(isset($this->question) ? 0 : 100);
+                ->withValue(isset($this->question) ? $this->question->getEndRange() : 100);
 
             $form_answers["step"] = $this->factory->input()->field()->numeric(
                 $this->plugin->txt('qtype_6_option_range_step'),
                 $this->plugin->txt('qtype_6_option_range_step_info'))
-                ->withValue(isset($this->question) ? 0 : 1);
+                ->withValue(isset($this->question) ? $this->question->getStepRange() : 1);
 
 
 
@@ -144,12 +143,12 @@ class LiveVotingRangeUI
                 "config_answers" => $section_answers
             ];
 
-            if(isset($options)){
+            if(isset($this->question)){
                 $this->control->setParameterByClass(ilObjLiveVotingGUI::class, "question_id", $this->question->getId());
                 $form_action = $this->control->getFormActionByClass(ilObjLiveVotingGUI::class, "edit");
 
             } else {
-                $form_action = $this->control->getFormActionByClass(ilObjLiveVotingGUI::class, "selectedChoices");
+                $form_action = $this->control->getFormActionByClass(ilObjLiveVotingGUI::class, "selectedRange");
             }
 
             $DIC->ui()->mainTemplate()->addJavaScript($this->plugin->getDirectory() . "/templates/js/xlvo.js");
@@ -229,77 +228,25 @@ class LiveVotingRangeUI
      */
     public function save($result, ?int $question_id = null): int
     {
-        if ($result && isset($result["config_question"], $result["config_answers"]["hidden"]) && $result["config_answers"]["hidden"] !== "") {
+        if ($result && isset($result["config_question"]) && isset($result["config_answers"])) {
             $question_data = $result["config_question"];
-            $options_data = json_decode($result["config_answers"]["hidden"]);
+            $answers_data = $result["config_answers"];
 
+            $question = $question_id ? LiveVotingQuestion::loadQuestionById($question_id) : LiveVotingQuestion::loadNewQuestion("NumberRange");
 
-            if (!empty($options_data)) {
-                $question = $question_id ? LiveVotingQuestion::loadQuestionById($question_id) : LiveVotingQuestion::loadNewQuestion("Choices");
+            $question->setTitle($question_data["title"] ?? null);
+            $question->setQuestion($question_data["question"] ?? null);
+            $question->setPercentage($answers_data["percentages"] ? (bool) $answers_data["percentages"] : false);
+            $question->setAltResultDisplayMode($answers_data["display_mode"] ? (int) $answers_data["display_mode"] : 0);
+            $question->setStartRange($answers_data["minimum"] ? (int) $answers_data["minimum"] : 0);
+            $question->setEndRange($answers_data["maximum"] ? (int) $answers_data["maximum"] : 100);
+            $question->setStepRange($answers_data["step"] ? (int) $answers_data["step"] : 1);
 
-                $question->setTitle($question_data["title"] ?? null);
-                $question->setQuestion($question_data["question"] ?? null);
-                $question->setColumns((int)($question_data["columns"] ?? 0));
-                $question->setMultiSelection($question_data["selection"] ?? false);
+            $id = ilObject::_lookupObjId((int)$_GET['ref_id']);
 
-                $old_options = $question->getOptions();
+            $this->question = $question;
 
-                foreach ($old_options as $old_option) {
-                    $found = false;
-
-                    foreach ($options_data as $index => $option_data) {
-                        if ($option_data) {
-                            if (is_string($option_data)) {
-                                $option_data = json_decode($option_data);
-                            }
-
-                            if (isset($option_data->id) && $option_data->id == $old_option->getId()) {
-                                $old_option->setPosition($index);
-
-                                if (isset($option_data->text)) {
-                                    $old_option->setText($option_data->text);
-                                }
-
-                                $old_option->save($question->getId());
-                                $found = true;
-                                $options_data[$index] = false;
-
-                                break;
-                            }
-                        }
-                    }
-
-                    if (!$found) {
-                        $old_option->delete();
-                    }
-                }
-
-                foreach ($options_data as $index => $option_data) {
-                    if ($option_data) {
-
-                        if (is_string($option_data)) {
-                            $option_data = json_decode($option_data);
-                        }
-
-                        $option = LiveVotingQuestionOption::loadNewOption($question->getQuestionTypeId());
-
-                        if (isset($option_data->text)) {
-                            $option->setText($option_data->text);
-                        }
-
-                        $option->setPosition($index);
-                        $old_options[] = $option;
-                    }
-                }
-
-                $question->setOptions($old_options);
-                $id = ilObject::_lookupObjId((int)$_GET['ref_id']);
-                $this->question = $question;
-
-                return $question->save($id);
-            } else {
-                return 0;
-            }
+            return $question->save($id);
         } else {
             return 0;
         }

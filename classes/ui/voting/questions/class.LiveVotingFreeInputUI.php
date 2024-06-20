@@ -65,7 +65,10 @@ class LiveVotingFreeInputUI
     protected renderer $renderer;
     protected $request;
 
-    public function __construct(?LiveVotingQuestion $question = null)
+    /**
+     * @throws LiveVotingException
+     */
+    public function __construct(?int $question_id = null)
     {
         global $DIC;
 
@@ -75,15 +78,15 @@ class LiveVotingFreeInputUI
         $this->factory = $DIC->ui()->factory();
         $this->renderer = $DIC->ui()->renderer();
 
-        if($question) {
-            $this->question = $question;
+        if($question_id) {
+            $this->question = LiveVotingQuestion::loadQuestionById($question_id);
         }
     }
 
     /**
      * @throws ilException
      */
-    public function getChoicesForm(): Form
+    public function getFreeForm(): Form
     {
         global $DIC;
         try {
@@ -106,17 +109,15 @@ class LiveVotingFreeInputUI
             //Answers section
             $form_answers = [];
 
-            $form_answers["percentages"] = $this->factory->input()->field()->checkbox(
+            $form_answers["multi_input"] = $this->factory->input()->field()->checkbox(
                 $this->plugin->txt('qtype_2_multi_free_input'),
-                $this->plugin->txt('qtype_2_multi_free_input_info'))->withValue(isset($this->question) ? $this->question->isMultiSelection() : false);
+                $this->plugin->txt('qtype_2_multi_free_input_info'))
+                ->withValue(isset($this->question) ? $this->question->isMultiFreeInput() : false);
 
-            if(isset($this->question)) {
-                $options = $this->question->getOptions();
-            }
-
-            $form_answers["answer_field"] = $DIC->ui()->factory()->input()->field()->radio($this->plugin->txt('obj_frozen_behaviour'), "")
-                ->withOption('value1', $this->plugin->txt('qtype_2_answer_field_single_line'), $this->plugin->txt('qtype_2_answer_field_single_line_info'))
-                ->withOption('value2', $this->plugin->txt('qtype_2_answer_field_multi_line'), $this->plugin->txt('qtype_2_answer_field_multi_line_info'));
+            $form_answers["answer_field"] = $DIC->ui()->factory()->input()->field()->radio($this->plugin->txt('qtype_2_answer_field_multi_line'), "")
+                ->withOption('1', $this->plugin->txt('qtype_2_answer_field_single_line'), $this->plugin->txt('qtype_2_answer_field_single_line_info'))
+                ->withOption('2', $this->plugin->txt('qtype_2_answer_field_multi_line'), $this->plugin->txt('qtype_2_answer_field_multi_line_info'))
+                ->withValue(isset($this->question) ? $this->question->getAnswerField() : 1);
 
 
 
@@ -127,12 +128,12 @@ class LiveVotingFreeInputUI
                 "config_answers" => $section_answers
             ];
 
-            if(isset($options)){
+            if(isset($this->question)){
                 $this->control->setParameterByClass(ilObjLiveVotingGUI::class, "question_id", $this->question->getId());
                 $form_action = $this->control->getFormActionByClass(ilObjLiveVotingGUI::class, "edit");
 
             } else {
-                $form_action = $this->control->getFormActionByClass(ilObjLiveVotingGUI::class, "selectedChoices");
+                $form_action = $this->control->getFormActionByClass(ilObjLiveVotingGUI::class, "selectedFreeInput");
             }
 
             $DIC->ui()->mainTemplate()->addJavaScript($this->plugin->getDirectory() . "/templates/js/xlvo.js");
@@ -212,77 +213,23 @@ class LiveVotingFreeInputUI
      */
     public function save($result, ?int $question_id = null): int
     {
-        if ($result && isset($result["config_question"], $result["config_answers"]["hidden"]) && $result["config_answers"]["hidden"] !== "") {
+        if ($result && isset($result["config_question"]) && isset($result["config_answers"])) {
             $question_data = $result["config_question"];
-            $options_data = json_decode($result["config_answers"]["hidden"]);
+            $answers_data = $result["config_answers"];
 
 
-            if (!empty($options_data)) {
-                $question = $question_id ? LiveVotingQuestion::loadQuestionById($question_id) : LiveVotingQuestion::loadNewQuestion("Choices");
+            $question = $question_id ? LiveVotingQuestion::loadQuestionById($question_id) : LiveVotingQuestion::loadNewQuestion("FreeText");
 
-                $question->setTitle($question_data["title"] ?? null);
-                $question->setQuestion($question_data["question"] ?? null);
-                $question->setColumns((int)($question_data["columns"] ?? 0));
-                $question->setMultiSelection($question_data["selection"] ?? false);
+            $question->setTitle($question_data["title"] ?? null);
+            $question->setQuestion($question_data["question"] ?? null);
+            $question->setMultiFreeInput($answers_data["multi_input"] ? (bool) $answers_data["multi_input"] : false);
+            $question->setAnswerField($answers_data["answer_field"] ? (int) $answers_data["answer_field"] : 1);
 
-                $old_options = $question->getOptions();
+            $id = ilObject::_lookupObjId((int)$_GET['ref_id']);
 
-                foreach ($old_options as $old_option) {
-                    $found = false;
+            $this->question = $question;
 
-                    foreach ($options_data as $index => $option_data) {
-                        if ($option_data) {
-                            if (is_string($option_data)) {
-                                $option_data = json_decode($option_data);
-                            }
-
-                            if (isset($option_data->id) && $option_data->id == $old_option->getId()) {
-                                $old_option->setPosition($index);
-
-                                if (isset($option_data->text)) {
-                                    $old_option->setText($option_data->text);
-                                }
-
-                                $old_option->save($question->getId());
-                                $found = true;
-                                $options_data[$index] = false;
-
-                                break;
-                            }
-                        }
-                    }
-
-                    if (!$found) {
-                        $old_option->delete();
-                    }
-                }
-
-                foreach ($options_data as $index => $option_data) {
-                    if ($option_data) {
-
-                        if (is_string($option_data)) {
-                            $option_data = json_decode($option_data);
-                        }
-
-                        $option = LiveVotingQuestionOption::loadNewOption($question->getQuestionTypeId());
-
-                        if (isset($option_data->text)) {
-                            $option->setText($option_data->text);
-                        }
-
-                        $option->setPosition($index);
-                        $old_options[] = $option;
-                    }
-                }
-
-                $question->setOptions($old_options);
-                $id = ilObject::_lookupObjId((int)$_GET['ref_id']);
-                $this->question = $question;
-
-                return $question->save($id);
-            } else {
-                return 0;
-            }
+            return $question->save($id);
         } else {
             return 0;
         }
