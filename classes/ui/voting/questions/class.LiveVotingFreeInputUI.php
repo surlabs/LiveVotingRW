@@ -99,11 +99,6 @@ class LiveVotingFreeInputUI
                 ->withValue(isset($this->question) ? $this->question->getQuestion() : "")
                 ->withRequired(true);
 
-            $form_questions["columns"] = $this->factory->input()->field()->select(
-                $this->plugin->txt('voting_columns'),
-                [1 => "1", 2 => "2", 3 => "3", 4 => "4"])
-                ->withValue(isset($this->question) ? $this->question->getColumns() : 1);
-
 
             $section_questions = $this->factory->input()->field()->section($form_questions, $this->plugin->txt("player_voting_list"), $this->plugin->txt("voting_type_2"));
 
