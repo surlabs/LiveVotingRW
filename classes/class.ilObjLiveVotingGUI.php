@@ -19,15 +19,17 @@ declare(strict_types=1);
  */
 
 use LiveVoting\UI\LiveVotingChoicesUI;
+use LiveVoting\UI\LiveVotingFreeInputUI;
 use LiveVoting\UI\LiveVotingManageUI;
+use LiveVoting\UI\LiveVotingRangeUI;
 use LiveVoting\UI\LiveVotingSettingsUI;
 use LiveVoting\UI\LiveVotingUI;
 
 /**
  * Class ilObjLiveVotingGUI
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
- * @ilCtrl_isCalledBy ilObjLiveVotingGUI: ilRepositoryGUI, ilObjPluginDispatchGUI, ilAdministrationGUI, LiveVotingUI, LiveVotingChoicesUI, LiveVotingManageUI, LiveVotingSettingsUI
- * @ilCtrl_Calls      ilObjLiveVotingGUI: ilObjectCopyGUI, ilPermissionGUI, ilInfoScreenGUI, ilCommonActionDispatcherGUI, LiveVotingUI, LiveVotingChoicesUI, LiveVotingManageUI, LiveVotingSettingsUI
+ * @ilCtrl_isCalledBy ilObjLiveVotingGUI: ilRepositoryGUI, ilObjPluginDispatchGUI, ilAdministrationGUI, LiveVotingUI, LiveVotingChoicesUI, LiveVotingManageUI, LiveVotingSettingsUI, LiveVotingFreeInputUI, LiveVotingRangeUI
+ * @ilCtrl_Calls      ilObjLiveVotingGUI: ilObjectCopyGUI, ilPermissionGUI, ilInfoScreenGUI, ilCommonActionDispatcherGUI, LiveVotingUI, LiveVotingChoicesUI, LiveVotingManageUI, LiveVotingSettingsUI, LiveVotingFreeInputUI, LiveVotingRangeUI
  */
 class ilObjLiveVotingGUI extends ilObjectPluginGUI
 {
@@ -68,6 +70,8 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             case 'manage':
             case 'selectType':
             case 'selectedChoices':
+            case 'selectedFreeInput':
+            case 'selectedRange':
             case 'updateProperties':
                 $this->{$cmd}();
                 break;
@@ -77,9 +81,6 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         }
     }
 
-    /**
-     * @throws ilCtrlException
-     */
     public function showContentAfterCreation(): void
     {
         global $DIC;
@@ -94,9 +95,6 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         }
     }
 
-    /**
-     * @throws ilCtrlException
-     */
     public function showContent(): void
     {
         $liveVotingUI = new LiveVotingUI();
@@ -149,7 +147,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
         $liveVotingChoicesUI = new LiveVotingChoicesUI();
         $form = $liveVotingChoicesUI->getChoicesForm();
-
+        $saving_info = "";
         if($DIC->http()->request()->getMethod() == "POST") {
 
             $id = $liveVotingChoicesUI->save($form->withRequest($DIC->http()->request())->getData());
@@ -160,7 +158,74 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
                 $DIC->ctrl()->redirect($this, "edit");
 
             } else {
-                $this->tpl->setContent("ERROR".$DIC->ui()->renderer()->render($form->withRequest($DIC->http()->request())));
+                $saving_info = $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure($DIC->language()->txt("form_input_not_valid")));
+                $this->tpl->setContent($saving_info.$DIC->ui()->renderer()->render($form->withRequest($DIC->http()->request())));
+            }
+            //$form = $liveVotingChoicesUI->getChoicesForm();
+
+        } else {
+            $this->tpl->setContent($DIC->ui()->renderer()->render($form));
+
+        }
+    }
+
+    /**
+     * @throws ilException
+     * @throws LiveVotingException
+     */
+    public function selectedFreeInput(): void
+    {
+        global $DIC;
+        $this->tabs->activateTab("tab_manage");
+
+        $liveVotingFreeInputUI = new LiveVotingFreeInputUI();
+        $form = $liveVotingFreeInputUI->getChoicesForm();
+        $saving_info = "";
+        if($DIC->http()->request()->getMethod() == "POST") {
+
+            $id = $liveVotingFreeInputUI->save($form->withRequest($DIC->http()->request())->getData());
+
+            if($id !== 0){
+                $DIC->ctrl()->setParameter($this, "question_id", $id);
+                $DIC->ctrl()->setParameter($this, "show_success", true);
+                $DIC->ctrl()->redirect($this, "edit");
+
+            } else {
+                $saving_info = $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure($DIC->language()->txt("form_input_not_valid")));
+                $this->tpl->setContent($saving_info.$DIC->ui()->renderer()->render($form->withRequest($DIC->http()->request())));
+            }
+            //$form = $liveVotingChoicesUI->getChoicesForm();
+
+        } else {
+            $this->tpl->setContent($DIC->ui()->renderer()->render($form));
+
+        }
+    }
+
+    /**
+     * @throws ilException
+     * @throws LiveVotingException
+     */
+    public function selectedRange(): void
+    {
+        global $DIC;
+        $this->tabs->activateTab("tab_manage");
+
+        $liveVotingRangeUI = new LiveVotingRangeUI();
+        $form = $liveVotingRangeUI->getChoicesForm();
+        $saving_info = "";
+        if($DIC->http()->request()->getMethod() == "POST") {
+
+            $id = $liveVotingRangeUI->save($form->withRequest($DIC->http()->request())->getData());
+
+            if($id !== 0){
+                $DIC->ctrl()->setParameter($this, "question_id", $id);
+                $DIC->ctrl()->setParameter($this, "show_success", true);
+                $DIC->ctrl()->redirect($this, "edit");
+
+            } else {
+                $saving_info = $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure($DIC->language()->txt("form_input_not_valid")));
+                $this->tpl->setContent($saving_info.$DIC->ui()->renderer()->render($form->withRequest($DIC->http()->request())));
             }
             //$form = $liveVotingChoicesUI->getChoicesForm();
 
@@ -316,11 +381,10 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
                     } else {
                         $this->tpl->setContent($DIC->ui()->renderer()->render($form->withRequest($DIC->http()->request())));
                     }
-                    //$form = $liveVotingChoicesUI->getChoicesForm();
 
                 } else {
                     if(isset($_GET['show_success'])){
-                        $saving_info = $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->success($this->plugin->txt('msg_success_voting_updated')));
+                        $saving_info = $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->success($this->plugin->txt('msg_success_voting_created')));
                     }
                     $this->tpl->setContent($saving_info.$DIC->ui()->renderer()->render($form));
 

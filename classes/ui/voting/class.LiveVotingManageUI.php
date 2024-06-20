@@ -42,7 +42,7 @@ use LiveVotingQuestion;
 use LiveVotingQuestionOption;
 
 /**
- * Class LiveVotingChoicesUI
+ * Class LiveVotingManageUI
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
  * @ilCtrl_IsCalledBy  ilObjLiveVotingGUI: ilObjPluginGUI
  */
@@ -91,11 +91,11 @@ class LiveVotingManageUI
 
         $glyph = $f->symbol()->glyph()->add("#");
 
-        $button = $f->button()->bulky($glyph, '<div style="margin-left:10px">'.$this->plugin->txt("voting_type_1").' <br/><small><muted>('.$this->plugin->txt("voting_type_1_info").')</muted></small></div>', $this->control->getLinkTargetByClass(ilObjLiveVotingGUI::class, 'selectedChoices'));
-        $button2 = $f->button()->bulky($glyph, '<div style="margin-left:10px">'.$this->plugin->txt("voting_type_2").' <br/><small><muted>('.$this->plugin->txt("voting_type_2_info").')</muted></small></div>', $this->control->getLinkTargetByClass(ilObjLiveVotingGUI::class, 'selectedType2'));
-        $button3 = $f->button()->bulky($glyph, '<div style="margin-left:10px">'.$this->plugin->txt("voting_type_4").' <br/><small><muted>('.$this->plugin->txt("voting_type_4_info").')</muted></small></div>', $this->control->getLinkTargetByClass(ilObjLiveVotingGUI::class, 'selectedType4'));
-        $button4 = $f->button()->bulky($glyph, '<div style="margin-left:10px">'.$this->plugin->txt("voting_type_5").' <br/><small><muted>('.$this->plugin->txt("voting_type_5_info").')</muted></small></div>', $this->control->getLinkTargetByClass(ilObjLiveVotingGUI::class, 'selectedType5'));
-        $button5 = $f->button()->bulky($glyph, '<div style="margin-left:10px">'.$this->plugin->txt("voting_type_6").' <br/><small><muted>('.$this->plugin->txt("voting_type_6_info").')</muted></small></div>', $this->control->getLinkTargetByClass(ilObjLiveVotingGUI::class, 'selectedType6'));
+        $button = $f->button()->bulky($glyph, '<div style="margin-left:10px">'.$this->plugin->txt("voting_type_1").' <br/><small><muted>'.$this->plugin->txt("voting_type_1_info").'</muted></small></div>', $this->control->getLinkTargetByClass(ilObjLiveVotingGUI::class, 'selectedChoices'));
+        $button2 = $f->button()->bulky($glyph, '<div style="margin-left:10px">'.$this->plugin->txt("voting_type_2").' <br/><small><muted>'.$this->plugin->txt("voting_type_2_info").'</muted></small></div>', $this->control->getLinkTargetByClass(ilObjLiveVotingGUI::class, 'selectedFreeInput'));
+        $button3 = $f->button()->bulky($glyph, '<div style="margin-left:10px">'.$this->plugin->txt("voting_type_4").' <br/><small><muted>'.$this->plugin->txt("voting_type_4_info").'</muted></small></div>', $this->control->getLinkTargetByClass(ilObjLiveVotingGUI::class, 'selectedType4'));
+        $button4 = $f->button()->bulky($glyph, '<div style="margin-left:10px">'.$this->plugin->txt("voting_type_5").' <br/><small><muted>'.$this->plugin->txt("voting_type_5_info").'</muted></small></div>', $this->control->getLinkTargetByClass(ilObjLiveVotingGUI::class, 'selectedType5'));
+        $button5 = $f->button()->bulky($glyph, '<div style="margin-left:10px">'.$this->plugin->txt("voting_type_6").' <br/><small><muted>'.$this->plugin->txt("voting_type_6_info").'</muted></small></div>', $this->control->getLinkTargetByClass(ilObjLiveVotingGUI::class, 'selectedRange'));
 
 
         $uri = new \ILIAS\Data\URI('https://ilias.de');

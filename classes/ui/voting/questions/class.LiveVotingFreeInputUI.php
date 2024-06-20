@@ -39,11 +39,11 @@ use LiveVotingQuestion;
 use LiveVotingQuestionOption;
 
 /**
- * Class LiveVotingChoicesUI
+ * Class LiveVotingFreeInputUI
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
  * @ilCtrl_IsCalledBy  ilObjLiveVotingGUI: ilObjPluginGUI
  */
-class LiveVotingChoicesUI
+class LiveVotingFreeInputUI
 {
     /**
      * @var LiveVotingQuestion
@@ -65,10 +65,7 @@ class LiveVotingChoicesUI
     protected renderer $renderer;
     protected $request;
 
-    /**
-     * @throws LiveVotingException
-     */
-    public function __construct(?int $question_id = null)
+    public function __construct(?LiveVotingQuestion $question = null)
     {
         global $DIC;
 
@@ -78,8 +75,8 @@ class LiveVotingChoicesUI
         $this->factory = $DIC->ui()->factory();
         $this->renderer = $DIC->ui()->renderer();
 
-        if($question_id) {
-            $this->question = LiveVotingQuestion::loadQuestionById($question_id);
+        if($question) {
+            $this->question = $question;
         }
     }
 
@@ -108,39 +105,24 @@ class LiveVotingChoicesUI
                 ->withValue(isset($this->question) ? $this->question->getColumns() : 1);
 
 
-            $section_questions = $this->factory->input()->field()->section($form_questions, $this->plugin->txt("player_voting_list"), $this->plugin->txt("voting_type_1"));
+            $section_questions = $this->factory->input()->field()->section($form_questions, $this->plugin->txt("player_voting_list"), $this->plugin->txt("voting_type_2"));
 
 
             //Answers section
             $form_answers = [];
 
-            $form_answers["selection"] = $this->factory->input()->field()->checkbox(
-                $this->plugin->txt('qtype_1_multi_selection'),
-                $this->plugin->txt('qtype_1_multi_selection_info'))->withValue(isset($this->question) ? $this->question->isMultiSelection() : false);
+            $form_answers["percentages"] = $this->factory->input()->field()->checkbox(
+                $this->plugin->txt('qtype_2_multi_free_input'),
+                $this->plugin->txt('qtype_2_multi_free_input_info'))->withValue(isset($this->question) ? $this->question->isMultiSelection() : false);
 
             if(isset($this->question)) {
                 $options = $this->question->getOptions();
             }
 
-            $form_answers["hidden"] = $this->factory->input()->field()->hidden()
-                ->withValue(isset($options) ? htmlspecialchars(json_encode(array_map(function($option) {
-                    return json_encode([
-                        "text" => $option->getText(),
-                        "id" => $option->getId()
-                    ]);
-                }, $options), JSON_UNESCAPED_UNICODE) ) : "")
-                ->withOnLoadCode(function ($id) {
-                    return "xlvo.initHiddenInput('".$id."')";
-                })
-                ->withLabel('options');
+            $form_answers["answer_field"] = $DIC->ui()->factory()->input()->field()->radio($this->plugin->txt('obj_frozen_behaviour'), "")
+                ->withOption('value1', $this->plugin->txt('qtype_2_answer_field_single_line'), $this->plugin->txt('qtype_2_answer_field_single_line_info'))
+                ->withOption('value2', $this->plugin->txt('qtype_2_answer_field_multi_line'), $this->plugin->txt('qtype_2_answer_field_multi_line_info'));
 
-            $form_answers["input"] = $this->factory->input()->field()->text(
-                $this->plugin->txt('qtype_1_options'))
-                ->withOnLoadCode(function ($id) {
-                    return "xlvo.initMultipleInputs('".$id."')";
-                })
-                ->withMaxLength(255)
-                ->withRequired(true);
 
 
             $section_answers = $this->factory->input()->field()->section($form_answers, $this->plugin->txt("qtype_form_header"), "");
@@ -237,8 +219,7 @@ class LiveVotingChoicesUI
     {
         if ($result && isset($result["config_question"], $result["config_answers"]["hidden"]) && $result["config_answers"]["hidden"] !== "") {
             $question_data = $result["config_question"];
-            $answers_data = $result["config_answers"];
-            $options_data = json_decode($answers_data["hidden"]);
+            $options_data = json_decode($result["config_answers"]["hidden"]);
 
 
             if (!empty($options_data)) {
@@ -247,7 +228,7 @@ class LiveVotingChoicesUI
                 $question->setTitle($question_data["title"] ?? null);
                 $question->setQuestion($question_data["question"] ?? null);
                 $question->setColumns((int)($question_data["columns"] ?? 0));
-                $question->setMultiSelection($answers_data["selection"] ?? false);
+                $question->setMultiSelection($question_data["selection"] ?? false);
 
                 $old_options = $question->getOptions();
 
