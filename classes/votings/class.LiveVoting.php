@@ -267,6 +267,8 @@ class LiveVoting
             $this->setVotingHistory((bool) $result[0]["voting_history"]);
             $this->setShowAttendees((bool) $result[0]["show_attendees"]);
             $this->setPuk($result[0]["puk"]);
+        } else {
+            $this->loadDefaultValues();
         }
 
         $questions_id = $database->select("rep_robj_xlvo_voting_n", array(
@@ -276,6 +278,40 @@ class LiveVoting
         foreach ($questions_id as $question_id) {
             $this->questions[] = LiveVotingQuestion::loadQuestionById((int) $question_id["id"]);
         }
+    }
+
+    /**
+     * Load default values for the voting
+     */
+    private function loadDefaultValues(): void
+    {
+        $this->setPin($this->generateCode(4));
+        $this->setOnline(false);
+        $this->setAnonymous(false);
+        $this->setFrozenBehaviour(1);
+        $this->setresultsBehaviour(1);
+        $this->setVotingHistory(false);
+        $this->setShowAttendees(false);
+        $this->setPuk($this->generateCode(10));
+    }
+
+    /**
+     * Generate a random code
+     *
+     * @param int $lenght
+     * @return string
+     */
+    private function generateCode(int $lenght): string
+    {
+        // TODO: Prevenir que no se generen códigos repetidos
+        $characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        $pin = "";
+
+        for ($i = 0; $i < $lenght; $i++) {
+            $pin .= $characters[rand(0, strlen($characters) - 1)];
+        }
+
+        return $pin;
     }
 
     /**

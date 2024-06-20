@@ -89,21 +89,20 @@ class LiveVotingSettingsUI
 
         try {
             $this->control->setParameterByClass('ilObLiveVotingGUI', 'cmd', 'editProperties');
-            $object = $this->object;
             $titleInput = $DIC->ui()->factory()->input()->field()->text($this->plugin->txt("obj_title"), '')
-                ->withValue($object->getTitle())
+                ->withValue($this->object->getTitle())
                 ->withRequired(true)
                 ->withAdditionalTransformation($DIC->refinery()->custom()->transformation(
-                    function ($v) use ($object) {
-                        //$this->object->setTitle($v);
+                    function ($v) {
+                        $this->object->setTitle($v);
                     }
                 ));
 
             $descriptionInput = $DIC->ui()->factory()->input()->field()->textarea($this->plugin->txt("obj_description"), '')
-                ->withValue($object->getDescription())
+                ->withValue($this->object->getDescription())
                 ->withAdditionalTransformation($DIC->refinery()->custom()->transformation(
-                    function ($v) use ($object) {
-                        //$this->object->setDescription($v);
+                    function ($v) {
+                        $this->object->setDescription($v);
                     }
                 ));
 
@@ -113,37 +112,37 @@ class LiveVotingSettingsUI
             ];
 
             $onlineCheckbox = $DIC->ui()->factory()->input()->field()->checkbox($this->plugin->txt("obj_online"), $this->plugin->txt("obj_info_online"))
-                ->withValue(true)
+                ->withValue($this->object->getLiveVoting()->isOnline())
                 ->withAdditionalTransformation($DIC->refinery()->custom()->transformation(
-                    function ($v) use ($object) {
-                        //$this->object->setOnline($v);
+                    function ($v) {
+                        $this->object->getLiveVoting()->setOnline((bool) $v);
                     }
                 ));
             $formFields['online'] = $onlineCheckbox;
 
             $voteLoginCheck = $DIC->ui()->factory()->input()->field()->checkbox($this->plugin->txt("obj_anonymous"), $this->plugin->txt("obj_info_anonymous"))
-                ->withValue(false)
+                ->withValue($this->object->getLiveVoting()->isAnonymous())
                 ->withAdditionalTransformation($DIC->refinery()->custom()->transformation(
-                    function ($v) use ($object) {
-                        //$this->object->setOnline($v);
+                    function ($v) {
+                        $this->object->getLiveVoting()->setAnonymous((bool) $v);
                     }
                 ));
             $formFields['vote_login_check'] = $voteLoginCheck;
 
             $voteHistoryCheck = $DIC->ui()->factory()->input()->field()->checkbox($this->plugin->txt("voting_history"), $this->plugin->txt("voting_history_info"))
-                ->withValue(false)
+                ->withValue($this->object->getLiveVoting()->isVotingHistory())
                 ->withAdditionalTransformation($DIC->refinery()->custom()->transformation(
-                    function ($v) use ($object) {
-                        //$this->object->setOnline($v);
+                    function ($v) {
+                        $this->object->getLiveVoting()->setVotingHistory((bool) $v);
                     }
                 ));
             $formFields['vote_history_check'] = $voteHistoryCheck;
 
             $showAttendeesCheck = $DIC->ui()->factory()->input()->field()->checkbox($this->plugin->txt("show_attendees"), $this->plugin->txt("show_attendees_info"))
-                ->withValue(false)
+                ->withValue($this->object->getLiveVoting()->isShowAttendees())
                 ->withAdditionalTransformation($DIC->refinery()->custom()->transformation(
-                    function ($v) use ($object) {
-                        //$this->object->setOnline($v);
+                    function ($v) {
+                        $this->object->getLiveVoting()->setShowAttendees((bool) $v);
                     }
                 ));
             $formFields['show_attendees'] = $showAttendeesCheck;
@@ -155,16 +154,28 @@ class LiveVotingSettingsUI
             $formFields = [];
 
             $frozenOptions = $DIC->ui()->factory()->input()->field()->radio($this->plugin->txt('obj_frozen_behaviour'), "")
-                ->withOption('value1', $this->plugin->txt('obj_frozen_alway_on'), $this->plugin->txt('obj_frozen_alway_on_info'))
-                ->withOption('value2', $this->plugin->txt('obj_frozen_alway_off'), $this->plugin->txt('obj_frozen_alway_off_info'))
-                ->withOption('value3', $this->plugin->txt('obj_frozen_reuse'), $this->plugin->txt('obj_frozen_reuse_info'));
+                ->withOption("0", $this->plugin->txt('obj_frozen_alway_on'), $this->plugin->txt('obj_frozen_alway_on_info'))
+                ->withOption("1", $this->plugin->txt('obj_frozen_alway_off'), $this->plugin->txt('obj_frozen_alway_off_info'))
+                ->withOption("2", $this->plugin->txt('obj_frozen_reuse'), $this->plugin->txt('obj_frozen_reuse_info'))
+                ->withValue($this->object->getLiveVoting()->getFrozenBehaviour())
+                ->withAdditionalTransformation($DIC->refinery()->custom()->transformation(
+                    function ($v) {
+                        $this->object->getLiveVoting()->setFrozenBehaviour((int) $v);
+                    }
+                ));
 
             $formFields['frozen_options'] = $frozenOptions;
 
             $resultsOptions = $DIC->ui()->factory()->input()->field()->radio($this->plugin->txt('obj_results_behaviour'), "")
-                ->withOption('value1', $this->plugin->txt('obj_results_alway_on'), $this->plugin->txt('obj_results_alway_on_info'))
-                ->withOption('value2', $this->plugin->txt('obj_results_alway_off'), $this->plugin->txt('obj_results_alway_off_info'))
-                ->withOption('value3', $this->plugin->txt('obj_frozen_reuse'), $this->plugin->txt('obj_results_reuse_info'));
+                ->withOption("0", $this->plugin->txt('obj_results_alway_on'), $this->plugin->txt('obj_results_alway_on_info'))
+                ->withOption("1", $this->plugin->txt('obj_results_alway_off'), $this->plugin->txt('obj_results_alway_off_info'))
+                ->withOption("2", $this->plugin->txt('obj_frozen_reuse'), $this->plugin->txt('obj_results_reuse_info'))
+                ->withValue($this->object->getLiveVoting()->getResultsBehaviour())
+                ->withAdditionalTransformation($DIC->refinery()->custom()->transformation(
+                    function ($v) {
+                        $this->object->getLiveVoting()->setResultsBehaviour((int) $v);
+                    }
+                ));
 
             $formFields['results_options'] = $resultsOptions;
 
