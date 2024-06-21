@@ -179,7 +179,7 @@ class liveVotingTableGUI extends ilTable2GUI
 
         //$question = $this->shorten($question);
         $this->tpl->setVariable('QUESTION', ilLegacyFormElementsUtil::prepareTextareaOutput($this->shorten($question->getQuestion()), true));
-        $this->tpl->setVariable('TYPE', $this->txt('voting_type_1'));
+        $this->tpl->setVariable('TYPE', $this->txt('voting_type_'.$a_set['voting_type']));
 
         $voting_status = $this->getVotingStatus("STATUS");
         //		$this->tpl->setVariable('STATUS', $voting_status); // deactivated at the moment
@@ -251,6 +251,7 @@ class liveVotingTableGUI extends ilTable2GUI
         $collection = $database->select("rep_robj_xlvo_voting_n", array(
             "obj_id" => $this->voting_gui->getObjId(),
         ), null, "ORDER BY ".$sorting_column." ".$sorting_direction." LIMIT ".$offset.", ".$num);
+
 
 
         foreach ($this->filter as $filter_key => $filter_value) {
