@@ -28,7 +28,7 @@ abstract class LiveVotingQuestion
         "Choices" => 1,
         "FreeText" =>2,
         "Order" => 4,
-        "Priorities" => 5, // This is the same as Order but its defined to give support to the old version of the plugin
+        "Priorities" => 5,
         "NumberRange" => 6,
     );
 
@@ -80,10 +80,10 @@ abstract class LiveVotingQuestion
                     $question = new LiveVotingFreeTextQuestion($result[0]);
                     break;
                 case self::QUESTION_TYPES_IDS["Priorities"]:
-                    $question = new LiveVotingOrderQuestion($result[0]);
+                    $question = new LiveVotingPrioritiesQuestion($result[0]);
                     break;
                 case self::QUESTION_TYPES_IDS["Order"]:
-                    $question = new LiveVotingPrioritiesQuestion($result[0]);
+                    $question = new LiveVotingOrderQuestion($result[0]);
                     break;
                 case self::QUESTION_TYPES_IDS["NumberRange"]:
                     $question = new LiveVotingNumberRangeQuestion($result[0]);
