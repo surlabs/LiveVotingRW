@@ -10,7 +10,8 @@ const xlvo = {
 
         if(xlvo.inputs.length>0){
             for(let i = 0; i < xlvo.inputs.length; i++){
-                const data = JSON.parse(xlvo.inputs[i]);
+                console.log(xlvo.inputs);
+                const data =  xlvo.inputs[i];
 
                 const newInput = xlvo.addMultipleInput(input, i+1, parseInt(data.id) ?? 0);
 
@@ -32,7 +33,7 @@ const xlvo = {
         let hiddenInput = $(this.hiddenId).val();
         if(hiddenInput.length!==0){
             try{
-                xlvo.inputs = JSON.parse(hiddenInput);
+                xlvo.inputs = JSON.parse(hiddenInput.replace(/\\'/g, "\""));
             }catch (e){
                 console.log("Parsing input error");
             }
@@ -49,14 +50,14 @@ const xlvo = {
         $(".option-input").each(function(i, element){
             if($(element).val() != ""){
                 xlvo.inputs.push({
-                    "text": $(element).val(),
-                    "id": $(element).attr("option-id") ?? 0
+                    'text': $(element).val(),
+                    'id': $(element).attr("option-id") ?? 0
                 });
             }
         });
 
         // Convierte el array a JSON
-        let jsonString = JSON.stringify(xlvo.inputs);
+        let jsonString = JSON.stringify(xlvo.inputs).replace(/"/g, "\\'");
 
         // Escapa las comillas simples en el JSON
         //jsonString = jsonString.replaceAll("\"", "'");

@@ -39,11 +39,11 @@ use LiveVotingQuestion;
 use LiveVotingQuestionOption;
 
 /**
- * Class LiveVotingChoicesUI
+ * Class LiveVotingPrioritiesUI
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
  * @ilCtrl_IsCalledBy  ilObjLiveVotingGUI: ilObjPluginGUI
  */
-class LiveVotingChoicesUI
+class LiveVotingPrioritiesUI
 {
     /**
      * @var LiveVotingQuestion
@@ -108,15 +108,11 @@ class LiveVotingChoicesUI
                 ->withValue(isset($this->question) ? $this->question->getColumns() : 1);
 
 
-            $section_questions = $this->factory->input()->field()->section($form_questions, $this->plugin->txt("player_voting_list"), $this->plugin->txt("voting_type_1"));
+            $section_questions = $this->factory->input()->field()->section($form_questions, $this->plugin->txt("player_voting_list"), $this->plugin->txt("voting_type_5"));
 
 
             //Answers section
             $form_answers = [];
-
-            $form_answers["selection"] = $this->factory->input()->field()->checkbox(
-                $this->plugin->txt('qtype_1_multi_selection'),
-                $this->plugin->txt('qtype_1_multi_selection_info'))->withValue(isset($this->question) ? $this->question->isMultiSelection() : false);
 
             if(isset($this->question)) {
                 $options = $this->question->getOptions();

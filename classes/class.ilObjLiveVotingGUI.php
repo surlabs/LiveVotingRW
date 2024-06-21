@@ -21,6 +21,7 @@ declare(strict_types=1);
 use LiveVoting\UI\LiveVotingChoicesUI;
 use LiveVoting\UI\LiveVotingFreeInputUI;
 use LiveVoting\UI\LiveVotingManageUI;
+use LiveVoting\UI\LiveVotingPrioritiesUI;
 use LiveVoting\UI\LiveVotingRangeUI;
 use LiveVoting\UI\LiveVotingSettingsUI;
 use LiveVoting\UI\LiveVotingUI;
@@ -28,8 +29,8 @@ use LiveVoting\UI\LiveVotingUI;
 /**
  * Class ilObjLiveVotingGUI
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
- * @ilCtrl_isCalledBy ilObjLiveVotingGUI: ilRepositoryGUI, ilObjPluginDispatchGUI, ilAdministrationGUI, LiveVotingUI, LiveVotingChoicesUI, LiveVotingManageUI, LiveVotingSettingsUI, LiveVotingFreeInputUI, LiveVotingRangeUI
- * @ilCtrl_Calls      ilObjLiveVotingGUI: ilObjectCopyGUI, ilPermissionGUI, ilInfoScreenGUI, ilCommonActionDispatcherGUI, LiveVotingUI, LiveVotingChoicesUI, LiveVotingManageUI, LiveVotingSettingsUI, LiveVotingFreeInputUI, LiveVotingRangeUI
+ * @ilCtrl_isCalledBy ilObjLiveVotingGUI: ilRepositoryGUI, ilObjPluginDispatchGUI, ilAdministrationGUI, LiveVotingUI, LiveVotingChoicesUI, LiveVotingManageUI, LiveVotingSettingsUI, LiveVotingFreeInputUI, LiveVotingRangeUI, LiveVotingPrioritiesUI
+ * @ilCtrl_Calls      ilObjLiveVotingGUI: ilObjectCopyGUI, ilPermissionGUI, ilInfoScreenGUI, ilCommonActionDispatcherGUI, LiveVotingUI, LiveVotingChoicesUI, LiveVotingManageUI, LiveVotingSettingsUI, LiveVotingFreeInputUI, LiveVotingRangeUI, LiveVotingPrioritiesUI
  */
 class ilObjLiveVotingGUI extends ilObjectPluginGUI
 {
@@ -71,6 +72,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             case 'selectType':
             case 'selectedChoices':
             case 'selectedFreeInput':
+            case 'selectedPriorities':
             case 'selectedRange':
             case 'updateProperties':
                 $this->{$cmd}();
@@ -192,6 +194,37 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             }
         } else {
             $this->tpl->setContent($DIC->ui()->renderer()->render($form));
+        }
+    }
+
+    /**
+     * @throws ilException
+     * @throws ilCtrlException
+     * @throws LiveVotingException
+     */
+    public function selectedPriorities(): void
+    {
+        global $DIC;
+        $this->tabs->activateTab("tab_manage");
+
+        $liveVotingPrioritiesUI = new LiveVotingPrioritiesUI();
+        $form = $liveVotingPrioritiesUI->getChoicesForm();
+        if($DIC->http()->request()->getMethod() == "POST") {
+
+            $id = $liveVotingPrioritiesUI->save($form->withRequest($DIC->http()->request())->getData());
+
+            if($id !== 0){
+                $DIC->ctrl()->setParameter($this, "question_id", $id);
+                $DIC->ctrl()->setParameter($this, "show_success", true);
+                $DIC->ctrl()->redirect($this, "edit");
+
+            } else {
+                $saving_info = $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure($DIC->language()->txt("form_input_not_valid")));
+                $this->tpl->setContent($saving_info.$DIC->ui()->renderer()->render($form->withRequest($DIC->http()->request())));
+            }
+        } else {
+            $this->tpl->setContent($DIC->ui()->renderer()->render($form));
+
         }
     }
 
