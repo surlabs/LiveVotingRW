@@ -79,9 +79,11 @@ abstract class LiveVotingQuestion
                 case self::QUESTION_TYPES_IDS["FreeText"]:
                     $question = new LiveVotingFreeTextQuestion($result[0]);
                     break;
-                case self::QUESTION_TYPES_IDS["Order"]:
                 case self::QUESTION_TYPES_IDS["Priorities"]:
                     $question = new LiveVotingOrderQuestion($result[0]);
+                    break;
+                case self::QUESTION_TYPES_IDS["Order"]:
+                    $question = new LiveVotingPrioritiesQuestion($result[0]);
                     break;
                 case self::QUESTION_TYPES_IDS["NumberRange"]:
                     $question = new LiveVotingNumberRangeQuestion($result[0]);
@@ -110,8 +112,10 @@ abstract class LiveVotingQuestion
                 $question = new LiveVotingFreeTextQuestion();
                 break;
             case "Order":
-            case "Priorities":
                 $question = new LiveVotingOrderQuestion();
+                break;
+            case "Priorities":
+                $question = new LiveVotingPrioritiesQuestion();
                 break;
             case "NumberRange":
                 $question = new LiveVotingNumberRangeQuestion();

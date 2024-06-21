@@ -86,7 +86,7 @@ class LiveVotingPrioritiesUI
     /**
      * @throws ilException
      */
-    public function getChoicesForm(): Form
+    public function getPrioritiesForm(): Form
     {
         global $DIC;
         try {
@@ -151,7 +151,7 @@ class LiveVotingPrioritiesUI
                 $form_action = $this->control->getFormActionByClass(ilObjLiveVotingGUI::class, "edit");
 
             } else {
-                $form_action = $this->control->getFormActionByClass(ilObjLiveVotingGUI::class, "selectedChoices");
+                $form_action = $this->control->getFormActionByClass(ilObjLiveVotingGUI::class, "selectedPriorities");
             }
 
             $DIC->ui()->mainTemplate()->addJavaScript($this->plugin->getDirectory() . "/templates/js/xlvo.js");
@@ -237,12 +237,11 @@ class LiveVotingPrioritiesUI
             $options_data = json_decode(str_replace("\'", '"',$answers_data["hidden"]));
 
             if (!empty($options_data)) {
-                $question = $question_id ? LiveVotingQuestion::loadQuestionById($question_id) : LiveVotingQuestion::loadNewQuestion("Choices");
+                $question = $question_id ? LiveVotingQuestion::loadQuestionById($question_id) : LiveVotingQuestion::loadNewQuestion("Priorities");
 
                 $question->setTitle($question_data["title"] ?? null);
                 $question->setQuestion($question_data["question"] ?? null);
                 $question->setColumns((int)($question_data["columns"] ?? 0));
-                $question->setMultiSelection($answers_data["selection"] ?? false);
 
                 $old_options = $question->getOptions();
 
