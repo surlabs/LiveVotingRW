@@ -18,6 +18,8 @@ declare(strict_types=1);
  *
  */
 
+use LiveVoting\Voting\LiveVotingParticipant;
+
 /**
  * Class LiveVoting
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>

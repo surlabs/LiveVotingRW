@@ -18,11 +18,86 @@ declare(strict_types=1);
  *
  */
 
+namespace LiveVoting\Voting;
+
 /**
  * Class LiveVotingParticipant
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
  */
 class LiveVotingParticipant
 {
+    protected static $instance;
+    protected $type = 1;
+    protected $identifier = '';
 
+    public static function getInstance(): LiveVotingParticipant
+    {
+        if (!isset(self::$instance)) {
+            self::$instance = new self();
+        }
+
+        return self::$instance;
+    }
+
+
+    /**
+     * @return int
+     */
+    public function getType(): int
+    {
+        return $this->type;
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function isILIASUser(): bool
+    {
+        return ($this->getType() == 1);
+    }
+
+
+    /**$
+     * @return bool
+     */
+    public function isPINUser(): bool
+    {
+        return ($this->getType() == 2);
+    }
+
+
+    /**
+     * @param $type
+     *
+     * @return $this
+     */
+    public function setType($type): LiveVotingParticipant
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getIdentifier(): string
+    {
+        return $this->identifier;
+    }
+
+
+    /**
+     * @param $identifier
+     *
+     * @return $this
+     */
+    public function setIdentifier($identifier): LiveVotingParticipant
+    {
+        $this->identifier = $identifier;
+
+        return $this;
+    }
 }

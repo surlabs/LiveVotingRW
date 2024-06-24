@@ -103,7 +103,7 @@ class liveVotingTableGUI extends ilTable2GUI
         $this->parseData();
 
         $this->setFormAction($DIC->ctrl()->getFormAction($a_parent_obj));
-        $this->addCommandButton('saveSorting', $this->txt('save_sorting'));
+        $this->addCommandButton('saveSorting', $this->txt('voting_save_sorting'));
     }
 
 
