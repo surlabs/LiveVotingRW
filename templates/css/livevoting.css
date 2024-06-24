@@ -1,10 +1,57 @@
-.multiple-input .action-buttons{
+.multiple-input{
     display:flex;
-    align-items:center;
-    gap:5px;
-    flex-shrink: 0;
+    width: 100%;
+    margin-bottom:10px;
+
 }
 
-.multiple-input .col-sm-10{
-    margin-bottom:5px;
+.multiple-input .action-buttons, .order-input-container .action-buttons{
+    display:flex;
+    align-items:end;
+    gap:5px;
+    flex-shrink: 0;
+    flex-direction: row !important;
+    justify-content: start !important;
+}
+
+.order-input-container .action-buttons{
+    padding-bottom:5px;
+}
+
+
+.order-input-container{
+    margin-bottom:10px;
+    display: flex;
+    width: 100%;
+}
+
+.order-input-container .inputs{
+    width: 100%;
+}
+
+.order-input-container .term-input{
+    height: 100%;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+.d-flex{
+    display: flex;
+}
+
+.shrink-0{
+    flex-shrink: 0;
+
+}
+
+.flex-col{
+    flex-direction:column;
+}
+
+.gap-1{
+    gap:.5rem;
+}
+
+.w-full{
+    width:100%;
 }
