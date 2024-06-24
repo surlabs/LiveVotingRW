@@ -5,7 +5,6 @@ const xlvo = {
     initMultipleInputs: function (id) {
         xlvo.parent = $("#" + id).parent();
         const input = $("#"+id);
-
         xlvo.parent.html("");  // Limpia el contenedor
 
         if(xlvo.inputs.length>0){
@@ -21,7 +20,6 @@ const xlvo = {
             }
         } else {
             const newInput = xlvo.addMultipleInput(input, $(".option-input").length + 1, 0);
-
             xlvo.parent.append(newInput);
         }
 
@@ -76,9 +74,6 @@ const xlvo = {
                 console.log("Parsing input error");
             }
         }
-
-
-
     },
 
     updateMultipleInputs: function(){
@@ -131,7 +126,6 @@ const xlvo = {
             newInputHtml.attr('option-id', option_id);
         }
 
-
         return `
             <div class="multiple-input gap-1">
                 <div class="w-full">
@@ -158,7 +152,6 @@ const xlvo = {
         if(option_id && option_id !== 0) {
             newInputHtml.attr('option-id', option_id);
         }
-
 
         return `
             <div class="order-input-container gap-1">
@@ -192,8 +185,6 @@ const xlvo = {
                 const newInput = xlvo.addMultipleInput(newInputHTML, newIndex);
                 parent.append(newInput);
                 $(this.hiddenId).val(JSON.stringify(xlvo.updateMultipleInputs()));
-
-
                 break;
             case 'remove':
                 if ($(".multiple-input").length > 1) {
@@ -234,14 +225,11 @@ const xlvo = {
                 const newInput = xlvo.addCorrectOrderInput(newInputHTML, newIndex, newIndex);
                 parent.append(newInput);
                 xlvo.updateOrderInputs();
-
-
                 break;
             case 'remove':
                 if ($(".order-input").length > 1) {
                     parent.remove();
                     xlvo.updateOrderInputs();
-                    //$(this.hiddenId).val(JSON.stringify(xlvo.updateOrderInputs()));
                 }
                 break;
         }

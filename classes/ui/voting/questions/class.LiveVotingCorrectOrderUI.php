@@ -253,6 +253,12 @@ class LiveVotingCorrectOrderUI
                 }
             }
 
+            foreach ($options_data as $option_data) {
+                if (empty($option_data->text)) {
+                    return 0;
+                }
+            }
+
             if (!empty($options_data)) {
                 $question = $question_id ? LiveVotingQuestion::loadQuestionById($question_id) : LiveVotingQuestion::loadNewQuestion("Order");
 
