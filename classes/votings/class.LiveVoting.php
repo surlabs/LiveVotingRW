@@ -208,12 +208,12 @@ class LiveVoting
         $this->frozen_behaviour = $frozen_behaviour;
     }
 
-    public function getresultsBehaviour(): int
+    public function getResultsBehaviour(): int
     {
         return $this->results_behaviour;
     }
 
-    public function setresultsBehaviour(int $results_behaviour): void
+    public function setResultsBehaviour(int $results_behaviour): void
     {
         $this->results_behaviour = $results_behaviour;
     }
@@ -265,7 +265,7 @@ class LiveVoting
             $this->setOnline((bool) $result[0]["obj_online"]);
             $this->setAnonymous((bool) $result[0]["anonymous"]);
             $this->setFrozenBehaviour((int) $result[0]["frozen_behaviour"]);
-            $this->setresultsBehaviour((int) $result[0]["results_behaviour"]);
+            $this->setResultsBehaviour((int) $result[0]["results_behaviour"]);
             $this->setVotingHistory((bool) $result[0]["voting_history"]);
             $this->setShowAttendees((bool) $result[0]["show_attendees"]);
             $this->setPuk($result[0]["puk"]);
@@ -291,7 +291,7 @@ class LiveVoting
         $this->setOnline(false);
         $this->setAnonymous(false);
         $this->setFrozenBehaviour(1);
-        $this->setresultsBehaviour(1);
+        $this->setResultsBehaviour(1);
         $this->setVotingHistory(false);
         $this->setShowAttendees(false);
         $this->setPuk($this->generateCode(10));
