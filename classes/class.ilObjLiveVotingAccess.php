@@ -43,12 +43,14 @@ class ilObjLiveVotingAccess extends ilObjectPluginAccess
      *
      * @param int $obj_id
      * @return bool
-     * @throws LiveVotingException
      */
     public static function _isOffline(int $obj_id): bool
     {
+        //TODO: probar esto, no comprobado.
+        return ilObject::lookupOfflineStatus($obj_id);
+        /**
         $liveVoting = new LiveVoting($obj_id, true);
-
         return !$liveVoting->isOnline();
+         **/
     }
 }
