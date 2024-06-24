@@ -118,7 +118,7 @@ class LiveVotingConfig
      * Save the plugin configuration if the parameter is updated
      * @return bool|string
      */
-    public static function save(): bool|string
+    public static function save()
     {
         foreach (self::$updated as $key => $exist) {
             if ($exist) {
