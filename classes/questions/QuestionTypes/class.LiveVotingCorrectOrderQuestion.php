@@ -19,10 +19,10 @@ declare(strict_types=1);
  */
 
 /**
- * Class LiveVotingOrderQuestion
+ * Class LiveVotingCorrectOrderQuestion
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
  */
-class LiveVotingOrderQuestion extends LiveVotingQuestion
+class LiveVotingCorrectOrderQuestion extends LiveVotingQuestion
 {
     private int $columns = 1;
     private bool $randomise_option_sequence = false;
@@ -37,7 +37,7 @@ class LiveVotingOrderQuestion extends LiveVotingQuestion
     }
 
     public function getQuestionType(): string {
-        return "Order";
+        return "CorrectOrder";
     }
 
     public function save(?int $obj_id): int {

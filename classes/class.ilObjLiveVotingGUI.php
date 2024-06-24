@@ -209,7 +209,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         $this->tabs->activateTab("tab_manage");
 
         $liveVotingCorrectOrderUI = new LiveVotingCorrectOrderUI();
-        $form = $liveVotingCorrectOrderUI->getChoicesForm();
+        $form = $liveVotingCorrectOrderUI->getCorrectOrderForm();
         if($DIC->http()->request()->getMethod() == "POST") {
 
             $id = $liveVotingCorrectOrderUI->save($form->withRequest($DIC->http()->request())->getData());
@@ -510,6 +510,33 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
                     if($id !== 0){
                         $liveVotingPrioritiesUI = new LiveVotingPrioritiesUI($id);
                         $form = $liveVotingPrioritiesUI->getPrioritiesForm();
+
+                        $DIC->ctrl()->setParameter($this, "question_id", $id);
+                        $saving_info = $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->success($this->plugin->txt('msg_success_voting_updated')));
+                        $this->tpl->setContent($saving_info.$DIC->ui()->renderer()->render($form));
+                    } else {
+                        $this->tpl->setContent($DIC->ui()->renderer()->render($form->withRequest($DIC->http()->request())));
+                    }
+
+                } else {
+                    if(isset($_GET['show_success'])){
+                        $saving_info = $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->success($this->plugin->txt('msg_success_voting_created')));
+                    }
+                    $this->tpl->setContent($saving_info.$DIC->ui()->renderer()->render($form));
+
+                }
+                break;
+            case "CorrectOrder":
+                $liveVotingCorrectOrderUI = new LiveVotingCorrectOrderUI($question->getId());
+                $form = $liveVotingCorrectOrderUI->getCorrectOrderForm();
+                $saving_info = "";
+                if($DIC->http()->request()->getMethod() == "POST") {
+
+                    $id = $liveVotingCorrectOrderUI->save($form->withRequest($DIC->http()->request())->getData(), $question->getId());
+
+                    if($id !== 0){
+                        $liveVotingCorrectOrderUI = new LiveVotingCorrectOrderUI($id);
+                        $form = $liveVotingCorrectOrderUI->getCorrectOrderForm();
 
                         $DIC->ctrl()->setParameter($this, "question_id", $id);
                         $saving_info = $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->success($this->plugin->txt('msg_success_voting_updated')));

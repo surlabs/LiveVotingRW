@@ -86,7 +86,7 @@ class LiveVotingCorrectOrderUI
     /**
      * @throws ilException
      */
-    public function getChoicesForm(): Form
+    public function getCorrectOrderForm(): Form
     {
         global $DIC;
         try {
@@ -116,7 +116,7 @@ class LiveVotingCorrectOrderUI
 
             $form_answers["shuffle"] = $this->factory->input()->field()->checkbox(
                 $this->plugin->txt('qtype_4_option_randomise_option_after_save'),
-                $this->plugin->txt('qtype_4_option_randomise_option_after_save_info'))->withValue(isset($this->question) ? $this->question->isMultiSelection() : false);
+                $this->plugin->txt('qtype_4_option_randomise_option_after_save_info'))->withValue(isset($this->question) ? $this->question->isRandomiseOptionSequence() : false);
 
             if(isset($this->question)) {
                 $options = $this->question->getOptions();
@@ -260,16 +260,14 @@ class LiveVotingCorrectOrderUI
             }
 
             if (!empty($options_data)) {
-                $question = $question_id ? LiveVotingQuestion::loadQuestionById($question_id) : LiveVotingQuestion::loadNewQuestion("Order");
+                $question = $question_id ? LiveVotingQuestion::loadQuestionById($question_id) : LiveVotingQuestion::loadNewQuestion("CorrectOrder");
 
                 $question->setTitle($question_data["title"] ?? null);
                 $question->setQuestion($question_data["question"] ?? null);
                 $question->setColumns((int)($question_data["columns"] ?? 0));
-
+                $question->setRandomiseOptionSequence($answers_data["shuffle"] ?? false);
 
                 $old_options = $question->getOptions();
-
-
 
                 foreach ($old_options as $old_option) {
                     $found = false;
@@ -285,6 +283,10 @@ class LiveVotingCorrectOrderUI
 
                                 if (isset($option_data->text)) {
                                     $old_option->setText($option_data->text);
+                                }
+
+                                if (isset($option_data->order)) {
+                                    $old_option->setCorrectPosition($option_data->order);
                                 }
 
                                 $old_option->save($question->getId());
@@ -312,6 +314,10 @@ class LiveVotingCorrectOrderUI
 
                         if (isset($option_data->text)) {
                             $option->setText($option_data->text);
+                        }
+
+                        if (isset($option_data->order)) {
+                            $option->setCorrectPosition($option_data->order);
                         }
 
                         $option->setPosition($index);

@@ -27,7 +27,7 @@ abstract class LiveVotingQuestion
     const QUESTION_TYPES_IDS = array(
         "Choices" => 1,
         "FreeText" =>2,
-        "Order" => 4,
+        "CorrectOrder" => 4,
         "Priorities" => 5,
         "NumberRange" => 6,
     );
@@ -79,8 +79,8 @@ abstract class LiveVotingQuestion
                 case self::QUESTION_TYPES_IDS["FreeText"]:
                     $question = new LiveVotingFreeTextQuestion($result[0]);
                     break;
-                case self::QUESTION_TYPES_IDS["Order"]:
-                    $question = new LiveVotingOrderQuestion($result[0]);
+                case self::QUESTION_TYPES_IDS["CorrectOrder"]:
+                    $question = new LiveVotingCorrectOrderQuestion($result[0]);
                     break;
                 case self::QUESTION_TYPES_IDS["Priorities"]:
                     $question = new LiveVotingPrioritiesQuestion($result[0]);
@@ -111,8 +111,8 @@ abstract class LiveVotingQuestion
             case "FreeText":
                 $question = new LiveVotingFreeTextQuestion();
                 break;
-            case "Order":
-                $question = new LiveVotingOrderQuestion();
+            case "CorrectOrder":
+                $question = new LiveVotingCorrectOrderQuestion();
                 break;
             case "Priorities":
                 $question = new LiveVotingPrioritiesQuestion();

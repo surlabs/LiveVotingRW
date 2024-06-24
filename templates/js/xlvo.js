@@ -45,6 +45,7 @@ const xlvo = {
                 xlvo.parent.append(newInput);
 
                 $(".option-input").last().val(data.text ?? data);
+                $(".order-input").last().val(data.order ?? 1);
             }
         } else {
             const newInput = xlvo.addCorrectOrderInput(input, $(".option-input").length + 1, 1);
