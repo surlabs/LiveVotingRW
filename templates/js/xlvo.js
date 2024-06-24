@@ -25,7 +25,7 @@ const xlvo = {
             xlvo.parent.append(newInput);
         }
 
-        $(document).on("change" ,".option-input", function(){
+        $(document).on("keyup" ,".option-input", function(){
             xlvo.updateMultipleInputs();
         });
 
@@ -42,23 +42,23 @@ const xlvo = {
                 console.log(xlvo.inputs);
                 const data =  xlvo.inputs[i];
 
-                const newInput = xlvo.addCorrectOrderInput(input, i+1, parseInt(data.id) ?? 0);
+                const newInput = xlvo.addCorrectOrderInput(input, i+1, parseInt(data.order) ?? 1);
 
                 xlvo.parent.append(newInput);
 
                 $(".option-input").last().val(data.text ?? data);
             }
         } else {
-            const newInput = xlvo.addCorrectOrderInput(input, $(".option-input").length + 1, 0);
+            const newInput = xlvo.addCorrectOrderInput(input, $(".option-input").length + 1, 1);
 
             xlvo.parent.append(newInput);
         }
 
-        $(document).on("change" ,".order-input", function(){
+        $(document).on("keyup" ,".order-input", function(){
             xlvo.updateOrderInputs();
         });
 
-        $(document).on("change" ,".option-input", function(){
+        $(document).on("keyup" ,".option-input", function(){
             xlvo.updateOrderInputs();
         });
 
@@ -166,7 +166,7 @@ const xlvo = {
                     <div class="d-flex gap-1">
                         <div class="flex-col shrink-0">
                             Correct position
-                            <input type="number" class="form-control form-control-sm order-input" size="2" min="1" max="999" value="${index}">
+                            <input type="number" class="form-control form-control-sm order-input" size="2" min="1" max="999" value="${option_id}">
                         </div>
                         <div class="flex-col term-input">
                             Term
@@ -231,7 +231,7 @@ const xlvo = {
                 const newIndex = $(".order-input").length + 1;
                 const newInputHTML = firstInput.clone();
                 newInputHTML.attr('value', "");
-                const newInput = xlvo.addCorrectOrderInput(newInputHTML, newIndex);
+                const newInput = xlvo.addCorrectOrderInput(newInputHTML, newIndex, newIndex);
                 parent.append(newInput);
                 xlvo.updateOrderInputs();
 

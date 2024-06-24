@@ -114,11 +114,15 @@ class LiveVotingCorrectOrderUI
             //Answers section
             $form_answers = [];
 
+            $form_answers["shuffle"] = $this->factory->input()->field()->checkbox(
+                $this->plugin->txt('qtype_4_option_randomise_option_after_save'),
+                $this->plugin->txt('qtype_4_option_randomise_option_after_save_info'))->withValue(isset($this->question) ? $this->question->isMultiSelection() : false);
+
             if(isset($this->question)) {
                 $options = $this->question->getOptions();
             }
 
-            $form_answers["hidden"] = $this->factory->input()->field()->text("")
+            $form_answers["hidden"] = $this->factory->input()->field()->hidden()
                 ->withValue(isset($options) ? htmlspecialchars(str_replace('"', "\'", json_encode(array_map(function($option) {
                     return [
                         "text" => $option->getText(),
@@ -151,7 +155,7 @@ class LiveVotingCorrectOrderUI
                 $form_action = $this->control->getFormActionByClass(ilObjLiveVotingGUI::class, "edit");
 
             } else {
-                $form_action = $this->control->getFormActionByClass(ilObjLiveVotingGUI::class, "selectedChoices");
+                $form_action = $this->control->getFormActionByClass(ilObjLiveVotingGUI::class, "selectedCorrectOrder");
             }
 
             $DIC->ui()->mainTemplate()->addJavaScript($this->plugin->getDirectory() . "/templates/js/xlvo.js");
@@ -236,15 +240,30 @@ class LiveVotingCorrectOrderUI
             $answers_data = $result["config_answers"];
             $options_data = json_decode(str_replace("\'", '"',$answers_data["hidden"]));
 
+            $order = [];
+            foreach ($options_data as $option_data) {
+                if (isset($option_data->order)) {
+                    if (!is_numeric($option_data->order) || in_array($option_data->order, $order)) {
+                        return 0;
+                    }
+
+                    $order[] = $option_data->order;
+                } else {
+                   return 0;
+                }
+            }
+
             if (!empty($options_data)) {
-                $question = $question_id ? LiveVotingQuestion::loadQuestionById($question_id) : LiveVotingQuestion::loadNewQuestion("Choices");
+                $question = $question_id ? LiveVotingQuestion::loadQuestionById($question_id) : LiveVotingQuestion::loadNewQuestion("Order");
 
                 $question->setTitle($question_data["title"] ?? null);
                 $question->setQuestion($question_data["question"] ?? null);
                 $question->setColumns((int)($question_data["columns"] ?? 0));
-                $question->setMultiSelection($answers_data["selection"] ?? false);
+
 
                 $old_options = $question->getOptions();
+
+
 
                 foreach ($old_options as $old_option) {
                     $found = false;
