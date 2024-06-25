@@ -284,17 +284,56 @@ class LiveVoting
 
     /**
      * Load default values for the voting
+     * @throws LiveVotingException
      */
     private function loadDefaultValues(): void
     {
-        $this->setPin($this->generateCode(4));
+        $this->setPin($this->generatePin());
         $this->setOnline(false);
         $this->setAnonymous(false);
         $this->setFrozenBehaviour(1);
         $this->setResultsBehaviour(1);
         $this->setVotingHistory(false);
         $this->setShowAttendees(false);
-        $this->setPuk($this->generateCode(10));
+        $this->setPuk($this->generatePuk());
+    }
+
+    /**
+     * Generate a random pin
+     * @throws LiveVotingException
+     */
+    public static function generatePin(): string
+    {
+        $database = new LiveVotingDatabase();
+        $pin = LiveVoting::generateCode(4);
+
+        $result = $database->select("rep_robj_xlvo_config_n", ["pin" => $pin]);
+
+        while (isset($result[0])) {
+            $pin = LiveVoting::generateCode(4);
+            $result = $database->select("rep_robj_xlvo_config_n", ["pin" => $pin]);
+        }
+
+        return $pin;
+    }
+
+    /**
+     * Generate a random puk
+     * @throws LiveVotingException
+     */
+    public static function generatePuk(): string
+    {
+        $database = new LiveVotingDatabase();
+        $puk = LiveVoting::generateCode(10);
+
+        $result = $database->select("rep_robj_xlvo_config_n", ["puk" => $puk]);
+
+        while (isset($result[0])) {
+            $puk = LiveVoting::generateCode(10);
+            $result = $database->select("rep_robj_xlvo_config_n", ["puk" => $puk]);
+        }
+
+        return $puk;
     }
 
     /**
@@ -303,9 +342,8 @@ class LiveVoting
      * @param int $lenght
      * @return string
      */
-    private function generateCode(int $lenght): string
+    private static function generateCode(int $lenght): string
     {
-        // TODO: Prevenir que no se generen códigos repetidos
         $characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         $pin = "";
 
