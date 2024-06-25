@@ -30,6 +30,6 @@ class LiveVotingInitialisation extends ilInitialisation
 {
     public static function initUIFramework(\ILIAS\DI\Container $c): void
     {
-
+        parent::initUIFramework($c);
     }
 }

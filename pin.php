@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 use LiveVoting\platform\ilias\LiveVotingContext;
 use LiveVoting\platform\LiveVotingConfig;
+use LiveVoting\player\LiveVotingInitialisationUI;
 use LiveVoting\Utils\ParamManager;
 use LiveVoting\votings\LiveVoting;
 use LiveVoting\votings\LiveVotingParticipant;
@@ -38,7 +39,8 @@ global $DIC;
 
 try {
     $pin = trim(filter_input(INPUT_GET, 'xlvo_pin'), "/");
-    //TODO: Carga de bootstrap
+
+    LiveVotingInitialisationUI::init();
 
     LiveVotingContext::setContext(1);
 

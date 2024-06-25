@@ -71,12 +71,12 @@ class LiveVotingContext extends ilContext
     public static function setContext($context)
     {
         if($context === 2 || $context === 1){
-            $result = setcookie('xlvo_context', (string)$context, null, '/');
+            $result = setcookie('xlvo_context', (string)$context, 0, '/');
         } else {
             throw new Exception('Invalid context received');
         }
 
-        if($result){
+        if(!$result){
             throw new Exception("error setting cookie");
         }
     }

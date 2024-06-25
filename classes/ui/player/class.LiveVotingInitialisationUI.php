@@ -23,6 +23,7 @@ namespace LiveVoting\player;
 use ilAccess;
 use ilAppEventHandler;
 use ilCtrlException;
+use ilDBWrapperFactory;
 use ilErrorHandling;
 use ilGlobalCache;
 use ilGlobalCacheSettings;
@@ -41,6 +42,7 @@ use ILIAS\Refinery\Factory;
 use ilIniFile;
 use ilInitialisation;
 use iljQueryUtil;
+use ilLanguage;
 use ilLiveVotingPlugin;
 use ilLoggerFactory;
 use ilMailMimeSenderFactory;
@@ -48,6 +50,8 @@ use ilMailMimeTransportFactory;
 use ilNavigationHistory;
 use ilObjectDataCache;
 use ilObjectDefinition;
+use ilRbacReview;
+use ilRbacSystem;
 use ilSetting;
 use ilTabsGUI;
 use ilTemplateException;
@@ -63,6 +67,7 @@ use LiveVoting\Context\Initialisation\Version\v7\xlvoStyleDefinition;
 use LiveVoting\Context\xlvoDummyUser6;
 use LiveVoting\Context\xlvoILIAS;
 use LiveVoting\Context\xlvoInitialisation;
+use LiveVoting\platform\ilias\DummyUser;
 use LiveVoting\Session\SessionHandler;
 use LiveVoting\Session\xlvoSessionHandler;
 use LiveVoting\Utils\ParamManager;
@@ -91,20 +96,21 @@ class LiveVotingInitialisationUI
     protected ilLiveVotingPlugin $pl;
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
-    protected function _construct($context = null)
+    protected function __construct($context = null)
     {
         if($context){
             LiveVotingContext::setContext($context);
         }
 
-        //$this->bootstrapApp();
+        $this->bootstrapApp();
     }
 
     /**
      * @param int|null $context
      * @return LiveVotingInitialisationUI
+     * @throws \Exception
      */
     public static function init(int $context = null): LiveVotingInitialisationUI
     {
@@ -147,6 +153,7 @@ class LiveVotingInitialisationUI
         $this->initTree();
         $this->initComponentService($GLOBALS["DIC"]);
         $this->initControllFlow();
+        $this->initAccessHandling();
         $this->initObjectDefinition();
         $this->initAccess();
         $this->initAppEventHandler();
@@ -159,7 +166,6 @@ class LiveVotingInitialisationUI
         $this->initNavigationHistory();
         $this->initHelp();
 
-        //TODO: Ver como inicializar esto
         LiveVotingInitialisation::initUIFramework($DIC);
     }
 
@@ -231,22 +237,35 @@ class LiveVotingInitialisationUI
 
     }
 
+    /**
+     * initialise database object $ilDB
+     */
+    private function initDatabase()
+    {
+        // build dsn of database connection and connect
+        $ilDB = ilDBWrapperFactory::getWrapper(IL_DB_TYPE);
+        $ilDB->initFromIniFile();
+        $ilDB->connect();
+
+        $this->makeGlobal("ilDB", $ilDB);
+    }
+
     private function loadIniFile()
     {
         $this->iliasIniFile = new ilIniFile("./ilias.ini.php");
         $this->iliasIniFile->read();
 
-        //$this->makeGlobal("iliasIniFile", $this->iliasIniFile);
+        $this->makeGlobal('ilIliasIniFile', $this->iliasIniFile);
 
         //Initialize constants
         define("ILIAS_DATA_DIR", $this->iliasIniFile->readVariable("clients", "datadir"));
-        define("ILIAS_WEB_DIR", $this->iliasIniFile->readVariable("clients", "webdir"));
+        define("ILIAS_WEB_DIR", $this->iliasIniFile->readVariable("clients", "path"));
         define("ILIAS_ABSOLUTE_PATH", $this->iliasIniFile->readVariable("server", "absolute_path"));
 
         //loggin
         define("ILIAS_LOG_DIR", $this->iliasIniFile->readVariable("log", "path"));
         define("ILIAS_LOG_FILE", $this->iliasIniFile->readVariable("log", "file"));
-        define("ILIAS_LOG_ENABLE", $this->iliasIniFile->readVariable("log", "enable"));
+        define("ILIAS_LOG_ENABLED", $this->iliasIniFile->readVariable("log", "enabled"));
         define("ILIAS_LOG_LEVEL", $this->iliasIniFile->readVariable("log", "level"));
         define("SLOW_REQUEST_TIME", $this->iliasIniFile->readVariable("log", "slow_request_time"));
 
@@ -304,11 +323,10 @@ class LiveVotingInitialisationUI
         // invalid client id / client ini
         if ($ilClientIniFile->ERROR != "") {
             $default_client = $this->iliasIniFile->readVariable("clients", "default");
-            setcookie("ilClientId", $default_client, null, "/");
+            setcookie("ilClientId", $default_client, 0, "/");
         }
 
-        //$this->makeGlobal("ilClientIniFile", $ilClientIniFile);
-        //TODO: Revisar los makeGlobal
+        $this->makeGlobal("ilClientIniFile", $ilClientIniFile);
 
         // set constants
         define("SESSION_REMINDER_LEADTIME", 30);
@@ -389,7 +407,7 @@ class LiveVotingInitialisationUI
     private function initSettings():void
     {
         $this->settings = new ilSetting();
-        //$this->makeGlobal("ilSetting", $this->settings);
+        $this->makeGlobal("ilSetting", $this->settings);
 
         // set anonymous user & role id and system role id
         define("ANONYMOUS_USER_ID", $this->settings->get("anonymous_user_id"));
@@ -445,14 +463,14 @@ class LiveVotingInitialisationUI
 
     private function initLanguage():void
     {
-        //$this->makeGlobal('lng', ilLanguage::getGlobalInstance());
+        $this->makeGlobal('lng', ilLanguage::getGlobalInstance());
     }
 
     /**
      * Build the http path for ILIAS
      * @return string
      */
-    private function buildHTTPPath(): string
+    private function buildHTTPPath()
     {
         $https = new ilHTTPS();
         //$this->makeGlobal("https", $https);
@@ -641,13 +659,13 @@ class LiveVotingInitialisationUI
         if (isset($_GET["client_id"]) and $_GET["client_id"] != "") {
             $_GET["client_id"] = stripslashes($_GET["client_id"]);
             if (!defined("IL_PHPUNIT_TEST")) {
-                setcookie("ilClientId", $_GET["client_id"], null, "/");
+                setcookie("ilClientId", $_GET["client_id"], 0, "/");
             }
         } else {
             if (isset($_COOKIE["ilClientId"]) and !$_COOKIE["ilClientId"]) {
                 // to do: ilias ini raus nehmen
                 $client_id = $this->iliasIniFile->readVariable("clients", "default");
-                setcookie("ilClientId", $client_id, null, "/");
+                setcookie("ilClientId", $client_id, 0, "/");
             }
         }
         if (!defined("IL_PHPUNIT_TEST") && isset($_COOKIE["ilClientId"])) {
@@ -685,8 +703,27 @@ class LiveVotingInitialisationUI
      */
     private function initUser()
     {
-        //TODO: Reemplazar xlvoDummyUser6
-        $this->makeGlobal('ilUser', new xlvoDummyUser6());
+        $this->makeGlobal('ilUser', new DummyUser());
+    }
+
+    /**
+     * Starting from ILIAS basic initialisation also needs rbac stuff.
+     * You may ask why? well: deep down ilias wants to initialize the footer. Event hough we don't
+     * want the footer. This may not seem too bad... but the footer wants to translate something
+     * and the translation somehow needs rbac. god...
+     *
+     * We can remove this when this gets fixed: Services/UICore/classes/class.ilTemplate.php:479
+     */
+    private function initAccessHandling()
+    {
+        $ilObjDataCache = new ilObjectDataCache();
+        $this->makeGlobal('ilObjDataCache', $ilObjDataCache);
+
+        $rbacreview = new ilRbacReview();
+        $this->makeGlobal('rbacreview', $rbacreview);
+
+        $rbacsystem = ilRbacSystem::getInstance();
+        $this->makeGlobal("rbacsystem", $rbacsystem);
     }
 
     /**
@@ -792,7 +829,7 @@ class LiveVotingInitialisationUI
         $this->makeGlobal("mail.mime.transport.factory",
             new ilMailMimeTransportFactory($DIC->settings(), $DIC->appEventHandler()));
 
-        $this->makeGlobal("mail.mime.sender.factory", new ilMailMimeSenderFactory(self::dic()->settings(),intval(ANONYMOUS_USER_ID)));
+        $this->makeGlobal("mail.mime.sender.factory", new ilMailMimeSenderFactory($DIC->settings(),intval(ANONYMOUS_USER_ID)));
     }
 
     /**
