@@ -147,4 +147,33 @@ class LiveVotingConfig
         // In case there is nothing to update, return true to avoid error messages
         return true;
     }
+
+    /**
+     * Get full api url
+     * @throws LiveVotingException
+     */
+    public static function getFullApiUrl(): string {
+        return self::getBaseVoteUrl() . ltrim("./Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/ilias.php", "./");
+    }
+
+    /**
+     * Get the base vote url
+     *
+     * @throws LiveVotingException
+     */
+    public static function getBaseVoteUrl(): string
+    {
+        if (self::get("allow_shortlink")) {
+            return rtrim(self::get("base_url"), "/") . "/";
+
+        }
+
+        $str = ILIAS_HTTP_PATH;
+
+        if (strpos(ILIAS_HTTP_PATH, 'Customizing')) {
+            $str = strstr(ILIAS_HTTP_PATH, 'Customizing', true);
+        }
+
+        return rtrim($str, "/") . "/";
+    }
 }
