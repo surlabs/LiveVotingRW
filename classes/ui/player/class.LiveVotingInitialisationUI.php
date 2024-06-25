@@ -20,16 +20,60 @@ declare(strict_types=1);
 
 namespace LiveVoting\player;
 
+use Closure;
+use ilAccess;
+use ilAppEventHandler;
+use ilErrorHandling;
+use ilGlobalCache;
+use ilGlobalCacheSettings;
 use ilGlobalTemplate;
+use ilGSProviderFactory;
+use ilHelp;
+use ILIAS\DI\Container;
 use ILIAS\DI\Exceptions\Exception;
+use ILIAS\GlobalScreen\Services;
+use ILIAS\HTTP\Cookies\CookieJarFactoryImpl;
+use ILIAS\HTTP\Request\RequestFactoryImpl;
+use ILIAS\HTTP\Response\ResponseFactoryImpl;
+use ILIAS\HTTP\Response\Sender\DefaultResponseSenderStrategy;
+use ILIAS\Refinery\Factory;
 use ilIniFile;
+use ilInitialisation;
+use iljQueryUtil;
 use ilLiveVotingPlugin;
+use ilMailMimeSenderFactory;
+use ilMailMimeTransportFactory;
+use ilNavigationHistory;
+use ilObjectDataCache;
+use ilObjectDefinition;
 use ilSetting;
+use ilTabsGUI;
+use ilTemplateException;
+use ilTimeZone;
+use ilToolbarGUI;
+use ilTree;
+use ilUIFramework;
+use ilUtil;
+use InitComponentService;
+use InitCtrlService;
+use InitResourceStorage;
 use LiveVoting\Context\Initialisation\Version\v7\xlvoBasicInitialisation;
 use LiveVoting\Context\Initialisation\Version\v7\xlvoStyleDefinition;
+use LiveVoting\Context\xlvoDummyUser6;
 use LiveVoting\Context\xlvoILIAS;
 use LiveVoting\Context\xlvoInitialisation;
 use LiveVoting\platform\LiveVotingContext;
+use LiveVoting\Session\SessionHandler;
+use LiveVoting\Session\xlvoSessionHandler;
+use LiveVoting\Utils\ParamManager;
+use LiveVotingConfig;
+use LiveVotingException;
+use ilCtrlException;
+use ilHTTPS;
+use ilLoggerFactory;
+use ilObject;
+use ilUIPluginRouterGUI;
+use LiveVoting;
 
 class LiveVotingInitialisationUI
 {
@@ -44,6 +88,11 @@ class LiveVotingInitialisationUI
      * @var ilSetting
      */
     protected ilSetting $settings;
+
+    /**
+     * @var ilLiveVotingPlugin
+     */
+    protected ilLiveVotingPlugin $pl;
 
     /**
      * @throws Exception
@@ -66,9 +115,18 @@ class LiveVotingInitialisationUI
         return new self($context);
     }
 
-/*    private function bootstrapApp()
+    /**
+     * @throws ilCtrlException
+     * @throws LiveVotingException
+     * @throws Exception
+     * @throws ilTemplateException
+     * @throws \Exception
+     */
+    private function bootstrapApp()
     {
+        global $DIC;
         //bootstrap ILIAS
+
 
         //file_put_contents( "/var/www/html/ilias/tmp" . "/" . "debug.txt", "v7/bootstrapApp" . "\n",FILE_APPEND);
 
@@ -93,7 +151,6 @@ class LiveVotingInitialisationUI
         $this->initTree();
         $this->initComponentService($GLOBALS["DIC"]);
         $this->initControllFlow();
-        $this->initAccessHandling();
         $this->initObjectDefinition();
         $this->initAccess();
         $this->initAppEventHandler();
@@ -105,8 +162,10 @@ class LiveVotingInitialisationUI
         $this->initTabs();
         $this->initNavigationHistory();
         $this->initHelp();
-        xlvoInitialisation::initUIFramework(self::dic()->dic());
-    }*/
+
+        //TODO: Ver como inicializar esto
+        xlvoInitialisation::initUIFramework($DIC);
+    }
 
     /**
      * Remove unsafe characters from GET
@@ -137,6 +196,10 @@ class LiveVotingInitialisationUI
         }
     }
 
+    /**
+     * @throws ilTemplateException
+     * @throws LiveVotingException
+     */
     private function initTemplate()
     {
         /*$styleDefinition = new xlvoStyleDefinition();
@@ -148,7 +211,652 @@ class LiveVotingInitialisationUI
 
         $tpl = new ilGlobalTemplate("tpl.main.html", true, true, "Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting", "DEFAULT", true);
 
-        //$participant
+        $param_manager = ParamManager::getInstance();
+
+        if(!$param_manager->getPuk()){
+            $tpl->touchBlock("navbar");
+        }
+
+        $tpl->addCss('./templates/default/delos.css');
+        $tpl->addCss($this->pl->getDirectory() . '/templates/default/default.css');
+
+        $tpl->addBlockFile("CONTENT", "content", "tpl.main_voter.html", "Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting");
+
+        $tpl->setVariable("BASE", LiveVotingConfig::getBaseVoteUrl());
+
+        //$this->makeGlobal("tpl", $tpl);
+
+        iljQueryUtil::initjQuery();
+        ilUIFramework::init();
+
+        $ilToolbar = new ilToolbarGUI();
+
+        //$this->makeGlobal("ilToolbar", $ilToolbar);
+
+    }
+
+    private function loadIniFile()
+    {
+        $this->iliasIniFile = new ilIniFile("./ilias.ini.php");
+        $this->iliasIniFile->read();
+
+        //$this->makeGlobal("iliasIniFile", $this->iliasIniFile);
+
+        //Initialize constants
+        define("ILIAS_DATA_DIR", $this->iliasIniFile->readVariable("clients", "datadir"));
+        define("ILIAS_WEB_DIR", $this->iliasIniFile->readVariable("clients", "webdir"));
+        define("ILIAS_ABSOLUTE_PATH", $this->iliasIniFile->readVariable("server", "absolute_path"));
+
+        //loggin
+        define("ILIAS_LOG_DIR", $this->iliasIniFile->readVariable("log", "path"));
+        define("ILIAS_LOG_FILE", $this->iliasIniFile->readVariable("log", "file"));
+        define("ILIAS_LOG_ENABLE", $this->iliasIniFile->readVariable("log", "enable"));
+        define("ILIAS_LOG_LEVEL", $this->iliasIniFile->readVariable("log", "level"));
+        define("SLOW_REQUEST_TIME", $this->iliasIniFile->readVariable("log", "slow_request_time"));
+
+        // read path + command for third party tools from ilias.ini
+        define("PATH_TO_CONVERT", $this->iliasIniFile->readVariable("tools", "convert"));
+        define("PATH_TO_FFMPEG", $this->iliasIniFile->readVariable("tools", "ffmpeg"));
+        define("PATH_TO_ZIP", $this->iliasIniFile->readVariable("tools", "zip"));
+        define("PATH_TO_MKISOFS", $this->iliasIniFile->readVariable("tools", "mkisofs"));
+        define("PATH_TO_UNZIP", $this->iliasIniFile->readVariable("tools", "unzip"));
+        define("PATH_TO_GHOSTSCRIPT", $this->iliasIniFile->readVariable("tools", "ghostscript"));
+        define("PATH_TO_JAVA", $this->iliasIniFile->readVariable("tools", "java"));
+        define("PATH_TO_HTMLDOC", $this->iliasIniFile->readVariable("tools", "htmldoc"));
+        define("URL_TO_LATEX", $this->iliasIniFile->readVariable("tools", "latex"));
+        define("PATH_TO_FOP", $this->iliasIniFile->readVariable("tools", "fop"));
+
+        // read virus scanner settings
+        switch ($this->iliasIniFile->readVariable("tools", "vscantype")) {
+            case "sophos":
+                define("IL_VIRUS_SCANNER", "Sophos");
+                define("IL_VIRUS_SCAN_COMMAND", $this->iliasIniFile->readVariable("tools", "scancommand"));
+                define("IL_VIRUS_CLEAN_COMMAND", $this->iliasIniFile->readVariable("tools", "cleancommand"));
+                break;
+
+            case "antivir":
+                define("IL_VIRUS_SCANNER", "AntiVir");
+                define("IL_VIRUS_SCAN_COMMAND", $this->iliasIniFile->readVariable("tools", "scancommand"));
+                define("IL_VIRUS_CLEAN_COMMAND", $this->iliasIniFile->readVariable("tools", "cleancommand"));
+                break;
+
+            case "clamav":
+                define("IL_VIRUS_SCANNER", "ClamAV");
+                define("IL_VIRUS_SCAN_COMMAND", $this->iliasIniFile->readVariable("tools", "scancommand"));
+                define("IL_VIRUS_CLEAN_COMMAND", $this->iliasIniFile->readVariable("tools", "cleancommand"));
+                break;
+
+            default:
+                define("IL_VIRUS_SCANNER", "None");
+                break;
+        }
+
+        $tz = ilTimeZone::initDefaultTimeZone($this->iliasIniFile);
+        define("IL_TIMEZONE", $tz);
+        define("IL_INITIAL_WD", getcwd());
+
+    }
+
+    private function loadClientIniFile()
+    {
+        $ini_file = "./" . ILIAS_WEB_DIR . "/" . CLIENT_ID . "/client.ini.php";
+
+        // get settings from ini file
+        $ilClientIniFile = new ilIniFile($ini_file);
+        $ilClientIniFile->read();
+
+        // invalid client id / client ini
+        if ($ilClientIniFile->ERROR != "") {
+            $default_client = $this->iliasIniFile->readVariable("clients", "default");
+            setcookie("ilClientId", $default_client, null, "/");
+        }
+
+        //$this->makeGlobal("ilClientIniFile", $ilClientIniFile);
+        //TODO: Revisar los makeGlobal
+
+        // set constants
+        define("SESSION_REMINDER_LEADTIME", 30);
+        define("DEBUG", $ilClientIniFile->readVariable("system", "DEBUG"));
+        define("SHOWNOTICES", $ilClientIniFile->readVariable("system", "SHOWNOTICES"));
+        define("DEBUGTOOLS", $ilClientIniFile->readVariable("system", "DEBUGTOOLS"));
+        define("ROOT_FOLDER_ID", $ilClientIniFile->readVariable('system', 'ROOT_FOLDER_ID'));
+        define("SYSTEM_FOLDER_ID", $ilClientIniFile->readVariable('system', 'SYSTEM_FOLDER_ID'));
+        define("ROLE_FOLDER_ID", $ilClientIniFile->readVariable('system', 'ROLE_FOLDER_ID'));
+        define("MAIL_SETTINGS_ID", $ilClientIniFile->readVariable('system', 'MAIL_SETTINGS_ID'));
+        $log_error_trace = $ilClientIniFile->readVariable('system', 'LOG_ERROR_TRACE');
+        define("LOG_ERROR_TRACE", $log_error_trace ? $log_error_trace : false);
+
+        define("OH_REF_ID", $ilClientIniFile->readVariable("system", "OH_REF_ID"));
+
+        define("SYSTEM_MAIL_ADDRESS", $ilClientIniFile->readVariable('system', 'MAIL_SENT_ADDRESS'));
+        define("MAIL_REPLY_WARNING", $ilClientIniFile->readVariable('system', 'MAIL_REPLY_WARNING'));
+
+        define("CLIENT_DATA_DIR", ILIAS_DATA_DIR . "/" . CLIENT_ID);
+        define("CLIENT_WEB_DIR", ILIAS_ABSOLUTE_PATH . "/" . ILIAS_WEB_DIR . "/" . CLIENT_ID);
+        define("CLIENT_NAME", $ilClientIniFile->readVariable('client', 'name'));
+
+        $val = $ilClientIniFile->readVariable("db", "type");
+        if ($val == "") {
+            define("IL_DB_TYPE", "mysql");
+        } else {
+            define("IL_DB_TYPE", $val);
+        }
+
+        $ilGlobalCacheSettings = new ilGlobalCacheSettings();
+        $ilGlobalCacheSettings->readFromIniFile($ilClientIniFile);
+        ilGlobalCache::setup($ilGlobalCacheSettings);
+
+        return true;
+
+    }
+
+    private function initSessionHandler()
+    {
+        $session = new SessionHandler();
+
+        session_set_save_handler(array(
+            &$session,
+            "open",
+        ), array(
+            &$session,
+            "close",
+        ), array(
+            &$session,
+            "read",
+        ), array(
+            &$session,
+            "write",
+        ), array(
+            &$session,
+            "destroy",
+        ), array(
+            &$session,
+            "gc",
+        ));
+
+        session_start();
+    }
+
+    /*
+        * @return void
+        */
+    private function initDependencyInjection():void
+    {
+        global $DIC;
+        //TODO: Aquí había un require_once al autoload de composer.
+        $DIC = new Container();
+        $DIC["ilLoggerFactory"] = function ($c){
+            return ilLoggerFactory::getInstance();
+        };
+    }
+
+    private function initSettings():void
+    {
+        $this->settings = new ilSetting();
+        //$this->makeGlobal("ilSetting", $this->settings);
+
+        // set anonymous user & role id and system role id
+        define("ANONYMOUS_USER_ID", $this->settings->get("anonymous_user_id"));
+        define("ANONYMOUS_ROLE_ID", $this->settings->get("anonymous_role_id"));
+        define("SYSTEM_USER_ID", $this->settings->get("system_user_id"));
+        define("SYSTEM_ROLE_ID", $this->settings->get("system_role_id"));
+        define("USER_FOLDER_ID", 7);
+
+        // recovery folder
+        define("RECOVERY_FOLDER_ID", $this->settings->get("recovery_folder_id"));
+
+        // installation id
+        define("IL_INST_ID", $this->settings->get("inst_id", "0"));
+
+        // define default suffix replacements
+        define("SUFFIX_REPL_DEFAULT", "php,php3,php4,inc,lang,phtml,htaccess");
+        define("SUFFIX_REPL_ADDITIONAL", $this->settings->get("suffix_repl_additional"));
+
+        // payment setting
+        define('IS_PAYMENT_ENABLED', false);
+    }
+
+    private function requireCommonIncludes():void
+    {
+        require_once 'include/inc.ilias_version.php';
+
+        //$this->makeGlobal("ilBench", new ilBenchmark());
+    }
+
+    private function initLocale():void
+    {
+        if (trim((string)$this->settings->get("locale"))) {
+            $larr = explode(",", trim($this->settings->get("locale")));
+            $ls = array();
+            $first = $larr[0];
+            foreach ($larr as $l) {
+                if (trim($l) != "") {
+                    $ls[] = $l;
+                }
+            }
+            if (count($ls) > 0) {
+                setlocale(LC_ALL, $ls);
+
+                // #15347 - making sure that floats are not changed
+                setlocale(LC_NUMERIC, "C");
+
+                if (class_exists("Collator")) {
+                    //$this->makeGlobal("ilCollator", new Collator($first));
+                }
+            }
+        }
+    }
+
+    private function initLanguage():void
+    {
+        //$this->makeGlobal('lng', ilLanguage::getGlobalInstance());
+    }
+
+    /**
+     * Build the http path for ILIAS
+     * @return string
+     */
+    private function buildHTTPPath(): string
+    {
+        $https = new ilHTTPS();
+        //$this->makeGlobal("https", $https);
+
+        if ($https->isDetected()) {
+            $protocol = 'https://';
+        } else {
+            $protocol = 'http://';
+        }
+        $host = $_SERVER['HTTP_HOST'];
+
+        $rq_uri = $_SERVER['REQUEST_URI'];
+
+        if (is_int($pos = strpos($rq_uri, "?"))) {
+            $rq_uri = substr($rq_uri, 0, $pos);
+        }
+
+        if (!defined('ILIAS_MODULE')) {
+            $path = pathinfo($rq_uri);
+            if (!$path['extension']) {
+                $uri = $rq_uri;
+            } else {
+                $uri = dirname($rq_uri);
+            }
+        } else {
+            $path = dirname($rq_uri);
+
+            $module = \ilFileUtils::removeTrailingPathSeparators(ILIAS_MODULE);
+
+            $dirs = explode('/', $module);
+            $uri = $path;
+            foreach ($dirs as $dir) {
+                $uri = dirname($uri);
+            }
+        }
+
+        $https->enableSecureCookies();
+
+        return define('ILIAS_HTTP_PATH', self::removeTrailingPathSeparators($protocol . $host . $uri));
+    }
+
+    /**
+     * @param string $path
+     * @return string
+     */
+    public static function removeTrailingPathSeparators(string $path): string
+    {
+        $path = preg_replace("/[\/\\\]+$/", "", $path);
+        return (string) $path;
+    }
+
+    /**
+     * @return void
+     */
+    private function initErrorHandling()
+    {
+        error_reporting(E_ALL&~E_DEPRECATED&~E_STRICT&~E_NOTICE);
+
+        $this->requireCommonIncludes();
+
+        // error handler
+        if (!defined('ERROR_HANDLER')) {
+            define('ERROR_HANDLER', 'PRETTY_PAGE');
+        }
+        if (!defined('DEVMODE')) {
+            define('DEVMODE', false);
+        }
+
+        require_once "./libs/composer/vendor/filp/whoops/src/Whoops/Util/SystemFacade.php";
+        require_once "./libs/composer/vendor/filp/whoops/src/Whoops/RunInterface.php";
+        require_once "./libs/composer/vendor/filp/whoops/src/Whoops/Run.php";
+        require_once "./libs/composer/vendor/filp/whoops/src/Whoops/Handler/HandlerInterface.php";
+        require_once "./libs/composer/vendor/filp/whoops/src/Whoops/Handler/Handler.php";
+        require_once "./libs/composer/vendor/filp/whoops/src/Whoops/Handler/CallbackHandler.php";
+
+        require_once "./Services/Init/classes/class.ilErrorHandling.php";
+        $ilErr = new ilErrorHandling();
+        //$this->makeGlobal("ilErr", $ilErr);
+        $ilErr->setErrorHandling(PEAR_ERROR_CALLBACK, array($ilErr, 'errorHandler'));
+    }
+
+    /**
+     * Init ilias data cache.
+     */
+    private function initDataCache()
+    {
+        $this->makeGlobal("ilObjDataCache", new ilObjectDataCache());
+    }
+
+    /**
+     * Init ilias object definition.
+     */
+    private function initObjectDefinition()
+    {
+        $this->makeGlobal("objDefinition", new ilObjectDefinition());
+    }
+
+    /**
+     * @throws ilCtrlException
+     */
+    private function initControllFlow()
+    {
+        global $DIC;
+
+        $DIC['refinery'] = function ($container) {
+            $dataFactory = new \ILIAS\Data\Factory();
+            $language = $container['lng'];
+
+            return new Factory($dataFactory, $language);
+        };
+
+        (new InitCtrlService())->init($DIC);
+
+    }
+
+    /**
+     * @return void
+     */
+    private function initPluginAdmin():void
+    {
+        //TODO: Rehacer todo este método.
+/*        Closure::bind(function() : void {
+            $this->il_plugin_by_id = [ilLiveVotingPlugin::PLUGIN_ID => $this->il_plugin_by_id[ilLiveVotingPlugin::PLUGIN_ID]];
+            $this->il_plugin_by_name = [ilLiveVotingPlugin::PLUGIN_NAME => $this->il_plugin_by_name[ilLiveVotingPlugin::PLUGIN_NAME]];
+            if (isset($this->il_plugin_by_slotid)) {
+                $this->il_plugin_by_slotid = ["robj" => array_filter($this->il_plugin_by_slotid["robj"], fn(array $plugin) : bool => $plugin["plugin_id"] === ilLiveVotingPlugin::PLUGIN_ID)];
+            }
+            $this->il_plugin_active = ["robj" => array_filter($this->il_plugin_active["robj"], fn(array $plugin) : bool => $plugin["plugin_id"] === ilLiveVotingPlugin::PLUGIN_ID)];
+        }, ilCachedComponentData::getInstance(), ilCachedComponentData::class)();
+
+        $this->makeGlobal("ilPluginAdmin", new ilPluginAdmin());*/
+    }
+
+    /**
+     * Init log instance
+     * @return void
+     */
+    private function initLog():void
+    {
+        $log = ilLoggerFactory::getRootLogger();
+
+        $this->makeGlobal("ilLog", $log);
+        // deprecated
+        $this->makeGlobal("log", $log);
+    }
+
+    /**
+     * set session cookie params for path, domain, etc.
+     * @return void
+     */
+    private function setCookieParams():void
+    {
+        $GLOBALS['COOKIE_PATH'] = '/';
+        $cookie_path = '/';
+
+        $cookie_path .= (!preg_match("/[\\/|\\\\]$/", $cookie_path)) ? "/" : "";
+
+        if ($cookie_path == "\\") {
+            $cookie_path = '/';
+        }
+
+        define('IL_COOKIE_EXPIRE', 0);
+        define('IL_COOKIE_PATH', $cookie_path);
+        define('IL_COOKIE_DOMAIN', '');
+        define('IL_COOKIE_SECURE', true); // Default Value
+
+        define('IL_COOKIE_HTTPONLY', true); // Default Value
+        session_set_cookie_params(IL_COOKIE_EXPIRE, IL_COOKIE_PATH, IL_COOKIE_DOMAIN, IL_COOKIE_SECURE,
+            IL_COOKIE_HTTPONLY);
+    }
+
+    /**
+     * This method determines the current client and sets the
+     * constant CLIENT_ID.
+     * @throws Exception
+     * @return void
+     */
+    private function determineClient():void
+    {
+        // check whether ini file object exists
+        if (!is_object($this->iliasIniFile)) {
+            throw new Exception("Fatal Error: ilInitialisation::determineClient called without initialisation of ILIAS ini file object.");
+        }
+
+        // set to default client if empty
+        if (isset($_GET["client_id"]) and $_GET["client_id"] != "") {
+            $_GET["client_id"] = stripslashes($_GET["client_id"]);
+            if (!defined("IL_PHPUNIT_TEST")) {
+                setcookie("ilClientId", $_GET["client_id"], null, "/");
+            }
+        } else {
+            if (isset($_COOKIE["ilClientId"]) and !$_COOKIE["ilClientId"]) {
+                // to do: ilias ini raus nehmen
+                $client_id = $this->iliasIniFile->readVariable("clients", "default");
+                setcookie("ilClientId", $client_id, null, "/");
+            }
+        }
+        if (!defined("IL_PHPUNIT_TEST") && isset($_COOKIE["ilClientId"])) {
+            define("CLIENT_ID", $_COOKIE["ilClientId"]);
+        } else {
+            if (isset($_GET["client_id"])) {
+                define("CLIENT_ID", $_GET["client_id"]);
+            }
+        }
+        if (!defined('CLIENT_ID') ) {
+            $default_client = $this->iliasIniFile->readVariable("clients", "default");
+            define("CLIENT_ID", $default_client);
+        }
+
+    }
+
+    /**
+     * Create or override a global variable.
+     * @param string $name  The name of the global variable.
+     * @param object $value The value where the global variable should point at.
+     * @return void
+     */
+    private function makeGlobal(string $name, object $value):void
+    {
+        global $DIC;
+        $GLOBALS[$name] = $value;
+        $DIC[$name] = function ($c) use ($name) {
+            return $GLOBALS[$name];
+        };
+    }
+
+    /**
+     * Initialise a fake user service to satisfy the help system module.
+     * @return void
+     */
+    private function initUser()
+    {
+        //TODO: Reemplazar xlvoDummyUser6
+        $this->makeGlobal('ilUser', new xlvoDummyUser6());
+    }
+
+    /**
+     * Initialise a fake access service to satisfy the help system module.
+     * @return void
+     */
+    private function initAccess():void
+    {
+        $this->makeGlobal('ilAccess', new ilAccess());
+    }
+
+    /**
+     * Initialise a fake three service to satisfy the help system module.
+     * @return void
+     */
+    private function initTree():void
+    {
+        $this->makeGlobal('tree', new ilTree(intval(ROOT_FOLDER_ID),intval(ROOT_FOLDER_ID)));
+    }
+
+    /**
+     * Initialise a fake http services to satisfy the help system module.
+     * @return void
+     */
+
+    private static function initHTTPServices():void
+    {
+        global $DIC;
+
+        $DIC['http.request_factory'] = function ($c) {
+            return new RequestFactoryImpl();
+        };
+
+        $DIC['http.response_factory'] = function ($c) {
+            return new ResponseFactoryImpl();
+        };
+
+        $DIC['http.cookie_jar_factory'] = function ($c) {
+            return new CookieJarFactoryImpl();
+        };
+
+        $DIC['http.response_sender_strategy'] = function ($c) {
+            return new DefaultResponseSenderStrategy();
+        };
+
+        $DIC['http.duration_factory'] = function ($c) {
+            return new \ILIAS\HTTP\Duration\DurationFactory(
+                new \ILIAS\HTTP\Duration\Increment\IncrementFactory()
+            );
+        };
+
+        $DIC['http'] = function ($c) {
+            /*
+        return new HTTPServices($c['http.response_sender_strategy'], $c['http.cookie_jar_factory'],
+            $c['http.request_factory'], $c['http.response_factory']);
+         */
+            return new \ILIAS\HTTP\Services($c);
+        };
+    }
+
+    /**
+     * Initialise a fake tabs service to satisfy the help system module.
+     * @return void
+     */
+    private function initTabs():void
+    {
+        $this->makeGlobal('ilTabs', new ilTabsGUI());
+    }
+
+    /**
+     * Initialise a fake NavigationHistory service to satisfy the help system module.
+     * @return void
+     */
+    private function initNavigationHistory():void
+    {
+        $this->makeGlobal('ilNavigationHistory', new ilNavigationHistory());
+    }
+
+    /**
+     * Initialise a fake help service to satisfy the help system module.
+     * @return void
+     */
+    private function initHelp():void
+    {
+        $this->makeGlobal('ilHelp', new ilHelp());
+    }
+
+    /**
+     * @return void
+     */
+    private function initAppEventHandler():void
+    {
+        $this->makeGlobal("ilAppEventHandler", new ilAppEventHandler());
+    }
+
+    /**
+     *
+     * @throws \Exception
+     */
+    private function initMail()
+    {
+        global $DIC;
+        $this->makeGlobal("mail.mime.transport.factory",
+            new ilMailMimeTransportFactory($DIC->settings(), $DIC->appEventHandler()));
+
+        $this->makeGlobal("mail.mime.sender.factory", new ilMailMimeSenderFactory(self::dic()->settings(),intval(ANONYMOUS_USER_ID)));
+    }
+
+    /**
+     * @param Container $c
+     * @return void
+     */
+    private function initGlobalScreen(Container $c):void
+    {
+        /*
+        Closure::bind(function (Container $dic) {
+            self::initGlobalScreen($dic);
+        }, null, ilInitialisation::class)(self::dic()->dic());
+        */
+        $c['global_screen'] = function () use ($c) {
+            return new Services(
+                new ilGSProviderFactory($c),
+                $c->ui(),
+                htmlentities(str_replace([" ", ".", "-"], "_", ILIAS_VERSION_NUMERIC))
+            );
+        };
+        $c->globalScreen()->tool()->context()->stack()->clear();
+        $c->globalScreen()->tool()->context()->claim()->main();
+
+    }
+
+    /**
+     * @return void
+     */
+    private function initFilesystem():void
+    {
+        ilInitialisation::bootstrapFilesystems();
+    }
+
+    /**
+     * @return void
+     */
+    protected function initResourceStorage() : void
+    {
+        global $DIC;
+
+        $initResourceStorage = new InitResourceStorage();
+        $initResourceStorage->init($DIC);
+    }
+
+    /**
+     * @param Container $container
+     * @return void
+     */
+    protected static function initComponentService(\ILIAS\DI\Container $container): void
+    {
+        $init = new InitComponentService();
+        $init->init($container);
+    }
+
+    /**
+     * @return void
+     */
+    protected static function initCore(): void
+    {
+        $GLOBALS["DIC"]["ilias.version"] = (new \ILIAS\Data\Factory())->version(ILIAS_VERSION_NUMERIC);
     }
 
 }

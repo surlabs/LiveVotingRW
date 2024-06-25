@@ -18,6 +18,8 @@ declare(strict_types=1);
  *
  */
 
+use LiveVoting\platform\LiveVotingContext;
+use LiveVoting\Utils\ParamManager;
 use LiveVoting\Voting\LiveVotingParticipant;
 
 require_once __DIR__ . '/../../../../../../../libs/composer/vendor/autoload.php';
@@ -30,11 +32,26 @@ use LiveVoting\Context\Param\ParamManager;
 use LiveVoting\Context\xlvoContext;
 use LiveVoting\Pin\xlvoPin;
 use srag\DIC\LiveVoting\DICStatic;*/
+global $DIC;
 
 try {
     $pin = trim(filter_input(INPUT_GET, 'xlvo_pin'), "/");
     //TODO: Carga de bootstrap
+
+    LiveVotingContext::setContext(1);
+
     LiveVotingParticipant::getInstance()->setIdentifier(session_id())->setType(2);
+
+    $DIC->ctrl()->setTargetScript(LiveVotingConfig::getFullApiUrl());
+
+    if(!empty($pin)){
+        if(LiveVoting::getObjIdFromPin($pin)){
+            $param_manager = ParamManager::getInstance();
+            $DIC->ctrl()->redirectByClass([ilUIPluginRouterGUI::class, ])
+        }
+    } else {
+
+    }
 
 
 
