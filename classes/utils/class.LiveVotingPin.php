@@ -5,7 +5,9 @@ namespace utils;
 
 use ilLiveVotingPlugin;
 use LiveVoting;
+use LiveVoting\Voting\LiveVotingParticipant;
 use LiveVotingConfig;
+use LiveVotingDatabase;
 use LiveVotingException;
 
 class LiveVotingPin
@@ -83,6 +85,7 @@ class LiveVotingPin
      * @param string $pin
      * @param bool $safe_mode
      * @return int
+     * @throws LiveVotingException
      */
     public static function checkPinAndGetObjId(string $pin, bool $safe_mode = true): int
     {
@@ -90,38 +93,31 @@ class LiveVotingPin
     }
 
     /**
-     * @param string $pin
-     * @param bool $safe_mode
-     *
-     * @return int
+     * @throws LiveVotingException
      */
     private static function checkPinAndGetObjIdWithoutCache(string $pin, bool $safe_mode = true): int
     {
-        $xlvoVotingConfig = xlvoVotingConfig::where(array('pin' => $pin))->first();
+        $database = new LiveVotingDatabase();
+        $result = $database->select("rep_robj_xlvo_config_n", array("obj_id"), array("pin" => $pin));
 
-        //check pin
-        if ($xlvoVotingConfig instanceof xlvoVotingConfig) {
-            if (!$xlvoVotingConfig->isObjOnline()) {
-                if ($safe_mode) {
-                    throw new xlvoVoterException('', xlvoVoterException::VOTING_OFFLINE);
-                }
-            }
-            if (!$xlvoVotingConfig->isAnonymous() && xlvoUser::getInstance()->isPINUser()) {
-                if ($safe_mode) {
-                    throw new xlvoVoterException('', xlvoVoterException::VOTING_NOT_ANONYMOUS);
-                }
-            }
+        if (isset($result[0])) {
+            $liveVoting = new LiveVoting($result[0]["obj_id"]);
 
-            if (!$xlvoVotingConfig->isAvailableForUser() && xlvoUser::getInstance()->isPINUser()) {
+            if (!$liveVoting->isOnline()) {
                 if ($safe_mode) {
-                    throw new xlvoVoterException('', xlvoVoterException::VOTING_UNAVAILABLE);
+                    // TODO: Excepcion
+                    throw new LiveVotingException('TODO: message');
                 }
             }
 
-            return $xlvoVotingConfig->getObjId();
-        }
-        if ($safe_mode) {
-            throw new xlvoVoterException('', xlvoVoterException::VOTING_PIN_NOT_FOUND);
+            if (!$liveVoting->isAnonymous() && LiveVotingParticipant::getInstance()->isPINUser()) {
+                if ($safe_mode) {
+                    // TODO: Excepcion
+                    throw new LiveVotingException('TODO: message');
+                }
+            }
+
+            return $liveVoting->getId();
         }
 
         return 0;
@@ -160,6 +156,8 @@ class LiveVotingPin
         $pin = '';
         $pin_found = false;
 
+
+
         while (!$pin_found) {
             for ($i = 1; $i <= $this->getPinLength(); $i++) {
                 $rnd = mt_rand(0, count($array) - 1);
@@ -179,50 +177,7 @@ class LiveVotingPin
      */
     public function getLastAccess()
     {
-        if ($this->cache->isActive()) {
-            return $this->getLastAccessWithCache();
-        } else {
-            return $this->getLastAccessWithoutCache();
-        }
-    }
-
-
-    /**
-     * @return bool|string
-     */
-    private function getLastAccessWithCache()
-    {
-        $key = xlvoVotingConfig::TABLE_NAME . '_pin_' . $this->getPin();
-        /**
-         * @var stdClass $xlvoVotingConfig
-         */
-        $xlvoVotingConfig = $this->cache->get($key);
-
-        if (!($xlvoVotingConfig instanceof stdClass)) {
-            $xlvoVotingConfig = xlvoVotingConfig::where(array('pin' => $this->getPin()))->first();
-            $config = new stdClass();
-
-            //if the object is not gone
-            if ($xlvoVotingConfig instanceof xlvoVotingConfig) {
-                $config->id = $xlvoVotingConfig->getPrimaryFieldValue();
-                $this->cache->set($key, $config, self::CACHE_TTL_SECONDS);
-
-                return $xlvoVotingConfig->getLastAccess();
-            }
-
-            if (!($xlvoVotingConfig instanceof xlvoVotingConfig)) {
-                return false;
-            }
-        }
-
-        /**
-         * @var xlvoVotingConfig $xlvoVotingConfigObject
-         */
-
-        /*** SUR  Se ha cambiado id por getObjId*/
-        $xlvoVotingConfigObject = xlvoVotingConfig::find($xlvoVotingConfig->getObjId);
-
-        return $xlvoVotingConfigObject->getLastAccess();
+        return $this->getLastAccessWithoutCache();
     }
 
 
@@ -244,7 +199,7 @@ class LiveVotingPin
     /**
      * @return string
      */
-    public function getPin()
+    public function getPin(): string
     {
         return $this->pin;
     }
@@ -262,7 +217,7 @@ class LiveVotingPin
     /**
      * @return boolean
      */
-    public function isUseLowercase()
+    public function isUseLowercase(): bool
     {
         return $this->use_lowercase;
     }
@@ -271,7 +226,7 @@ class LiveVotingPin
     /**
      * @param boolean $use_lowercase
      */
-    public function setUseLowercase($use_lowercase)
+    public function setUseLowercase(bool $use_lowercase)
     {
         $this->use_lowercase = $use_lowercase;
     }
@@ -280,7 +235,7 @@ class LiveVotingPin
     /**
      * @return boolean
      */
-    public function isUseUppercase()
+    public function isUseUppercase(): bool
     {
         return $this->use_uppercase;
     }
@@ -289,7 +244,7 @@ class LiveVotingPin
     /**
      * @param boolean $use_uppercase
      */
-    public function setUseUppercase($use_uppercase)
+    public function setUseUppercase(bool $use_uppercase)
     {
         $this->use_uppercase = $use_uppercase;
     }
@@ -298,7 +253,7 @@ class LiveVotingPin
     /**
      * @return boolean
      */
-    public function isUseNumbers()
+    public function isUseNumbers(): bool
     {
         return $this->use_numbers;
     }
@@ -307,7 +262,7 @@ class LiveVotingPin
     /**
      * @param boolean $use_numbers
      */
-    public function setUseNumbers($use_numbers)
+    public function setUseNumbers(bool $use_numbers)
     {
         $this->use_numbers = $use_numbers;
     }
@@ -316,7 +271,7 @@ class LiveVotingPin
     /**
      * @return int
      */
-    public function getPinLength()
+    public function getPinLength(): int
     {
         return $this->pin_length;
     }
@@ -325,7 +280,7 @@ class LiveVotingPin
     /**
      * @param int $pin_length
      */
-    public function setPinLength($pin_length)
+    public function setPinLength(int $pin_length)
     {
         $this->pin_length = $pin_length;
     }
