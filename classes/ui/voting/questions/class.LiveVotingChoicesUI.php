@@ -34,9 +34,9 @@ use ilObjLiveVotingGUI;
 use ilPlugin;
 use ilPropertyFormGUI;
 use ilTextAreaInputGUI;
-use LiveVotingException;
-use LiveVotingQuestion;
-use LiveVotingQuestionOption;
+use LiveVoting\platform\LiveVotingException;
+use LiveVoting\questions\LiveVotingQuestion;
+use LiveVoting\questions\LiveVotingQuestionOption;
 
 /**
  * Class LiveVotingChoicesUI

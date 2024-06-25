@@ -39,8 +39,8 @@ use ilTemplate;
 use ilTemplateException;
 use ilTextAreaInputGUI;
 use LiveVoting\legacy\liveVotingTableGUI;
-use LiveVotingQuestion;
-use LiveVotingQuestionOption;
+use LiveVoting\questions\LiveVotingQuestion;
+use LiveVoting\questions\LiveVotingQuestionOption;
 
 /**
  * Class LiveVotingSettingsUI

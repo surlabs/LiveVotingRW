@@ -18,6 +18,11 @@ declare(strict_types=1);
  *
  */
 
+namespace LiveVoting\questions\QuestionTypes;
+
+use LiveVoting\platform\LiveVotingDatabase;
+use LiveVoting\questions\LiveVotingQuestion;
+
 /**
  * Class LiveVotingChoicesQuestion
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>

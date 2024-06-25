@@ -18,6 +18,8 @@ declare(strict_types=1);
  *
  */
 
+namespace LiveVoting\platform;
+
 /**
  * Class LiveVotingConfig
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>

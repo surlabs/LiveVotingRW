@@ -35,9 +35,9 @@ use JsonException;
 use LiveVoting\Js\xlvoJs;
 use LiveVoting\QuestionTypes\xlvoQuestionTypes;
 use LiveVoting\Utils\LiveVotingTrait;
-use LiveVotingDatabase;
-use LiveVotingException;
-use LiveVotingQuestion;
+use LiveVoting\platform\LiveVotingDatabase;
+use LiveVoting\platform\LiveVotingException;
+use LiveVoting\questions\LiveVotingQuestion;
 use srag\CustomInputGUIs\LiveVoting\TextInputGUI\TextInputGUI;
 use ilLegacyFormElementsUtil;
 

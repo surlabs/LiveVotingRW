@@ -18,9 +18,11 @@ declare(strict_types=1);
  *
  */
 
-use LiveVoting\platform\LiveVotingContext;
+use LiveVoting\platform\ilias\LiveVotingContext;
+use LiveVoting\platform\LiveVotingConfig;
 use LiveVoting\Utils\ParamManager;
-use LiveVoting\Voting\LiveVotingParticipant;
+use LiveVoting\votings\LiveVoting;
+use LiveVoting\votings\LiveVotingParticipant;
 
 require_once __DIR__ . '/../../../../../../../libs/composer/vendor/autoload.php';
 /*require_once __DIR__ . "/vendor/autoload.php";*/
@@ -47,7 +49,7 @@ try {
     if(!empty($pin)){
         if(LiveVoting::getObjIdFromPin($pin)){
             $param_manager = ParamManager::getInstance();
-            $DIC->ctrl()->redirectByClass([ilUIPluginRouterGUI::class, ])
+            $DIC->ctrl()->redirectByClass([ilUIPluginRouterGUI::class, xlvoVoter2GUI::class], xlvoVoter2GUI::CMD_START_VOTER_PLAYER);
         }
     } else {
 

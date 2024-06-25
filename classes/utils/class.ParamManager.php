@@ -24,8 +24,8 @@ use ilCtrlException;
 use ilObject;
 use ilSetting;
 use ilUIPluginRouterGUI;
-use LiveVoting;
-use LiveVotingException;
+use LiveVoting\platform\LiveVotingException;
+use LiveVoting\votings\LiveVoting;
 
 
 /**

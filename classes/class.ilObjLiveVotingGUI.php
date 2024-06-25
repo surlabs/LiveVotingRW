@@ -18,6 +18,7 @@ declare(strict_types=1);
  *
  */
 
+use LiveVoting\platform\LiveVotingException;
 use LiveVoting\UI\LiveVotingChoicesUI;
 use LiveVoting\UI\LiveVotingCorrectOrderUI;
 use LiveVoting\UI\LiveVotingFreeInputUI;

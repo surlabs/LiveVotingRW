@@ -18,7 +18,11 @@ declare(strict_types=1);
  *
  */
 
-use LiveVoting\Voting\LiveVotingParticipant;
+namespace LiveVoting\votings;
+
+use LiveVoting\platform\LiveVotingDatabase;
+use LiveVoting\platform\LiveVotingException;
+use LiveVoting\questions\LiveVotingQuestion;
 
 /**
  * Class LiveVoting

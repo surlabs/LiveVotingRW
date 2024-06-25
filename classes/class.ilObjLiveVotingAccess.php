@@ -18,6 +18,9 @@ declare(strict_types=1);
  *
  */
 
+use LiveVoting\platform\LiveVotingException;
+use LiveVoting\votings\LiveVoting;
+
 /**
  * Class ilObjLiveVotingAccess
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
@@ -43,14 +46,12 @@ class ilObjLiveVotingAccess extends ilObjectPluginAccess
      *
      * @param int $obj_id
      * @return bool
+     * @throws LiveVotingException
      */
     public static function _isOffline(int $obj_id): bool
     {
-        //TODO: probar esto, no comprobado.
-        return ilObject::lookupOfflineStatus($obj_id);
-        /**
+
         $liveVoting = new LiveVoting($obj_id, true);
         return !$liveVoting->isOnline();
-         **/
     }
 }

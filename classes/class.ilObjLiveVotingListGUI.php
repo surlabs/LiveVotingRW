@@ -48,7 +48,6 @@ class ilObjLiveVotingListGUI extends ilObjectPluginListGUI
      *                        'alert' (boolean) => display as an alert property (usually in red)
      *                        'property' (string) => property name
      *                        'value' (string) => property value
-     * @throws LiveVotingException
      */
     public function getCustomProperties(array $prop): array
     {

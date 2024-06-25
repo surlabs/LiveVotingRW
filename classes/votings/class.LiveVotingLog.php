@@ -18,6 +18,12 @@ declare(strict_types=1);
  *
  */
 
+namespace LiveVoting\votings;
+
+use Exception;
+use ilLogException;
+use ilLogLevel;
+
 /**
  * Class LiveVotingLog
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>

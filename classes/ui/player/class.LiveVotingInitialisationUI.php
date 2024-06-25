@@ -20,15 +20,16 @@ declare(strict_types=1);
 
 namespace LiveVoting\player;
 
-use Closure;
 use ilAccess;
 use ilAppEventHandler;
+use ilCtrlException;
 use ilErrorHandling;
 use ilGlobalCache;
 use ilGlobalCacheSettings;
 use ilGlobalTemplate;
 use ilGSProviderFactory;
 use ilHelp;
+use ilHTTPS;
 use ILIAS\DI\Container;
 use ILIAS\DI\Exceptions\Exception;
 use ILIAS\GlobalScreen\Services;
@@ -41,6 +42,7 @@ use ilIniFile;
 use ilInitialisation;
 use iljQueryUtil;
 use ilLiveVotingPlugin;
+use ilLoggerFactory;
 use ilMailMimeSenderFactory;
 use ilMailMimeTransportFactory;
 use ilNavigationHistory;
@@ -53,7 +55,6 @@ use ilTimeZone;
 use ilToolbarGUI;
 use ilTree;
 use ilUIFramework;
-use ilUtil;
 use InitComponentService;
 use InitCtrlService;
 use InitResourceStorage;
@@ -62,18 +63,13 @@ use LiveVoting\Context\Initialisation\Version\v7\xlvoStyleDefinition;
 use LiveVoting\Context\xlvoDummyUser6;
 use LiveVoting\Context\xlvoILIAS;
 use LiveVoting\Context\xlvoInitialisation;
-use LiveVoting\platform\LiveVotingContext;
 use LiveVoting\Session\SessionHandler;
 use LiveVoting\Session\xlvoSessionHandler;
 use LiveVoting\Utils\ParamManager;
-use LiveVotingConfig;
-use LiveVotingException;
-use ilCtrlException;
-use ilHTTPS;
-use ilLoggerFactory;
-use ilObject;
-use ilUIPluginRouterGUI;
-use LiveVoting;
+use LiveVoting\platform\LiveVotingConfig;
+use LiveVoting\platform\ilias\LiveVotingContext;
+use LiveVoting\platform\LiveVotingException;
+use LiveVoting\platform\ilias\LiveVotingInitialisation;
 
 class LiveVotingInitialisationUI
 {
@@ -164,7 +160,7 @@ class LiveVotingInitialisationUI
         $this->initHelp();
 
         //TODO: Ver como inicializar esto
-        xlvoInitialisation::initUIFramework($DIC);
+        LiveVotingInitialisation::initUIFramework($DIC);
     }
 
     /**

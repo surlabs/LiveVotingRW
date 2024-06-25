@@ -18,11 +18,11 @@ declare(strict_types=1);
  *
  */
 
-namespace LiveVoting\platform;
 
+namespace LiveVoting\platform\ilias;
+
+use Exception;
 use ilContext;
-use ILIAS\DI\Exceptions\Exception;
-use LiveVoting\Context\xlvoContextLiveVoting;
 use LiveVoting\player\LiveVotingContextUI;
 
 class LiveVotingContext extends ilContext

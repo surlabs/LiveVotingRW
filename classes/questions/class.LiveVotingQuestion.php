@@ -18,6 +18,15 @@ declare(strict_types=1);
  *
  */
 
+namespace LiveVoting\questions;
+
+use LiveVoting\platform\LiveVotingDatabase;
+use LiveVoting\platform\LiveVotingException;
+use LiveVoting\questions\QuestionTypes\LiveVotingChoicesQuestion;
+use LiveVoting\questions\QuestionTypes\LiveVotingFreeTextQuestion;
+use LiveVoting\questions\QuestionTypes\LiveVotingNumberRangeQuestion;
+use LiveVoting\questions\QuestionTypes\LiveVotingOrderQuestion;
+
 /**
  * Abstract Class LiveVotingQuestion
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>

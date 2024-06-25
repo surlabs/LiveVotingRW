@@ -18,6 +18,11 @@ declare(strict_types=1);
  *
  */
 
+namespace LiveVoting\questions;
+
+use LiveVoting\platform\LiveVotingDatabase;
+use LiveVoting\platform\LiveVotingException;
+
 /**
  * Class LiveVotingQuestionOption
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>

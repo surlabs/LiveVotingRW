@@ -18,6 +18,9 @@ declare(strict_types=1);
  *
  */
 
+use LiveVoting\platform\LiveVotingException;
+use LiveVoting\votings\LiveVoting;
+
 /**
  * Class ilObjLiveVoting
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
@@ -29,7 +32,6 @@ class ilObjLiveVoting extends ilObjectPlugin
     /**
      * Create a new object
      * @param bool $clone_mode
-     * @throws LiveVotingException
      */
     protected function doCreate(bool $clone_mode = false): void
     {
@@ -40,7 +42,6 @@ class ilObjLiveVoting extends ilObjectPlugin
 
     /**
      * Read the object
-     * @throws LiveVotingException
      */
     protected function doRead(): void
     {
@@ -49,7 +50,6 @@ class ilObjLiveVoting extends ilObjectPlugin
 
     /**
      * Delete the object
-     * @throws LiveVotingException
      */
     protected function doDelete(): void
     {
@@ -58,7 +58,6 @@ class ilObjLiveVoting extends ilObjectPlugin
 
     /**
      * Update the object
-     * @throws LiveVotingException
      */
     protected function doUpdate(): void
     {

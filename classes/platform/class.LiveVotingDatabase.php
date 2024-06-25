@@ -18,6 +18,11 @@ declare(strict_types=1);
  *
  */
 
+namespace LiveVoting\platform;
+
+use Exception;
+use ilDBInterface;
+
 /**
  * Class LiveVotingDatabase
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>

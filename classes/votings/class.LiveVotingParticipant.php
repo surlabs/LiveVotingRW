@@ -18,7 +18,7 @@ declare(strict_types=1);
  *
  */
 
-namespace LiveVoting\Voting;
+namespace LiveVoting\votings;
 
 /**
  * Class LiveVotingParticipant

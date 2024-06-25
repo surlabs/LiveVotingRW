@@ -18,13 +18,18 @@ declare(strict_types=1);
  *
  */
 
-namespace LiveVoting\votings;
+namespace LiveVoting\platform\ilias;
+
+use ilInitialisation;
 
 /**
- * Class LiveVotingMode
+ * Class LiveVotingConfig
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
  */
-class LiveVotingMode
+class LiveVotingInitialisation extends ilInitialisation
 {
+    public static function initUIFramework(\ILIAS\DI\Container $c): void
+    {
 
+    }
 }
