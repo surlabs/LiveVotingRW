@@ -288,14 +288,14 @@ class LiveVoting
      */
     private function loadDefaultValues(): void
     {
-        $this->setPin($this->generatePin());
+        $this->setPin(LiveVoting::generatePin());
         $this->setOnline(false);
         $this->setAnonymous(false);
         $this->setFrozenBehaviour(1);
         $this->setResultsBehaviour(1);
         $this->setVotingHistory(false);
         $this->setShowAttendees(false);
-        $this->setPuk($this->generatePuk());
+        $this->setPuk(LiveVoting::generatePuk());
     }
 
     /**
