@@ -34,7 +34,7 @@ class LiveVotingConfig
      */
     public static function load(): void
     {
-        $config = (new LiveVotingDatabase)->select('xpan_config');
+        $config = (new LiveVotingDatabase)->select('xlvo_config');
 
         foreach ($config as $row) {
             if (isset($row['value']) && $row['value'] !== '') {
@@ -86,7 +86,7 @@ class LiveVotingConfig
      */
     public static function getFromDB(string $key) :mixed
     {
-        $config = (new LiveVotingDatabase)->select('xpan_config', array(
+        $config = (new LiveVotingDatabase)->select('xlvo_config', array(
             'name' => $key
         ));
 
