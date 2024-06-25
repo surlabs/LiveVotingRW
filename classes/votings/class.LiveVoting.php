@@ -299,6 +299,32 @@ class LiveVoting
     }
 
     /**
+     * @return void
+     * @throws LiveVotingException
+     */
+    public function delete(): void
+    {
+        $database = new LiveVotingDatabase();
+
+        $database->delete("rep_robj_xlvo_config_n", ["obj_id" => $this->getId()]);
+
+        foreach ($this->getQuestions() as $question) {
+            $question->delete();
+        }
+    }
+
+    public function getQuestionById(int $id): ?LiveVotingQuestion
+    {
+        foreach ($this->questions as $question) {
+            if ($question->getId() === $id) {
+                return $question;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Generate a random pin
      * @throws LiveVotingException
      */
@@ -355,28 +381,30 @@ class LiveVoting
     }
 
     /**
-     * @return void
      * @throws LiveVotingException
      */
-    public function delete(): void
-    {
+    private static function getLiveVotingFromPin(string $pin, bool $safe_mode = true): int {
         $database = new LiveVotingDatabase();
+        $result = $database->select("rep_robj_xlvo_config_n", array("obj_id"), array("pin" => $pin));
 
-        $database->delete("rep_robj_xlvo_config_n", ["obj_id" => $this->getId()]);
+        if (isset($result[0])) {
+            $liveVoting = new LiveVoting($result[0]["obj_id"]);
 
-        foreach ($this->getQuestions() as $question) {
-            $question->delete();
-        }
-    }
-
-    public function getQuestionById(int $id): ?LiveVotingQuestion
-    {
-        foreach ($this->questions as $question) {
-            if ($question->getId() === $id) {
-                return $question;
+            if (!$liveVoting->isOnline()) {
+                if ($safe_mode) {
+                    throw new LiveVotingException('The voting is not online');
+                }
             }
+
+            if (!$liveVoting->isAnonymous() && LiveVotingParticipant::getInstance()->isPINUser()) {
+                if ($safe_mode) {
+                    throw new LiveVotingException('The voting is not anonymous');
+                }
+            }
+
+            return $liveVoting->getId();
         }
 
-        return null;
+        return 0;
     }
 }
