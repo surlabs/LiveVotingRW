@@ -19,23 +19,30 @@ declare(strict_types=1);
  */
 
 /**
- * Class LiveVotingPrioritiesQuestion
+ * Class LiveVotingOrderQuestion
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
  */
-class LiveVotingPrioritiesQuestion extends LiveVotingQuestion
+class LiveVotingOrderQuestion extends LiveVotingQuestion
 {
     private int $columns = 1;
+    private bool $randomise_option_sequence = false;
+    private bool $correct_order = false;
 
     public function __construct(?array $data = null) {
         parent::__construct($data);
 
         if ($data !== null) {
             $this->columns = (int) $data["columns"];
+            $this->randomise_option_sequence = (bool) $data["randomise_option_sequence"];
         }
     }
 
     public function getQuestionType(): string {
-        return "Priorities";
+        if ($this->correct_order) {
+            return "CorrectOrder";
+        } else {
+            return "Priorities";
+        }
     }
 
     public function save(?int $obj_id): int {
@@ -43,9 +50,15 @@ class LiveVotingPrioritiesQuestion extends LiveVotingQuestion
 
         $database = new LiveVotingDatabase();
 
-        $database->update("rep_robj_xlvo_voting_n", array(
+        $data = array(
             "columns" => $this->columns
-        ), array(
+        );
+
+        if ($this->correct_order) {
+            $data["randomise_option_sequence"] = (int) $this->randomise_option_sequence;
+        }
+
+        $database->update("rep_robj_xlvo_voting_n", $data, array(
             "id" => $id
         ));
 
@@ -60,5 +73,20 @@ class LiveVotingPrioritiesQuestion extends LiveVotingQuestion
     public function setColumns(int $columns): void
     {
         $this->columns = $columns;
+    }
+
+    public function isRandomiseOptionSequence(): bool
+    {
+        return $this->randomise_option_sequence;
+    }
+
+    public function setRandomiseOptionSequence(bool $randomise_option_sequence): void
+    {
+        $this->randomise_option_sequence = $randomise_option_sequence;
+    }
+
+    public function setCorrectOrder(bool $correct_order): void
+    {
+        $this->correct_order = $correct_order;
     }
 }
