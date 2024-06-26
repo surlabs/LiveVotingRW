@@ -37,13 +37,13 @@ try {
     $pin = trim(filter_input(INPUT_GET, 'xlvo_pin'), "/");
 
     LiveVotingInitialisationUI::init();
-    ilInitialisation::initILIAS();
+
     LiveVotingContext::setContext(1);
 
     LiveVotingParticipant::getInstance()->setIdentifier(session_id())->setType(2);
+
     global $DIC;
-    dump($DIC);
-    exit;
+    
     $DIC->ctrl()->setTargetScript(LiveVotingConfig::getFullApiUrl());
 
    /* if(!empty($pin)){

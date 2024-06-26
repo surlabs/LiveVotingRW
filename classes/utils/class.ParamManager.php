@@ -98,27 +98,27 @@ final class ParamManager
      */
     private function loadAndPersistAllParams()
     {
-        $pin = trim(filter_input(INPUT_GET, 'xlvo_pin'), "/");
+        $pin = trim(filter_input(INPUT_GET, 'xlvo_pin') ?? "", "/");
         if (!empty($pin)) {
             $this->setPin($pin);
         }
 
-        $ref_id = trim(filter_input(INPUT_GET, 'ref_id'), "/");
+        $ref_id = trim(filter_input(INPUT_GET, 'ref_id') ?? "", "/");
         if (!empty($ref_id)) {
             $this->setRefId((int)$ref_id);
         }
 
-        $puk = trim(filter_input(INPUT_GET, 'xlvo_puk'), "/");
+        $puk = trim(filter_input(INPUT_GET, 'xlvo_puk') ?? "", "/");
         if (!empty($puk)) {
             $this->setPuk($puk);
         }
 
-        $voting = trim(filter_input(INPUT_GET, 'xlvo_voting'), "/");
+        $voting = trim(filter_input(INPUT_GET, 'xlvo_voting') ?? "", "/");
         if (!empty($voting)) {
             $this->setVoting((int)$voting);
         }
 
-        $ppt = trim(filter_input(INPUT_GET, 'xlvo_ppt'), "/");
+        $ppt = trim(filter_input(INPUT_GET, 'xlvo_ppt') ?? "", "/");
         if (!empty($ppt)) {
             $this->setPpt((bool)$ppt);
         }

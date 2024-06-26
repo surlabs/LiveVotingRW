@@ -68,6 +68,8 @@ use LiveVoting\Context\xlvoDummyUser6;
 use LiveVoting\Context\xlvoILIAS;
 use LiveVoting\Context\xlvoInitialisation;
 use LiveVoting\platform\ilias\DummyUser;
+use LiveVoting\platform\ilias\LiveVotingILIAS;
+use LiveVoting\platform\ilias\LiveVotingStyleDefinition;
 use LiveVoting\Session\SessionHandler;
 use LiveVoting\Session\xlvoSessionHandler;
 use LiveVoting\Utils\ParamManager;
@@ -91,20 +93,15 @@ class LiveVotingInitialisationUI
     protected ilSetting $settings;
 
     /**
-     * @var ilLiveVotingPlugin
-     */
-    protected ilLiveVotingPlugin $pl;
-
-    /**
      * @throws \Exception
      */
     protected function __construct($context = null)
     {
-        /*if($context){
+        if($context){
             LiveVotingContext::setContext($context);
         }
 
-        $this->bootstrapApp();*/
+        $this->bootstrapApp();
     }
 
     /**
@@ -132,11 +129,11 @@ class LiveVotingInitialisationUI
 
         //file_put_contents( "/var/www/html/ilias/tmp" . "/" . "debug.txt", "v7/bootstrapApp" . "\n",FILE_APPEND);
 
-        //$this->initDependencyInjection();
-        //$this->setCookieParams();
-        //$this->removeUnsafeCharacters();
-        //$this->loadIniFile();
-/*        $this->requireCommonIncludes();
+        $this->initDependencyInjection();
+        $this->setCookieParams();
+        $this->removeUnsafeCharacters();
+        $this->loadIniFile();
+        $this->requireCommonIncludes();
         $this->initErrorHandling();
         $this->determineClient();
         $this->initHTTPServices($GLOBALS["DIC"]);
@@ -157,17 +154,16 @@ class LiveVotingInitialisationUI
         $this->initObjectDefinition();
         $this->initAccess();
         $this->initAppEventHandler();
-        //$this->initMail();
-        //TODO: Revisar si initMail es necesario
+        $this->initMail();
         $this->initFilesystem();
         $this->initResourceStorage();
         $this->initGlobalScreen($GLOBALS["DIC"]);
         $this->initTemplate();
         $this->initTabs();
         $this->initNavigationHistory();
-        $this->initHelp();*/
+        $this->initHelp();
 
-       // LiveVotingInitialisation::initUIFramework($DIC);
+       LiveVotingInitialisation::initUIFramework($DIC);
     }
 
     /**
@@ -205,12 +201,11 @@ class LiveVotingInitialisationUI
      */
     private function initTemplate()
     {
-        /*$styleDefinition = new xlvoStyleDefinition();
-        $this->makeGlobal('styleDefinition', $styleDefinition);*/
+        $styleDefinition = new LiveVotingStyleDefinition();
+        $this->makeGlobal('styleDefinition', $styleDefinition);
 
-        /*$ilias = new xlvoILIAS();
-        $this->makeGlobal("ilias", $ilias);*/
-        //TODO: Implementar esto si finalmente se usa.
+        $ilias = new LiveVotingILIAS();
+        $this->makeGlobal("ilias", $ilias);
 
         $tpl = new ilGlobalTemplate("tpl.main.html", true, true, "Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting", "DEFAULT", true);
 
@@ -221,21 +216,20 @@ class LiveVotingInitialisationUI
         }
 
         $tpl->addCss('./templates/default/delos.css');
-        $tpl->addCss($this->pl->getDirectory() . '/templates/default/default.css');
+        $tpl->addCss(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/default.css');
 
         $tpl->addBlockFile("CONTENT", "content", "tpl.main_voter.html", "Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting");
 
         $tpl->setVariable("BASE", LiveVotingConfig::getBaseVoteUrl());
 
-        //$this->makeGlobal("tpl", $tpl);
+        $this->makeGlobal("tpl", $tpl);
 
         iljQueryUtil::initjQuery();
         ilUIFramework::init();
 
         $ilToolbar = new ilToolbarGUI();
 
-        //$this->makeGlobal("ilToolbar", $ilToolbar);
-
+        $this->makeGlobal("ilToolbar", $ilToolbar);
     }
 
     /**
@@ -828,7 +822,7 @@ class LiveVotingInitialisationUI
     {
         global $DIC;
         $this->makeGlobal("mail.mime.transport.factory",
-            new ilMailMimeTransportFactory($DIC->settings(), $DIC->appEventHandler()));
+            new ilMailMimeTransportFactory($DIC->settings(), $DIC->event()));
 
         $this->makeGlobal("mail.mime.sender.factory", new ilMailMimeSenderFactory($DIC->settings(),intval(ANONYMOUS_USER_ID)));
     }
