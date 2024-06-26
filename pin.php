@@ -47,7 +47,6 @@ try {
 
     if(!empty($pin)) {
         $liveVoting = LiveVoting::getLiveVotingFromPin($pin);
-
         if ($liveVoting) {
             if ($liveVoting->isOnline()) {
                 if ($liveVoting->isAnonymous() || LiveVotingParticipant::getInstance()->isPINUser()) {
