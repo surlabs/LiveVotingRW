@@ -41,7 +41,8 @@ class DummyUser extends ilObjUser {
      */
     public function getLanguage():string
     {
-        return self::dic()->language()->getLangKey();
+        global $DIC;
+        return $DIC->language()->getLangKey();
     }
 
 
