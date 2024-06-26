@@ -389,7 +389,7 @@ class LiveVoting
      */
     public static function getObjIdFromPin(string $pin, bool $safe_mode = true): int {
         $database = new LiveVotingDatabase();
-        $result = $database->select("rep_robj_xlvo_config_n", array("obj_id"), array("pin" => $pin));
+        $result = $database->select("rep_robj_xlvo_config_n", array("pin" => $pin), array("obj_id"));
 
         if (isset($result[0])) {
             $liveVoting = new LiveVoting($result[0]["obj_id"]);
