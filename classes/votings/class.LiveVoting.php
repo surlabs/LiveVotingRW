@@ -411,4 +411,18 @@ class LiveVoting
 
         return 0;
     }
+
+    /**
+     * @throws LiveVotingException
+     */
+    public static function getLiveVotingFromPin(string $pin): ?LiveVoting {
+        $database = new LiveVotingDatabase();
+        $result = $database->select("rep_robj_xlvo_config_n", array("pin" => $pin), array("obj_id"));
+
+        if (isset($result[0])) {
+            return new LiveVoting($result[0]["obj_id"]);
+        }
+
+        return null;
+    }
 }

@@ -23,7 +23,7 @@ use ILIAS\DI\Container;
 use LiveVoting\platform\ilias\LiveVotingContext;
 use LiveVoting\platform\LiveVotingConfig;
 use LiveVoting\player\LiveVotingInitialisationUI;
-use LiveVoting\UI\Player\LiveVotingPlayerUI;
+use LiveVoting\player\LiveVotingPlayerUI;
 use LiveVoting\Utils\ParamManager;
 use LiveVoting\votings\LiveVoting;
 use LiveVoting\votings\LiveVotingParticipant;
@@ -35,29 +35,39 @@ require_once "dir.php";
 
 
 try {
-    $pin = trim(filter_input(INPUT_GET, 'xlvo_pin'), "/");
-
     LiveVotingInitialisationUI::init();
 
     LiveVotingContext::setContext(1);
 
     LiveVotingParticipant::getInstance()->setIdentifier(session_id())->setType(2);
 
+    $param_manager = ParamManager::getInstance();
+
+    $pin = $param_manager->getPin();
+
     global $DIC;
-    
+
     $DIC->ctrl()->setTargetScript(LiveVotingConfig::getFullApiUrl());
 
-    if(!empty($pin)){
-        if(LiveVoting::getObjIdFromPin($pin)){
-            $param_manager = ParamManager::getInstance();
-            $DIC->ctrl()->redirectByClass([ilUIPluginRouterGUI::class, LiveVotingPlayerUI::class], 'startVoterPlayer');
+    if(!empty($pin)) {
+        $liveVoting = LiveVoting::getLiveVotingFromPin($pin);
+
+        if ($liveVoting) {
+            if ($liveVoting->isOnline()) {
+                if ($liveVoting->isAnonymous() || LiveVotingParticipant::getInstance()->isPINUser()) {
+                    $DIC->ctrl()->redirectByClass([ilUIPluginRouterGUI::class, LiveVotingPlayerUI::class], 'startVoterPlayer');
+                } else {
+                    $DIC->ctrl()->redirectByClass([ilUIPluginRouterGUI::class, LiveVotingPlayerUI::class], 'votingNeedLogin');
+                }
+            } else {
+                $DIC->ctrl()->redirectByClass([ilUIPluginRouterGUI::class, LiveVotingPlayerUI::class], 'votingOffline');
+            }
+        } else {
+            $DIC->ctrl()->redirectByClass([ilUIPluginRouterGUI::class, LiveVotingPlayerUI::class], 'votingNotFound');
         }
     } else {
-
+        $DIC->ctrl()->redirectByClass([ilUIPluginRouterGUI::class, LiveVotingPlayerUI::class], 'index');
     }
-
-
-
 } catch (Throwable $ex) {
     echo $ex->getMessage() . "<br /><br /><a href='/'>back</a>";
 }

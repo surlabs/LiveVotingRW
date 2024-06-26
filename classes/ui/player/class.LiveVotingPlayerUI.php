@@ -18,7 +18,7 @@ declare(strict_types=1);
  *
  */
 
-namespace LiveVoting\UI\Player;
+namespace LiveVoting\player;
 
 
 /**
@@ -32,7 +32,40 @@ class LiveVotingPlayerUI
 {
     public function executeCommand()
     {
-        dump("Llego!");
-        exit;
+        global $DIC;
+
+        $cmd = $DIC->ctrl()->getCmd('index');
+
+        $this->{$cmd}();
+    }
+
+    public function index()
+    {
+        dump("Cargar el input para meter el PIN");
+        exit();
+    }
+
+    public function votingNotFound()
+    {
+        dump("Mensaje de error: No se encuentra la votación");
+        exit();
+    }
+
+    public function votingOffline()
+    {
+        dump("Mensaje de error: El repositorio está offline");
+        exit();
+    }
+
+    public function votingNeedLogin()
+    {
+        dump("Mensaje de error: El usuario no está logueado y la votacion no es anonima");
+        exit();
+    }
+
+    public function startVoterPlayer()
+    {
+        dump("Cargar la vista de la votación");
+        exit();
     }
 }
