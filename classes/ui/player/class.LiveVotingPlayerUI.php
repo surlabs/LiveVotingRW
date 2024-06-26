@@ -30,7 +30,7 @@ namespace LiveVoting\player;
 
 class LiveVotingPlayerUI
 {
-    public function executeCommand()
+    public function executeCommand(): void
     {
         global $DIC;
 
@@ -39,31 +39,31 @@ class LiveVotingPlayerUI
         $this->{$cmd}();
     }
 
-    public function index()
+    public function index(): void
     {
         dump("Cargar el input para meter el PIN");
         exit();
     }
 
-    public function votingNotFound()
+    public function votingNotFound(): void
     {
         dump("Mensaje de error: No se encuentra la votación");
         exit();
     }
 
-    public function votingOffline()
+    public function votingOffline(): void
     {
         dump("Mensaje de error: El repositorio está offline");
         exit();
     }
 
-    public function votingNeedLogin()
+    public function votingNeedLogin(): void
     {
         dump("Mensaje de error: El usuario no está logueado y la votacion no es anonima");
         exit();
     }
 
-    public function startVoterPlayer()
+    public function startVoterPlayer(): void
     {
         dump("Cargar la vista de la votación");
         exit();
