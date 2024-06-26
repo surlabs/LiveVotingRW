@@ -100,11 +100,11 @@ class LiveVotingInitialisationUI
      */
     protected function __construct($context = null)
     {
-        if($context){
+        /*if($context){
             LiveVotingContext::setContext($context);
         }
 
-        $this->bootstrapApp();
+        $this->bootstrapApp();*/
     }
 
     /**
@@ -132,11 +132,11 @@ class LiveVotingInitialisationUI
 
         //file_put_contents( "/var/www/html/ilias/tmp" . "/" . "debug.txt", "v7/bootstrapApp" . "\n",FILE_APPEND);
 
-        $this->initDependencyInjection();
-        $this->setCookieParams();
-        $this->removeUnsafeCharacters();
-        $this->loadIniFile();
-        $this->requireCommonIncludes();
+        //$this->initDependencyInjection();
+        //$this->setCookieParams();
+        //$this->removeUnsafeCharacters();
+        //$this->loadIniFile();
+/*        $this->requireCommonIncludes();
         $this->initErrorHandling();
         $this->determineClient();
         $this->initHTTPServices($GLOBALS["DIC"]);
@@ -157,16 +157,17 @@ class LiveVotingInitialisationUI
         $this->initObjectDefinition();
         $this->initAccess();
         $this->initAppEventHandler();
-        $this->initMail();
+        //$this->initMail();
+        //TODO: Revisar si initMail es necesario
         $this->initFilesystem();
         $this->initResourceStorage();
         $this->initGlobalScreen($GLOBALS["DIC"]);
         $this->initTemplate();
         $this->initTabs();
         $this->initNavigationHistory();
-        $this->initHelp();
+        $this->initHelp();*/
 
-        LiveVotingInitialisation::initUIFramework($DIC);
+       // LiveVotingInitialisation::initUIFramework($DIC);
     }
 
     /**

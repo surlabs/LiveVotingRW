@@ -18,44 +18,42 @@ declare(strict_types=1);
  *
  */
 
+use ILIAS\DI\Container;
+
 use LiveVoting\platform\ilias\LiveVotingContext;
 use LiveVoting\platform\LiveVotingConfig;
 use LiveVoting\player\LiveVotingInitialisationUI;
 use LiveVoting\Utils\ParamManager;
 use LiveVoting\votings\LiveVoting;
 use LiveVoting\votings\LiveVotingParticipant;
-
 require_once __DIR__ . '/../../../../../../../libs/composer/vendor/autoload.php';
 /*require_once __DIR__ . "/vendor/autoload.php";*/
 require_once "dir.php";
 
-/*use LiveVoting\Conf\xlvoConf;
-use LiveVoting\Context\InitialisationManager;
-use LiveVoting\Context\Param\ParamManager;
-use LiveVoting\Context\xlvoContext;
-use LiveVoting\Pin\xlvoPin;
-use srag\DIC\LiveVoting\DICStatic;*/
-global $DIC;
+
+
 
 try {
     $pin = trim(filter_input(INPUT_GET, 'xlvo_pin'), "/");
 
     LiveVotingInitialisationUI::init();
-
+    ilInitialisation::initILIAS();
     LiveVotingContext::setContext(1);
 
     LiveVotingParticipant::getInstance()->setIdentifier(session_id())->setType(2);
-
+    global $DIC;
+    dump($DIC);
+    exit;
     $DIC->ctrl()->setTargetScript(LiveVotingConfig::getFullApiUrl());
 
-    if(!empty($pin)){
+   /* if(!empty($pin)){
         if(LiveVoting::getObjIdFromPin($pin)){
             $param_manager = ParamManager::getInstance();
             $DIC->ctrl()->redirectByClass([ilUIPluginRouterGUI::class, xlvoVoter2GUI::class], xlvoVoter2GUI::CMD_START_VOTER_PLAYER);
         }
     } else {
 
-    }
+    }*/
 
 
 
