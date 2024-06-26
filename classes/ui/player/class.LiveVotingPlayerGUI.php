@@ -18,17 +18,13 @@ declare(strict_types=1);
  *
  */
 
-namespace LiveVoting\player;
-
-
 /**
  * Class LiveVotingPlayerUI
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
- * @ilCtrl_IsCalledBy  LiveVotingPlayerUI: ilUIPluginRouterGUI
+ *
+ * @ilCtrl_isCalledBy LiveVotingPlayerGUI: ilUIPluginRouterGUI
  */
-
-
-class LiveVotingPlayerUI
+class LiveVotingPlayerGUI
 {
     public function executeCommand(): void
     {

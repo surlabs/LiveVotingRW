@@ -20,7 +20,18 @@ declare(strict_types=1);
 
 namespace LiveVoting\platform\ilias;
 
+use Exception;
+use ILIAS\DI\Container;
 use ilInitialisation;
+use iljQueryUtil;
+use ilLiveVotingPlugin;
+use ilLoggerFactory;
+use ilObjectDefinition;
+use ilTree;
+use ilUIFramework;
+use LiveVoting\platform\LiveVotingConfig;
+use LiveVoting\platform\LiveVotingException;
+use LiveVoting\player\LiveVotingContextUI;
 
 /**
  * Class LiveVotingConfig
@@ -28,8 +39,163 @@ use ilInitialisation;
  */
 class LiveVotingInitialisation extends ilInitialisation
 {
-    public static function initUIFramework(\ILIAS\DI\Container $c): void
+    /**
+     * @var ilTree
+     */
+    protected static ilTree $tree;
+
+    /**
+     * @var int
+     */
+    protected static int $context = 1;
+
+    /**
+     * LiveVotingInitialisation constructor.
+     *
+     * @param int|null $context
+     * @throws Exception
+     */
+    protected function __construct(int $context = null)
+    {
+        if ($context) {
+            self::saveContext($context);
+        } else {
+            self::setContext(LiveVotingContext::getContext());
+        }
+
+        $this->run();
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected function run(): void
+    {
+        //		$this->setContext(self::CONTEXT_ILIAS);
+        switch (self::getContext()) {
+            case 2:
+                require_once 'include/inc.header.php';
+                self::initHTML2();
+                break;
+            case 1:
+                LiveVotingContext::init(LiveVotingContextUI::class);
+                self::initILIAS2();
+                break;
+        }
+    }
+
+    /**
+     *
+     * @throws LiveVotingException
+     */
+    public static function initILIAS2(): void
+    {
+        global $DIC;
+        require_once 'include/inc.ilias_version.php';
+        self::initDependencyInjection();
+        self::initCore();
+        self::initClient();
+        self::initUser();
+        self::initLanguage();
+        self::$tree->initLangCode();
+        self::initHTML2();
+        $GLOBALS["objDefinition"] = $DIC["objDefinition"] = new ilObjectDefinition();
+    }
+
+    /**
+     *
+     */
+    public static function initDependencyInjection(): void
+    {
+        global $DIC;
+        $DIC = new Container();
+        $DIC["ilLoggerFactory"] = function ($c) {
+            return ilLoggerFactory::getInstance();
+        };
+    }
+
+    /**
+     * @param int|null $context
+     *
+     * @return LiveVotingInitialisation
+     * @throws Exception
+     */
+    public static function init(int $context = null): LiveVotingInitialisation
+    {
+        return new self($context);
+    }
+
+
+    /**
+     * @param int $context
+     *
+     * @throws Exception
+     */
+    public static function saveContext(int $context): void
+    {
+        self::setContext($context);
+
+        LiveVotingContext::setContext($context);
+    }
+
+    /**
+     *
+     * @throws LiveVotingException
+     */
+    protected static function initHTML2(): void
+    {
+        global $DIC;
+        if ($DIC->offsetExists("tpl")) {
+            $DIC->offsetUnset("tpl");
+        }
+        if ($DIC->offsetExists("ilNavigationHistory")) {
+            $DIC->offsetUnset("ilNavigationHistory");
+        }
+        if ($DIC->offsetExists("ilHelp")) {
+            $DIC->offsetUnset("ilHelp");
+        }
+        if ($DIC->offsetExists("styleDefinition")) {
+            $DIC->offsetUnset("styleDefinition");
+        }
+
+        self::initHTML();
+
+        $tpl = ilLiveVotingPlugin::getInstance()->template("default/tpl.main.html");
+
+        $tpl->touchBlock("navbar");
+        $tpl->addCss('./templates/default/delos.css');
+        $tpl->addBlockFile("CONTENT", "content", "tpl.main_voter.html", ilLiveVotingPlugin::getInstance()->directory());
+
+        if ($DIC->offsetExists("tpl")) {
+            $DIC->offsetUnset("tpl");
+        }
+
+        self::initGlobal("tpl", $tpl);
+
+        $tpl->setVariable('BASE', LiveVotingConfig::getBaseVoteURL());
+
+        iljQueryUtil::initjQuery();
+        ilUIFramework::init();
+    }
+
+    public static function initUIFramework(Container $c): void
     {
         parent::initUIFramework($c);
+    }
+
+    /**
+     * @return int
+     */
+    public static function getContext(): int
+    {
+        return self::$context;
+    }
+
+    /**
+     * @param int $context
+     */
+    public static function setContext(int $context): void
+    {
+        self::$context = $context;
     }
 }

@@ -18,17 +18,13 @@ declare(strict_types=1);
  *
  */
 
-use ILIAS\DI\Container;
-
 use LiveVoting\platform\ilias\LiveVotingContext;
 use LiveVoting\platform\LiveVotingConfig;
 use LiveVoting\player\LiveVotingInitialisationUI;
-use LiveVoting\player\LiveVotingPlayerUI;
 use LiveVoting\Utils\ParamManager;
 use LiveVoting\votings\LiveVoting;
 use LiveVoting\votings\LiveVotingParticipant;
 require_once __DIR__ . '/../../../../../../../libs/composer/vendor/autoload.php';
-/*require_once __DIR__ . "/vendor/autoload.php";*/
 require_once "dir.php";
 
 
@@ -37,9 +33,9 @@ require_once "dir.php";
 try {
     LiveVotingInitialisationUI::init();
 
-    LiveVotingContext::setContext(1);
-
     LiveVotingParticipant::getInstance()->setIdentifier(session_id())->setType(2);
+
+    LiveVotingContext::setContext(1);
 
     $param_manager = ParamManager::getInstance();
 
@@ -55,18 +51,18 @@ try {
         if ($liveVoting) {
             if ($liveVoting->isOnline()) {
                 if ($liveVoting->isAnonymous() || LiveVotingParticipant::getInstance()->isPINUser()) {
-                    $DIC->ctrl()->redirectByClass([ilUIPluginRouterGUI::class, LiveVotingPlayerUI::class], 'startVoterPlayer');
+                    $DIC->ctrl()->redirectByClass(["ilUIPluginRouterGUI", "LiveVotingPlayerGUI"], 'startVoterPlayer');
                 } else {
-                    $DIC->ctrl()->redirectByClass([ilUIPluginRouterGUI::class, LiveVotingPlayerUI::class], 'votingNeedLogin');
+                    $DIC->ctrl()->redirectByClass(["ilUIPluginRouterGUI", "LiveVotingPlayerGUI"], 'votingNeedLogin');
                 }
             } else {
-                $DIC->ctrl()->redirectByClass([ilUIPluginRouterGUI::class, LiveVotingPlayerUI::class], 'votingOffline');
+                $DIC->ctrl()->redirectByClass(["ilUIPluginRouterGUI", "LiveVotingPlayerGUI"], 'votingOffline');
             }
         } else {
-            $DIC->ctrl()->redirectByClass([ilUIPluginRouterGUI::class, LiveVotingPlayerUI::class], 'votingNotFound');
+            $DIC->ctrl()->redirectByClass(["ilUIPluginRouterGUI", "LiveVotingPlayerGUI"], 'votingNotFound');
         }
     } else {
-        $DIC->ctrl()->redirectByClass([ilUIPluginRouterGUI::class, LiveVotingPlayerUI::class], 'index');
+        $DIC->ctrl()->redirectByClass(["ilUIPluginRouterGUI", "LiveVotingPlayerGUI"], 'index');
     }
 } catch (Throwable $ex) {
     echo $ex->getMessage() . "<br /><br /><a href='/'>back</a>";
