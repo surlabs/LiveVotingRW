@@ -49,7 +49,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
     public function getStandardCmd(): string
     {
-        return 'showContent';
+        return 'index';
     }
 
     /**
@@ -59,10 +59,8 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
     {
         global $DIC;
         $DIC->help()->setScreenIdComponent(ilLiveVotingPlugin::PLUGIN_ID);
-        //$cmd = $DIC->ctrl()->getCmd('showContent');
-        $DIC->ui()->mainTemplate()->setPermanentLink(ilLiveVotingPlugin::PLUGIN_ID, $this->ref_id);
 
-        $this->initHeaderAndLocator();
+        $DIC->ui()->mainTemplate()->setPermanentLink(ilLiveVotingPlugin::PLUGIN_ID, $this->ref_id);
 
         switch ($cmd){
             case 'index':

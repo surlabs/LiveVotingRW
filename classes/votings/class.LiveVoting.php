@@ -300,6 +300,8 @@ class LiveVoting
         $this->setVotingHistory(false);
         $this->setShowAttendees(false);
         $this->setPuk(LiveVoting::generatePuk());
+
+        $this->save();
     }
 
     /**
@@ -424,5 +426,22 @@ class LiveVoting
         }
 
         return null;
+    }
+
+    /**
+     * @param int $obj_id
+     * @return string
+     * @throws LiveVotingException
+     */
+    public static function getPinFromObjId(int $obj_id): string
+    {
+        $database = new LiveVotingDatabase();
+        $result = $database->select("rep_robj_xlvo_config_n", array("obj_id" => $obj_id), array("pin"));
+
+        if (isset($result[0])) {
+            return $result[0]["pin"];
+        }
+
+        return "";
     }
 }

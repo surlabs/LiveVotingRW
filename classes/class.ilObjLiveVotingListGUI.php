@@ -18,6 +18,9 @@ declare(strict_types=1);
  *
  */
 
+use LiveVoting\platform\LiveVotingException;
+use LiveVoting\votings\LiveVoting;
+
 /**
  * Class ilObjLiveVotingListGUI
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
@@ -26,17 +29,31 @@ class ilObjLiveVotingListGUI extends ilObjectPluginListGUI
 {
     public function getGuiClass(): string
     {
-        // TODO: Implement getGuiClass() method.
         return "ilObjLiveVotingGUI";
     }
 
     public function initCommands(): array
     {
-        // TODO: Implement initCommands() method.
-        return [];
+        return [
+            [
+                "permission" => "read",
+                "cmd" => "index",
+                "default" => true,
+            ],
+            [
+                "permission" => "write",
+                "cmd" => "manage",
+                "txt" => $this->txt("tab_manage"),
+            ],
+            [
+                "permission" => "write",
+                "cmd" => "editProperties",
+                "txt" => $this->lng->txt("settings"),
+            ],
+        ];
     }
 
-    public function initType()
+    public function initType(): void
     {
         $this->setType("xlvo");
     }
@@ -48,6 +65,7 @@ class ilObjLiveVotingListGUI extends ilObjectPluginListGUI
      *                        'alert' (boolean) => display as an alert property (usually in red)
      *                        'property' (string) => property name
      *                        'value' (string) => property value
+     * @throws LiveVotingException
      */
     public function getCustomProperties(array $prop): array
     {
@@ -57,15 +75,21 @@ class ilObjLiveVotingListGUI extends ilObjectPluginListGUI
 
         $props = parent::getCustomProperties($prop);
 
+
         if (ilObjLiveVotingAccess::_isOffline($this->obj_id)) {
             $props[] = array(
                 'alert' => true,
                 'newline' => true,
                 'property' => 'Status',
-                'value' => 'Offline',
-                'propertyNameVisible' => true
+                'value' => 'Offline'
             );
         }
+
+        $props[] = array(
+            'newline' => true,
+            "property" => $this->txt("voter_pin_input"),
+            "value"    => LiveVoting::getPinFromObjId($this->obj_id)
+        );
 
         return $props;
     }
