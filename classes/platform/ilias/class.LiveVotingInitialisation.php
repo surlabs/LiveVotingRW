@@ -164,7 +164,7 @@ class LiveVotingInitialisation extends ilInitialisation
 
         $tpl->touchBlock("navbar");
         $tpl->addCss('./templates/default/delos.css');
-        $tpl->addBlockFile("CONTENT", "content", "tpl.main_voter.html", ilLiveVotingPlugin::getInstance()->directory());
+        $tpl->addBlockFile("CONTENT", "content", "tpl.main_voter.html", ilLiveVotingPlugin::getInstance()->getDirectory());
 
         if ($DIC->offsetExists("tpl")) {
             $DIC->offsetUnset("tpl");

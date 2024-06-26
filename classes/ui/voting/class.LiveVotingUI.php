@@ -20,10 +20,16 @@ declare(strict_types=1);
 
 namespace LiveVoting\UI;
 
+use ILIAS\UI\Factory;
+use ILIAS\UI\Renderer;
+use ilLanguage;
 use ilLiveVotingPlugin;
 use ilSystemStyleException;
 use ilTemplate;
 use ilTemplateException;
+use LiveVoting\platform\LiveVotingException;
+use LiveVoting\Utils\ParamManager;
+use LiveVoting\votings\LiveVoting;
 
 /**
  * Class LiveVotingUI
@@ -35,38 +41,73 @@ class LiveVotingUI
     /**
      * @var ilLiveVotingPlugin
      */
-    protected ilLiveVotingPlugin $pl;
+    private ilLiveVotingPlugin $pl;
 
-/*
+    /**
+     * @var LiveVoting
+     */
+    private LiveVoting $liveVoting;
+    /**
+     * @var Renderer
+     */
+    private Renderer $renderer;
+    /**
+     * @var Factory $factory
+     */
+    private Factory $factory;
+
+    /**
+     * LiveVotingUI constructor.
+     */
+    public function __construct(LiveVoting $liveVoting)
+    {
+        global $DIC;
+
+        $this->pl = ilLiveVotingPlugin::getInstance();
+        $this->liveVoting = $liveVoting;
+        $this->renderer = $DIC->ui()->renderer();
+        $this->factory = $DIC->ui()->factory();
+    }
+
     public function executeCommand(): void
     {
         GLOBAL $DIC;
-        $nextClass = $DIC->ctrl()->getNextClass();
-        switch ($nextClass) {
-            default:
-                $cmd = $DIC->ctrl()->getCmd('showContent');
-                $this->{$cmd}();
-                break;
-        }
-    }*/
+
+        $cmd = $DIC->ctrl()->getCmd('showIndex');
+
+        $this->{$cmd}();
+    }
 
     /**
      * @throws ilTemplateException
      * @throws ilSystemStyleException
+     * @throws LiveVotingException
      */
     public function showIndex(): string
     {
-        $this->pl = ilLiveVotingPlugin::getInstance();
-        $template = new ilTemplate($this->pl->getDirectory()."/templates/default/Player/tpl.start.html", true, true );
-        $template->setVariable('PIN',"1234");
+        if ($this->liveVoting->isOnline()) {
+            if (!empty($this->liveVoting->getQuestions())) {
+                $param_manager = ParamManager::getInstance();
 
-        $template->setVariable('QR-CODE', "1234");
+                $template = new ilTemplate($this->pl->getDirectory() . "/templates/default/Player/tpl.start.html", true, true);
 
-        $template->setVariable('SHORTLINK', "TEST");
-        $template->setVariable('MODAL', "TEST");
-        $template->setVariable("ONLINE_TEXT", "TEST");
-        $template->setVariable("ZOOM_TEXT", "TEST");
-        return '<div>Hola'.$template->get().'</div>';
+                $template->setVariable('PIN', $this->liveVoting->getPin());
+
+                $template->setVariable('QR-CODE', $this->liveVoting->getQRCode($param_manager->getRefId()));
+
+                $template->setVariable('SHORTLINK', $this->liveVoting->getShortLink($param_manager->getRefId()));
+
+                $template->setVariable('MODAL', "Modal del QR (Debe estar oculto y mostrarse al clicar en el QR)");
+                $template->setVariable("ONLINE_TEXT", vsprintf($this->pl->txt("start_online"), [0]));
+                $template->setVariable("ZOOM_TEXT", $this->pl->txt("start_zoom"));
+
+                return '<div>' . $template->get() . '</div>';
+            } else {
+                return $this->renderer->render($this->factory->messageBox()->failure($this->pl->txt("player_msg_no_start_2")));
+            }
+        } else {
+            return $this->renderer->render($this->factory->messageBox()->failure($this->pl->txt("player_msg_no_start_1")));
+        }
     }
 
 }

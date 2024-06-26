@@ -44,7 +44,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
     public function getAfterCreationCmd(): string
     {
-        return 'showContentAfterCreation';
+        return 'index';
     }
 
     public function getStandardCmd(): string
@@ -66,7 +66,6 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             case 'index':
                 $this->showContent();
                 break;
-            case 'showContentAfterCreation':
             case 'editProperties':
             case 'manage':
             case 'selectType':
@@ -84,29 +83,16 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         }
     }
 
-    public function showContentAfterCreation(): void
-    {
-        global $DIC;
-        $liveVotingUI = new LiveVotingUI();
-        //$this->setSubTabs('tab_content', 'subtab_show');
-        $this->tabs->activateTab("tab_content");
-
-        try {
-            $this->tpl->setContent($liveVotingUI->showIndex());
-        } catch (ilSystemStyleException|ilTemplateException $e) {
-            //TODO: Mostrar error
-        }
-    }
-
     public function showContent(): void
     {
-        $liveVotingUI = new LiveVotingUI();
+        $liveVotingUI = new LiveVotingUI($this->object->getLiveVoting());
+
         $this->tabs->activateTab("tab_content");
+
         try {
             $this->tpl->setContent($liveVotingUI->showIndex());
         } catch (ilSystemStyleException|ilTemplateException $e) {
             //TODO: Mostrar error
-
         }
     }
 

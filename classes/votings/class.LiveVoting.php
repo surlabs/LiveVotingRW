@@ -20,6 +20,9 @@ declare(strict_types=1);
 
 namespace LiveVoting\votings;
 
+use ilLink;
+use ilLiveVotingPlugin;
+use LiveVoting\platform\LiveVotingConfig;
 use LiveVoting\platform\LiveVotingDatabase;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\questions\LiveVotingQuestion;
@@ -85,6 +88,37 @@ class LiveVoting
         if ($loadFromDB) {
             $this->loadFromDB();
         }
+    }
+
+    /**
+     * @throws LiveVotingException
+     */
+    public function getShortLink(int $ref_id): string
+    {
+        switch ($this->isAnonymous()) {
+            case true:
+                $shortLinkEnabled = boolval(LiveVotingConfig::get("allow_shortlink"));
+
+                if ($shortLinkEnabled) {
+                    $url = LiveVotingConfig::get("allow_shortlink_link");
+                    $url = rtrim($url, "/") . "/";
+                } else {
+                    $url = ILIAS_HTTP_PATH . '/' . ilLiveVotingPlugin::getInstance()->getDirectory() . '/pin.php?xlvo_pin=' . $this->getPin();
+                }
+
+                break;
+            default:
+                $url = ilLink::_getStaticLink($ref_id, ilLiveVotingPlugin::PLUGIN_ID);
+                break;
+        }
+
+        return $url;
+    }
+
+    public function getQRCode(int $ref_id): string
+    {
+        // TODO: Implement getQRCode() method.
+        return "Hay que generar el QR 🆎";
     }
 
     private function init(): void

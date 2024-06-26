@@ -224,7 +224,7 @@ class LiveVotingSettingsUI
         $renderer = $DIC->ui()->renderer();
         $this->object->update();
 
-        return $renderer->render($DIC->ui()->factory()->messageBox()->success($this->plugin->txt('info_config_saved')));
+        return $renderer->render($DIC->ui()->factory()->messageBox()->success($this->plugin->txt('config_msg_success')));
 
     }
 
