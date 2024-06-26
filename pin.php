@@ -23,6 +23,7 @@ use ILIAS\DI\Container;
 use LiveVoting\platform\ilias\LiveVotingContext;
 use LiveVoting\platform\LiveVotingConfig;
 use LiveVoting\player\LiveVotingInitialisationUI;
+use LiveVoting\UI\Player\LiveVotingPlayerUI;
 use LiveVoting\Utils\ParamManager;
 use LiveVoting\votings\LiveVoting;
 use LiveVoting\votings\LiveVotingParticipant;
@@ -46,14 +47,14 @@ try {
     
     $DIC->ctrl()->setTargetScript(LiveVotingConfig::getFullApiUrl());
 
-   /* if(!empty($pin)){
+    if(!empty($pin)){
         if(LiveVoting::getObjIdFromPin($pin)){
             $param_manager = ParamManager::getInstance();
-            $DIC->ctrl()->redirectByClass([ilUIPluginRouterGUI::class, xlvoVoter2GUI::class], xlvoVoter2GUI::CMD_START_VOTER_PLAYER);
+            $DIC->ctrl()->redirectByClass([ilUIPluginRouterGUI::class, LiveVotingPlayerUI::class], 'startVoterPlayer');
         }
     } else {
 
-    }*/
+    }
 
 
 
