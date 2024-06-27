@@ -71,6 +71,13 @@ final class LiveVotingJs
         return $this;
     }
 
+    public function addSetting($key, $value): LiveVotingJs
+    {
+        $this->settings[$key] = $value;
+
+        return $this;
+    }
+
     public function category(string $category): LiveVotingJs
     {
         $this->category = $category;
@@ -120,7 +127,7 @@ final class LiveVotingJs
 
     protected function resolveLib(): void
     {
-        $base_path = './Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/js/';
+        $base_path = './Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/js/';
         $category = ($this->category ? $this->category . '/' : '') . $this->name . '/';
         $file_name = ilLiveVotingPlugin::PLUGIN_ID . $this->name . '.js';
         $file_name_min = ilLiveVotingPlugin::PLUGIN_ID . $this->name . '.min.js';
@@ -138,7 +145,7 @@ final class LiveVotingJs
         global $DIC;
 
         if ($external) {
-            $DIC->ui()->mainTemplate()->addJavascript(ilLiveVotingPlugin::getInstance()->getDirectory() . '/js/libs/' . $name_of_lib);
+            $DIC->ui()->mainTemplate()->addJavascript(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/js/libs/' . $name_of_lib);
         } else {
             $DIC->ui()->mainTemplate()->addJavaScript($name_of_lib);
         }

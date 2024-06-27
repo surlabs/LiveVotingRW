@@ -20,15 +20,19 @@ declare(strict_types=1);
 
 namespace LiveVoting\UI;
 
+use ilAdvancedSelectionListGUI;
+use ilCtrlException;
 use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
-use ilLanguage;
+use ilLinkButton;
 use ilLiveVotingPlugin;
 use ilSystemStyleException;
 use ilTemplate;
 use ilTemplateException;
+use JsonException;
 use LiveVoting\legacy\LiveVotingQRModalGUI;
 use LiveVoting\platform\LiveVotingException;
+use LiveVoting\Utils\LiveVotingJs;
 use LiveVoting\Utils\ParamManager;
 use LiveVoting\votings\LiveVoting;
 
@@ -36,6 +40,7 @@ use LiveVoting\votings\LiveVoting;
  * Class LiveVotingUI
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
  * @ilCtrl_IsCalledBy  ilObjLiveVotingGUI: ilObjPluginGUI
+ * @ilCtrl_IsCalledBy  LiveVotingUI: ilUIPluginRouterGUI
  */
 class LiveVotingUI
 {
@@ -83,16 +88,40 @@ class LiveVotingUI
      * @throws ilTemplateException
      * @throws ilSystemStyleException
      * @throws LiveVotingException
+     * @throws ilCtrlException
+     * @throws JsonException
      */
     public function showIndex(): string
     {
+        global $DIC;
+
         if ($this->liveVoting->isOnline()) {
             if (!empty($this->liveVoting->getQuestions())) {
-                $param_manager = ParamManager::getInstance();
+                // TODO: Refactor this code to remove deprecated button
+                $b = ilLinkButton::getInstance();
+                $b->setCaption($this->pl->txt('player_start_voting'), false);
+                $b->addCSSClass('xlvo-preview');
+                $b->setUrl($DIC->ctrl()->getLinkTargetByClass("ilObjLiveVotingGUI", "startPlayer"));
+                $b->setId('btn-start-voting');
+                $b->setPrimary(true);
+                $DIC->toolbar()->addButtonInstance($b);
+
+                $current_selection_list = $this->getQuestionSelectionList(false);
+                $DIC->toolbar()->addText($current_selection_list->getHTML());
+
+                // TODO: Refactor this code to remove deprecated button
+                $b2 = ilLinkButton::getInstance();
+                $b2->setCaption($this->pl->txt('player_start_voting_and_unfreeze'), false);
+                $b2->addCSSClass('xlvo-preview');
+                $b2->setUrl($DIC->ctrl()->getLinkTargetByClass("ilObjLiveVotingGUI", "startPlayerAnUnfreeze"));
+                $b2->setId('btn-start-voting-unfreeze');
+                $DIC->toolbar()->addButtonInstance($b2);
 
                 $template = new ilTemplate($this->pl->getDirectory() . "/templates/default/Player/tpl.start.html", true, true);
 
                 $template->setVariable('PIN', $this->liveVoting->getPin());
+
+                $param_manager = ParamManager::getInstance();
 
                 $template->setVariable('QR-CODE', $this->liveVoting->getQRCode($param_manager->getRefId(), 180));
 
@@ -101,6 +130,15 @@ class LiveVotingUI
                 $template->setVariable('MODAL', LiveVotingQRModalGUI::getInstanceFromLiveVoting($this->liveVoting)->getHTML());
                 $template->setVariable("ONLINE_TEXT", vsprintf($this->pl->txt("start_online"), [0]));
                 $template->setVariable("ZOOM_TEXT", $this->pl->txt("start_zoom"));
+
+                $js = LiveVotingJs::getInstance()->addSetting("base_url", $DIC->ctrl()->getLinkTargetByClass("ilObjLiveVotingGUI", "", "", true))->name('Player')->init();
+
+                if ($this->liveVoting->isShowAttendees()) {
+                    $js->call('updateAttendees');
+                    $template->touchBlock('attendees');
+                }
+
+                $js->call('handleStartButton');
 
                 return '<div>' . $template->get() . '</div>';
             } else {
@@ -111,4 +149,36 @@ class LiveVotingUI
         }
     }
 
+    /**
+     * @throws ilCtrlException
+     */
+    protected function getQuestionSelectionList($async = true): ilAdvancedSelectionListGUI
+    {
+        global $DIC;
+
+        // TODO: Refactor this code to remove deprecated selection list
+        $current_selection_list = new ilAdvancedSelectionListGUI();
+        $current_selection_list->setItemLinkClass('xlvo-preview');
+        $current_selection_list->setListTitle($this->pl->txt('player_voting_list'));
+        $current_selection_list->setId('xlvo_select');
+        $current_selection_list->setTriggerEvent('xlvo_voting');
+        $current_selection_list->setUseImages(false);
+
+
+        foreach ($this->liveVoting->getQuestions() as $question) {
+            $id = $question->getId();
+            $title = $question->getTitle();
+
+            $DIC->ctrl()->setParameterByClass("ilObjLiveVotingGUI", "xlvo_voting", $id);
+
+            $target = $DIC->ctrl()->getLinkTargetByClass("ilObjLiveVotingGUI", "startPlayer");
+            if ($async) {
+                $current_selection_list->addItem($title, (string) $id, $target, '', '', '', '', false, 'xlvoPlayer.open(' . $id . ')');
+            } else {
+                $current_selection_list->addItem($title, (string) $id, $target);
+            }
+        }
+
+        return $current_selection_list;
+    }
 }
