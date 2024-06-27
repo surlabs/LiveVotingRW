@@ -54,26 +54,26 @@ class LiveVoting
      * Which questions are being asked
      * @var LiveVotingQuestion[]
      */
-    private array $questions;
+    private array $questions = [];
 
     /**
      * Who is participating in the voting
      * @var LiveVotingParticipant[]
      */
-    private array $participants;
+    private array $participants = [];
 
     /**
      * @var bool Whether the voting is active or not
      */
-    private bool $is_active;
-    private string $pin;
+    private bool $is_active = false;
+    private string $pin = "";
     private bool $online = false;
-    private bool $anonymous;
-    private bool $voting_history;
-    private bool $show_attendees;
-    private int $frozen_behaviour;
-    private int $results_behaviour;
-    private string $puk;
+    private bool $anonymous = false;
+    private bool $voting_history = false;
+    private bool $show_attendees = false;
+    private int $frozen_behaviour = 1;
+    private int $results_behaviour = 1;
+    private string $puk = "";
 
     /**
      * LiveVoting constructor.
