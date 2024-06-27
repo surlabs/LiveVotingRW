@@ -81,14 +81,22 @@ class LiveVotingPlayerGUI
 
         $liveVoting = LiveVoting::getLiveVotingFromPin($pin);
 
+        if (!$liveVoting) {
+            dump("Mensaje de que el PIN no es válido");
+            exit();
+            return;
+        }
+
         if (!$liveVoting->isOnline()) {
             dump("Mensaje de que el objeto LiveVoting no está disponible");
             exit();
+            return;
         }
 
         if (!$liveVoting->isAnonymous() && LiveVotingParticipant::getInstance()->isPINUser()) {
             dump("Mensaje de que el usuario debe iniciar sesión para votar");
             exit();
+            return;
         }
 
         dump("Mostrar la pantalla de votación");
