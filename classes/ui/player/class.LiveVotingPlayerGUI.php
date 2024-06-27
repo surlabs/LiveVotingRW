@@ -40,6 +40,9 @@ class LiveVotingPlayerGUI
     {
         global $DIC;
 
+        $this->pl = ilLiveVotingPlugin::getInstance();
+
+
         $cmd = $DIC->ctrl()->getCmd('index');
 
         $this->{$cmd}();
@@ -63,11 +66,16 @@ class LiveVotingPlayerGUI
 
     /**
      * @throws LiveVotingException
+     * @throws ilTemplateException
      */
     protected function getHTML(): void
     {
-        // TODO: Dani esto es lo q te petaba
-        // $tpl = new ilGlobalTemplate('default/Voter/tpl.inner_screen.html', true, true, 'Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting');
+
+        try {
+            $tpl = new ilGlobalTemplate($this->pl->getDirectory() . "/templates/default/Voter/tpl.voter_player.html", true, true);
+        } catch (ilSystemStyleException|ilTemplateException $e) {
+            throw new LiveVotingException($e->getMessage());
+        }
 
         $param_manager = ParamManager::getInstance();
 
@@ -99,19 +107,16 @@ class LiveVotingPlayerGUI
             return;
         }
 
-        dump("Mostrar la pantalla de votación");
-        exit();
 
         if ($liveVoting->getFrozenBehaviour()) {
-
-            //$tpl->setVariable('TITLE', $this->txt('header_frozen'));
-            //$tpl->setVariable('DESCRIPTION', $this->txt('info_frozen'));
-/*            $tpl->setVariable('COUNT', $this->manager->countVotings());
-            $tpl->setVariable('POSITION', $this->manager->getVotingPosition());
-            $tpl->setVariable('PIN', xlvoPin::formatPin($this->manager->getVotingConfig()->getPin()));
-            $tpl->setVariable('GLYPH', GlyphGUI::get('pause'));*/
-            //echo $tpl->get();
-            //exit;
+            $tpl->setVariable('TITLE', $this->txt('header_frozen'));
+            $tpl->setVariable('DESCRIPTION', $this->txt('info_frozen'));
+            $tpl->setVariable('COUNT', $liveVoting->countQuestions());
+            $tpl->setVariable('POSITION', $liveVoting->getQuestionPosition());
+            //$tpl->setVariable('PIN', xlvoPin::formatPin($this->manager->getVotingConfig()->getPin()));
+            //$tpl->setVariable('GLYPH', GlyphGUI::get('pause'));
+            $renderer = $DIC->ui()->renderer();
+            exit;
         }
 
      /*   switch ($this->manager->getPlayer()->getStatus(false)) {
@@ -162,7 +167,6 @@ class LiveVotingPlayerGUI
 
     protected function txt(string $key): string
     {
-        $this->pl = ilLiveVotingPlugin::getInstance();
         return $this->pl->txt($key);
     }
 }
