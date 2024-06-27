@@ -23,6 +23,7 @@ namespace LiveVoting\player;
 use ilAccess;
 use ilAppEventHandler;
 use ilCtrlException;
+use ilDatabaseException;
 use ilDBWrapperFactory;
 use ilErrorHandling;
 use ilGlobalCache;
@@ -234,6 +235,7 @@ class LiveVotingInitialisationUI
 
     /**
      * initialise database object $ilDB
+     * @throws ilDatabaseException
      */
     private function initDatabase()
     {
@@ -307,7 +309,7 @@ class LiveVotingInitialisationUI
 
     }
 
-    private function loadClientIniFile()
+    private function loadClientIniFile(): void
     {
         $ini_file = "./" . ILIAS_WEB_DIR . "/" . CLIENT_ID . "/client.ini.php";
 
@@ -354,8 +356,6 @@ class LiveVotingInitialisationUI
         $ilGlobalCacheSettings = new ilGlobalCacheSettings();
         $ilGlobalCacheSettings->readFromIniFile($ilClientIniFile);
         ilGlobalCache::setup($ilGlobalCacheSettings);
-
-        return true;
 
     }
 

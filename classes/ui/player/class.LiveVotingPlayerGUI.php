@@ -107,17 +107,15 @@ class LiveVotingPlayerGUI
             return;
         }
 
-        dump($tpl);
-        exit;
 
         if ($liveVoting->getFrozenBehaviour()) {
             $tpl->setVariable('TITLE', $this->txt('header_frozen'));
             $tpl->setVariable('DESCRIPTION', $this->txt('info_frozen'));
-            $tpl->setVariable('COUNT', $this->manager->countVotings());
-            $tpl->setVariable('POSITION', $this->manager->getVotingPosition());
+            $tpl->setVariable('COUNT', $liveVoting->countQuestions());
+            $tpl->setVariable('POSITION', $liveVoting->getQuestionPosition());
             //$tpl->setVariable('PIN', xlvoPin::formatPin($this->manager->getVotingConfig()->getPin()));
             //$tpl->setVariable('GLYPH', GlyphGUI::get('pause'));
-            echo $tpl->get();
+            $renderer = $DIC->ui()->renderer();
             exit;
         }
 
