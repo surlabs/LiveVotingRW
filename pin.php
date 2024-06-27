@@ -46,22 +46,9 @@ try {
     $DIC->ctrl()->setTargetScript(LiveVotingConfig::getFullApiUrl());
 
     if(!empty($pin)) {
-        $liveVoting = LiveVoting::getLiveVotingFromPin($pin);
-        if ($liveVoting) {
-            if ($liveVoting->isOnline()) {
-                if ($liveVoting->isAnonymous() || LiveVotingParticipant::getInstance()->isPINUser()) {
-                    $DIC->ctrl()->redirectByClass(["ilUIPluginRouterGUI", "LiveVotingPlayerGUI"], 'startVoterPlayer');
-                } else {
-                    $DIC->ctrl()->redirectByClass(["ilUIPluginRouterGUI", "LiveVotingPlayerGUI"], 'votingNeedLogin');
-                }
-            } else {
-                $DIC->ctrl()->redirectByClass(["ilUIPluginRouterGUI", "LiveVotingPlayerGUI"], 'votingOffline');
-            }
-        } else {
-            $DIC->ctrl()->redirectByClass(["ilUIPluginRouterGUI", "LiveVotingPlayerGUI"], 'votingNotFound');
-        }
-    } else {
         $DIC->ctrl()->redirectByClass(["ilUIPluginRouterGUI", "LiveVotingPlayerGUI"], 'index');
+    } else {
+        $DIC->ctrl()->redirectByClass(["ilUIPluginRouterGUI", "LiveVotingPlayerGUI"], 'requestPin');
     }
 } catch (Throwable $ex) {
     echo $ex->getMessage() . "<br /><br /><a href='/'>back</a>";

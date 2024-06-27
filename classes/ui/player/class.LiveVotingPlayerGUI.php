@@ -21,6 +21,7 @@ declare(strict_types=1);
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\Utils\ParamManager;
 use LiveVoting\votings\LiveVoting;
+use LiveVoting\votings\LiveVotingParticipant;
 
 /**
  * Class LiveVotingPlayerUI
@@ -46,53 +47,52 @@ class LiveVotingPlayerGUI
 
     public function index(): void
     {
+        try{
+            $this->getHTML();
+        } catch (LiveVotingException $e) {
+            dump($e->getMessage());
+            exit;
+        }
+    }
+
+    public function requestPin(): void
+    {
         dump("Cargar el input para meter el PIN");
         exit();
     }
 
-    public function votingNotFound(): void
-    {
-        dump("Mensaje de error: No se encuentra la votación");
-        exit();
-    }
-
-    public function votingOffline(): void
-    {
-
-
-    }
-
-    public function votingNeedLogin(): void
-    {
-        dump("Mensaje de error: El usuario no está logueado y la votacion no es anonima");
-        exit();
-    }
-
     /**
      * @throws LiveVotingException
      */
-    public function startVoterPlayer(): void
+    protected function getHTML(): void
     {
-        try{$this->getHTML();}
-        catch (LiveVotingException $e) {
-             dump($e->getMessage());
-             exit;
-        }
-
-    }
-
-    /**
-     * @throws LiveVotingException
-     */
-    protected function getHTML()
-    {
-        $tpl = new ilGlobalTemplate('default/Voter/tpl.inner_screen.html', true, true, 'Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting');
+        // TODO: Dani esto es lo q te petaba
+        // $tpl = new ilGlobalTemplate('default/Voter/tpl.inner_screen.html', true, true, 'Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting');
 
         $param_manager = ParamManager::getInstance();
 
         $pin = $param_manager->getPin();
 
+        if (empty($pin)) {
+            $this->requestPin();
+            return;
+        }
+
+
         $liveVoting = LiveVoting::getLiveVotingFromPin($pin);
+
+        if (!$liveVoting->isOnline()) {
+            dump("Mensaje de que el objeto LiveVoting no está disponible");
+            exit();
+        }
+
+        if (!$liveVoting->isAnonymous() && LiveVotingParticipant::getInstance()->isPINUser()) {
+            dump("Mensaje de que el usuario debe iniciar sesión para votar");
+            exit();
+        }
+
+        dump("Mostrar la pantalla de votación");
+        exit();
 
         if ($liveVoting->getFrozenBehaviour()) {
 
