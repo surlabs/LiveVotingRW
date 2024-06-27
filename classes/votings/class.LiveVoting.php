@@ -26,6 +26,7 @@ use LiveVoting\platform\LiveVotingConfig;
 use LiveVoting\platform\LiveVotingDatabase;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\questions\LiveVotingQuestion;
+use LiveVoting\Utils\ParamManager;
 
 /**
  * Class LiveVoting
@@ -74,6 +75,7 @@ class LiveVoting
     private int $frozen_behaviour = 1;
     private int $results_behaviour = 1;
     private string $puk = "";
+    private int $current_question_id = 0;
 
     /**
      * LiveVoting constructor.
@@ -88,6 +90,8 @@ class LiveVoting
         if ($loadFromDB) {
             $this->loadFromDB();
         }
+
+        $this->init();
     }
 
     /**
@@ -123,7 +127,17 @@ class LiveVoting
 
     private function init(): void
     {
+        if ($this->countQuestions() > 0) {
+            $param_manager = ParamManager::getInstance();
 
+            if ($voting_id = $param_manager->getVoting()) {
+                $this->current_question_id = $voting_id;
+            } else {
+                // TODO: $this->player->getActiveVotingId() o algo parecido
+                $this->current_question_id = $this->questions[0]->getId();
+            }
+
+        }
     }
 
     public function getId(): int
@@ -477,5 +491,31 @@ class LiveVoting
         }
 
         return "";
+    }
+
+    /**
+     * Count questions
+     */
+    public function countQuestions(): int
+    {
+        return count($this->questions);
+    }
+
+    /**
+     * Get question position
+     */
+    public function getQuestionPosition(): int
+    {
+        $position = 0;
+
+        foreach ($this->questions as $question) {
+            if ($question->getId() === $this->current_question_id) {
+                return $position;
+            }
+
+            $position++;
+        }
+
+        return -1;
     }
 }
