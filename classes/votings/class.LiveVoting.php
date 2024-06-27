@@ -428,7 +428,7 @@ class LiveVoting
         $result = $database->select("rep_robj_xlvo_config_n", array("pin" => $pin), array("obj_id"));
 
         if (isset($result[0])) {
-            $liveVoting = new LiveVoting((int) $result[0]["obj_id"]);
+            $liveVoting = new LiveVoting((int) $result[0]["obj_id"], true);
 
             if (!$liveVoting->isOnline()) {
                 if ($safe_mode) {
@@ -456,7 +456,7 @@ class LiveVoting
         $result = $database->select("rep_robj_xlvo_config_n", array("pin" => $pin), array("obj_id"));
 
         if (isset($result[0])) {
-            return new LiveVoting((int) $result[0]["obj_id"]);
+            return new LiveVoting((int) $result[0]["obj_id"], true);
         }
 
         return null;
