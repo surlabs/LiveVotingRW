@@ -1,0 +1,163 @@
+<?php
+declare(strict_types=1);
+/**
+ * This file is part of the LiveVoting Repository Object plugin for ILIAS.
+ * This plugin allows to create real time votings within ILIAS.
+ *
+ * The LiveVoting Repository Object plugin for ILIAS is open-source and licensed under GPL-3.0.
+ * For license details, visit https://www.gnu.org/licenses/gpl-3.0.en.html.
+ *
+ * To report bugs or participate in discussions, visit the Mantis system and filter by
+ * the category "LiveVoting" at https://mantis.ilias.de.
+ *
+ * More information and source code are available at:
+ * https://github.com/surlabs/LiveVoting
+ *
+ * If you need support, please contact the maintainer of this software at:
+ * info@surlabs.es
+ *
+ */
+
+namespace LiveVoting\Utils;
+
+use ilLiveVotingPlugin;
+
+/**
+ * Class ParamManager
+ *
+ * @package LiveVoting\Context\Param
+ *
+ * @author  Martin Studer <ms@studer-raimann.ch>
+ */
+final class LiveVotingJs
+{
+    private string $name = '';
+    private array $settings = [];
+    private string $category = '';
+    /**
+     * @var true
+     */
+    private bool $init = false;
+    private string $lib = '';
+    private array $translations = [];
+
+    public static function getInstance(): LiveVotingJs
+    {
+        return new self();
+    }
+
+    public function name(string $string): LiveVotingJs
+    {
+        $this->name = $string;
+
+        return $this;
+    }
+
+    public function addSettings(array $settings): LiveVotingJs
+    {
+        foreach ($settings as $k => $v) {
+            $this->settings[$k] = $v;
+        }
+
+        return $this;
+    }
+
+    public function addTranslations(array $translations): LiveVotingJs
+    {
+        foreach ($translations as $k => $v) {
+            $this->translations[$k] = $v;
+        }
+
+        return $this;
+    }
+
+    public function category(string $category): LiveVotingJs
+    {
+        $this->category = $category;
+
+        return $this;
+    }
+
+    public function init(): LiveVotingJs
+    {
+        $this->init = true;
+        $this->resolveLib();
+        $this->addLibToHeader($this->lib, false);
+        $this->setInitCode();
+
+        return $this;
+    }
+
+    public function setRunCode(): LiveVotingJs
+    {
+        return $this->call("run");
+    }
+
+    public function call($method, $params = ''): LiveVotingJs
+    {
+        if (!$this->init) {
+            return $this;
+        }
+
+        $this->addOnLoadCode($this->getCallCode($method, $params));
+
+        return $this;
+    }
+
+    public function addOnLoadCode($code): LiveVotingJs
+    {
+        global $DIC;
+
+        $DIC->ui()->mainTemplate()->addOnLoadCode($code);
+
+        return $this;
+    }
+
+    public function getCallCode($method, $params = ''): string
+    {
+        return ilLiveVotingPlugin::PLUGIN_ID . $this->name . '.' . $method . '(' . $params . ');';
+    }
+
+    protected function resolveLib(): void
+    {
+        $base_path = './Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/js/';
+        $category = ($this->category ? $this->category . '/' : '') . $this->name . '/';
+        $file_name = ilLiveVotingPlugin::PLUGIN_ID . $this->name . '.js';
+        $file_name_min = ilLiveVotingPlugin::PLUGIN_ID . $this->name . '.min.js';
+        $full_path_min = $base_path . $category . $file_name_min;
+        $full_path = $base_path . $category . $file_name;
+        if (is_file($full_path_min)) {
+            $this->lib = $full_path_min;
+        } else {
+            $this->lib = $full_path;
+        }
+    }
+
+    public function addLibToHeader($name_of_lib, $external = true): LiveVotingJs
+    {
+        global $DIC;
+
+        if ($external) {
+            $DIC->ui()->mainTemplate()->addJavascript(ilLiveVotingPlugin::getInstance()->getDirectory() . '/js/libs/' . $name_of_lib);
+        } else {
+            $DIC->ui()->mainTemplate()->addJavaScript($name_of_lib);
+        }
+
+        return $this;
+    }
+
+    public function setInitCode(): LiveVotingJs
+    {
+        $arr = array();
+
+        foreach ($this->settings as $name => $value) {
+            $arr[$name] = $value;
+        }
+
+        foreach ($this->translations as $key => $string) {
+            $arr['lng'][$key] = $string;
+        }
+
+        return $this->call("init", json_encode($arr));
+    }
+}

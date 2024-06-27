@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace LiveVoting\votings;
 
+use Endroid\QrCode\QrCode;
 use ilLink;
 use ilLiveVotingPlugin;
 use LiveVoting\platform\LiveVotingConfig;
@@ -119,10 +120,31 @@ class LiveVoting
         return $url;
     }
 
-    public function getQRCode(int $ref_id): string
+    /**
+     * @throws LiveVotingException
+     */
+    public function getQRCode(int $ref_id, int $size): string
     {
-        // TODO: Implement getQRCode() method.
-        return "Hay que generar el QR 🆎";
+        require_once __DIR__ . '/../../vendor/autoload.php';
+
+        $qrCodeLarge = new QrCode($this->getShortLink($ref_id));
+        $qrCodeLarge->setErrorCorrection('high');
+        $qrCodeLarge->setForegroundColor(array(
+            'r' => 0,
+            'g' => 0,
+            'b' => 0,
+            'a' => 0,
+        ));
+        $qrCodeLarge->setBackgroundColor(array(
+            'r' => 255,
+            'g' => 255,
+            'b' => 255,
+            'a' => 0,
+        ));
+        $qrCodeLarge->setPadding(10);
+        $qrCodeLarge->setSize($size);
+
+        return $qrCodeLarge->getDataUri();
     }
 
     private function init(): void

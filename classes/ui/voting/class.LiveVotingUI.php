@@ -27,6 +27,7 @@ use ilLiveVotingPlugin;
 use ilSystemStyleException;
 use ilTemplate;
 use ilTemplateException;
+use LiveVoting\legacy\LiveVotingQRModalGUI;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\Utils\ParamManager;
 use LiveVoting\votings\LiveVoting;
@@ -93,11 +94,11 @@ class LiveVotingUI
 
                 $template->setVariable('PIN', $this->liveVoting->getPin());
 
-                $template->setVariable('QR-CODE', $this->liveVoting->getQRCode($param_manager->getRefId()));
+                $template->setVariable('QR-CODE', $this->liveVoting->getQRCode($param_manager->getRefId(), 180));
 
                 $template->setVariable('SHORTLINK', $this->liveVoting->getShortLink($param_manager->getRefId()));
 
-                $template->setVariable('MODAL', "Modal del QR (Debe estar oculto y mostrarse al clicar en el QR)");
+                $template->setVariable('MODAL', LiveVotingQRModalGUI::getInstanceFromLiveVoting($this->liveVoting)->getHTML());
                 $template->setVariable("ONLINE_TEXT", vsprintf($this->pl->txt("start_online"), [0]));
                 $template->setVariable("ZOOM_TEXT", $this->pl->txt("start_zoom"));
 
