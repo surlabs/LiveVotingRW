@@ -30,6 +30,11 @@ use LiveVoting\votings\LiveVoting;
  */
 class LiveVotingPlayerGUI
 {
+    /**
+     * @var ilLiveVotingPlugin
+     */
+    protected ilLiveVotingPlugin $pl;
+
     public function executeCommand(): void
     {
         global $DIC;
@@ -53,14 +58,7 @@ class LiveVotingPlayerGUI
 
     public function votingOffline(): void
     {
-        /*dump("Mensaje de error: El repositorio está offline");
-        exit();*/
-        try {
-            $this->getHTML();
-        } catch (Exception $e) {
-            dump($e->getMessage());
-            exit();
-        }
+
 
     }
 
@@ -70,10 +68,17 @@ class LiveVotingPlayerGUI
         exit();
     }
 
+    /**
+     * @throws LiveVotingException
+     */
     public function startVoterPlayer(): void
     {
-        dump("Cargar la vista de la votación");
-        exit();
+        try{$this->getHTML();}
+        catch (LiveVotingException $e) {
+             dump($e->getMessage());
+             exit;
+        }
+
     }
 
     /**
@@ -81,7 +86,7 @@ class LiveVotingPlayerGUI
      */
     protected function getHTML()
     {
-       // $tpl = new ilGlobalTemplate('default/Voter/tpl.inner_screen.html', true, true, 'Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting');
+        $tpl = new ilGlobalTemplate('default/Voter/tpl.inner_screen.html', true, true, 'Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting');
 
         $param_manager = ParamManager::getInstance();
 
@@ -89,20 +94,19 @@ class LiveVotingPlayerGUI
 
         $liveVoting = LiveVoting::getLiveVotingFromPin($pin);
 
-        dump($liveVoting->getFrozenBehaviour());exit;
-
         if ($liveVoting->getFrozenBehaviour()) {
-            $tpl->setVariable('TITLE', $this->txt('header_frozen'));
-            $tpl->setVariable('DESCRIPTION', $this->txt('info_frozen'));
-            $tpl->setVariable('COUNT', $this->manager->countVotings());
+
+            //$tpl->setVariable('TITLE', $this->txt('header_frozen'));
+            //$tpl->setVariable('DESCRIPTION', $this->txt('info_frozen'));
+/*            $tpl->setVariable('COUNT', $this->manager->countVotings());
             $tpl->setVariable('POSITION', $this->manager->getVotingPosition());
             $tpl->setVariable('PIN', xlvoPin::formatPin($this->manager->getVotingConfig()->getPin()));
-            $tpl->setVariable('GLYPH', GlyphGUI::get('pause'));
-            echo $tpl->get();
-            exit;
+            $tpl->setVariable('GLYPH', GlyphGUI::get('pause'));*/
+            //echo $tpl->get();
+            //exit;
         }
 
-        switch ($this->manager->getPlayer()->getStatus(false)) {
+     /*   switch ($this->manager->getPlayer()->getStatus(false)) {
             case xlvoPlayer::STAT_STOPPED:
                 $tpl->setVariable('TITLE', $this->txt('header_stopped'));
                 $tpl->setVariable('DESCRIPTION', $this->txt('info_stopped'));
@@ -145,6 +149,12 @@ class LiveVotingPlayerGUI
                 break;
         }
         echo $tpl->get();
-        exit;
+        exit;*/
+    }
+
+    protected function txt(string $key): string
+    {
+        $this->pl = ilLiveVotingPlugin::getInstance();
+        return $this->pl->txt($key);
     }
 }
