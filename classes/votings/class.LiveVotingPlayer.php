@@ -38,10 +38,10 @@ class LiveVotingPlayer
 
     private int $id;
     private int $obj_id;
-    private int $active_voting;
-    private int $status;
+    private int $active_voting = 0;
+    private int $status = self::STAT_STOPPED;
     private bool $frozen = true;
-    private int $timestamp_refresh;
+    private int $timestamp_refresh = 0;
     private bool $show_results = false;
     private array $button_states = array();
     private int $countdown = 0;
@@ -184,39 +184,39 @@ class LiveVotingPlayer
     /**
      * @throws LiveVotingException
      */
-    public function save(?int $obj_id = null): int {
+    public function save(): int {
         $database = new LiveVotingDatabase();
 
-        if ($this->id != 0) {
+        if (isset($this->id) && $this->id != 0) {
             $database->update("rep_robj_xlvo_player_n", array(
                 "active_voting" => $this->active_voting,
                 "status" => $this->status,
                 "frozen" => $this->frozen,
                 "timestamp_refresh" => $this->timestamp_refresh,
-                "show_results" => $this->show_results,
+                "show_results" => (int) $this->show_results,
                 "button_states" => json_encode($this->button_states),
                 "countdown" => $this->countdown,
                 "countdown_start" => $this->countdown_start,
-                "force_reload" => $this->force_reload,
+                "force_reload" => (int) $this->force_reload,
                 "round_id" => $this->round_id
             ), array(
                 "id" => $this->id
             ));
-        } else if ($obj_id !== null && $obj_id != 0) {
+        } else if (isset($this->obj_id) && $this->obj_id != 0) {
             $this->id = $database->nextId("rep_robj_xlvo_player_n");
 
             $database->insert("rep_robj_xlvo_player_n", array(
                 "id" => $this->id,
-                "obj_id" => $obj_id,
+                "obj_id" => $this->obj_id,
                 "active_voting" => $this->active_voting,
                 "status" => $this->status,
                 "frozen" => $this->frozen,
                 "timestamp_refresh" => $this->timestamp_refresh,
-                "show_results" => $this->show_results,
+                "show_results" => (int) $this->show_results,
                 "button_states" => json_encode($this->button_states),
                 "countdown" => $this->countdown,
                 "countdown_start" => $this->countdown_start,
-                "force_reload" => $this->force_reload,
+                "force_reload" => (int) $this->force_reload,
                 "round_id" => $this->round_id
             ));
         } else {
@@ -463,5 +463,27 @@ class LiveVotingPlayer
         if ($this->remainingCountDown() <= 0 && $this->getCountdownStart() > 0) {
             $this->freeze();
         }
+    }
+
+    /**
+     * @throws LiveVotingException
+     */
+    public static function loadFromObjId(int $getId): LiveVotingPlayer
+    {
+        $database = new LiveVotingDatabase();
+
+        $result = $database->select("rep_robj_xlvo_player_n", ["obj_id" => $getId], ["id"]);
+
+        $player = new LiveVotingPlayer();
+
+        if (isset($result[0])) {
+            $player->setId((int) $result[0]["id"]);
+            $player->loadFromDB();
+        } else {
+            $player->setObjId($getId);
+            $player->save();
+        }
+
+        return $player;
     }
 }

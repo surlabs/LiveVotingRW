@@ -32,24 +32,28 @@ class ilObjLiveVoting extends ilObjectPlugin
     /**
      * Create a new object
      * @param bool $clone_mode
+     * @throws LiveVotingException
      */
     protected function doCreate(bool $clone_mode = false): void
     {
-        $this->liveVoting = new LiveVoting($this->getId());
+        $this->liveVoting = new LiveVoting();
+        $this->liveVoting->setId($this->getId());
 
         $this->liveVoting->save();
     }
 
     /**
      * Read the object
+     * @throws LiveVotingException
      */
     protected function doRead(): void
     {
-        $this->liveVoting = new LiveVoting($this->getId(), true);
+        $this->liveVoting = new LiveVoting($this->getId());
     }
 
     /**
      * Delete the object
+     * @throws LiveVotingException
      */
     protected function doDelete(): void
     {
@@ -58,6 +62,7 @@ class ilObjLiveVoting extends ilObjectPlugin
 
     /**
      * Update the object
+     * @throws LiveVotingException
      */
     protected function doUpdate(): void
     {

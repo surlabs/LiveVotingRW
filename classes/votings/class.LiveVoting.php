@@ -76,23 +76,22 @@ class LiveVoting
     private int $frozen_behaviour = 1;
     private int $results_behaviour = 1;
     private string $puk = "";
-    private int $current_question_id = 0;
+    private LiveVotingPlayer $player;
 
     /**
      * LiveVoting constructor.
-     * @param int $id
-     * @param bool|null $loadFromDB
+     * @param int|null $id
      * @throws LiveVotingException
      */
-    public function __construct(int $id, ?bool $loadFromDB = false)
+    public function __construct(?int $id = null)
     {
-        $this->setId($id);
+        if ($id !== null && $id != 0) {
+            $this->setId($id);
 
-        if ($loadFromDB) {
             $this->loadFromDB();
         }
 
-        $this->init();
+        $this->player = LiveVotingPlayer::loadFromObjId($this->getId());
     }
 
     /**
@@ -147,27 +146,12 @@ class LiveVoting
         return $qrCodeLarge->getDataUri();
     }
 
-    private function init(): void
-    {
-        if ($this->countQuestions() > 0) {
-            $param_manager = ParamManager::getInstance();
-
-            if ($voting_id = $param_manager->getVoting()) {
-                $this->current_question_id = $voting_id;
-            } else {
-                // TODO: $this->player->getActiveVotingId() o algo parecido
-                $this->current_question_id = $this->questions[0]->getId();
-            }
-
-        }
-    }
-
     public function getId(): int
     {
         return $this->id;
     }
 
-    private function setId(int $id): void
+    public function setId(int $id): void
     {
         $this->id = $id;
     }
@@ -466,7 +450,7 @@ class LiveVoting
         $result = $database->select("rep_robj_xlvo_config_n", array("pin" => $pin), array("obj_id"));
 
         if (isset($result[0])) {
-            $liveVoting = new LiveVoting((int) $result[0]["obj_id"], true);
+            $liveVoting = new LiveVoting((int) $result[0]["obj_id"]);
 
             if (!$liveVoting->isOnline()) {
                 if ($safe_mode) {
@@ -494,7 +478,7 @@ class LiveVoting
         $result = $database->select("rep_robj_xlvo_config_n", array("pin" => $pin), array("obj_id"));
 
         if (isset($result[0])) {
-            return new LiveVoting((int) $result[0]["obj_id"], true);
+            return new LiveVoting((int) $result[0]["obj_id"]);
         }
 
         return null;
@@ -532,8 +516,10 @@ class LiveVoting
     {
         $position = 0;
 
+        $current_question_id = $this->player->getActiveVoting();
+
         foreach ($this->questions as $question) {
-            if ($question->getId() === $this->current_question_id) {
+            if ($question->getId() === $current_question_id) {
                 return $position;
             }
 
