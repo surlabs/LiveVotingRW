@@ -26,5 +26,22 @@ namespace LiveVoting\votings;
  */
 class LiveVotingMode
 {
+    const BASIC_MODE = 0;
 
+    private int $mode = self::BASIC_MODE;
+
+    public function __construct(int $mode)
+    {
+        $this->mode = $mode;
+    }
+
+    public function getMode(): int
+    {
+        return $this->mode;
+    }
+
+    public function setMode(int $mode): void
+    {
+        $this->mode = $mode;
+    }
 }

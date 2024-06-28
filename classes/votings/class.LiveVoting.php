@@ -347,6 +347,8 @@ class LiveVoting
             $this->loadDefaultValues();
         }
 
+        $this->setMode(new LiveVotingMode(LiveVotingMode::BASIC_MODE)); // For this version, only basic mode is available
+
         $questions_id = $database->select("rep_robj_xlvo_voting_n", array(
             "obj_id" => $this->getId(),
         ), ["id"]);
