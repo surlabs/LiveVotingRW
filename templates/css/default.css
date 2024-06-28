@@ -1,0 +1,164 @@
+/**
+This file contains all less Variables set by ILIAS. Please do not overwrite bootstrap standard variables here.
+Set an ILIAS variable here with an il- prefix and overwrite the bootstrap variable in the bootstrap variables file
+with the il- variable set here.
+ */
+/** headline text transform **/
+/** inline shadow of a message container **/
+/** border configuration, the color is automatically computed from the three color variants **/
+/** nagtive or positive contrast color for text and glyph **/
+/** contrast threshold for contrast color **/
+/** three color variants for neutral, important, breaking Head Infos **/
+.btn-default:active,
+.btn-default.active {
+  background-color: #2a6598 !important;
+}
+img.xlvo_loader {
+  width: 74px;
+  height: 74px;
+  margin: 0 auto;
+  display: block;
+}
+div.xlvo_pin {
+  font-size: 80px;
+  text-align: center;
+  height: 250px;
+  line-height: 250px;
+  padding: 0;
+}
+div.xlvo_shortlink {
+  height: 115px;
+  line-height: 115px;
+  text-align: center;
+  vertical-align: middle;
+  /* Fix no wrap if the URL is too long */
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+div.xlvo_pin * {
+  margin: 0;
+}
+button.xlvo_btn-qr-modal {
+  width: 100px;
+  height: 50px;
+  position: absolute;
+  top: calc((250px/2) - (50px/2) + (5px*2));
+  z-index: 100;
+  border: 5px solid black;
+  left: calc(50% - (100px/2));
+}
+/** DELOS FIX */
+.navbar-text {
+  margin-top: 8px !important;
+  margin-bottom: 8px !important;
+}
+li.ilToolbarTextonly {
+  padding: 4px 15px 5px 0 !important;
+}
+li.ilToolbarTextonly button {
+  line-height: 1.42857143 !important;
+}
+.xlvolist-group-fix {
+  height: 42px;
+  margin-bottom: 5px;
+}
+.xlvo-question {
+  font-size: 1.4em;
+}
+.xlvo-option_col {
+  line-height: 0px !important;
+}
+.xlvo-option {
+  border-bottom: 1px solid #EEEEEE;
+  padding-bottom: 3px;
+  padding-top: 3px;
+}
+.xlvo-option_letter {
+  display: inline-block !important;
+  font-size: 18px !important;
+  height: 25px;
+  line-height: 25px !important;
+  padding: 0px !important;
+  width: 25px;
+}
+.xlvo-option_text {
+  display: inline-block;
+  font-size: 22px;
+  line-height: 21px;
+}
+.ilToolbar li.ilToolbarGroup .navbar-text {
+  margin-right: 20px !important;
+}
+iframe.xlvo-preview {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  height: 500px;
+  border: none;
+}
+div.xlvo-preview-inner {
+  border: 10px black solid;
+  border-top: 50px black solid;
+  border-bottom: 50px black solid;
+  border-radius: 20px;
+  margin: 0;
+  padding: 0;
+}
+div.xlvo-preview-outer {
+  border: 2px white solid;
+  border-radius: 22px;
+  margin: 0;
+  padding: 0;
+}
+.modal-body p {
+  word-wrap: break-word;
+}
+.modal-body #xlvo-modal-qr {
+  width: auto;
+  max-width: 100%;
+  height: 100%;
+  margin: auto;
+  display: block;
+}
+.ui-sortable-handle {
+  cursor: move;
+}
+span.xlvo-label-url {
+  font-size: 3vw;
+}
+#ilAdvSelListTable_xlvo_select {
+  width: 220px !important;
+}
+#ilAdvSelListTable_xlvo_select li > a {
+  white-space: nowrap;
+  overflow: hidden !important;
+  text-overflow: ellipsis;
+}
+.zoom {
+  font-size: 30px;
+  line-height: 32px;
+}
+.single_vote_question {
+  font-size: 24px;
+}
+/* Serif font */
+.serif_font {
+  font-family: "Times New Roman", Times, serif;
+}
+.hidden-xs {
+  display: none !important;
+}
+
+.il-logo .hidden-xs{
+  display:block !important;
+}
+
+
+.alert-danger {
+  margin-top: 50px !important;
+}
+html,
+body {
+  overflow: initial;
+}
+/*# sourceMappingURL=default.css.map */

@@ -137,7 +137,7 @@ class LiveVotingInitialisationUI
         $this->requireCommonIncludes();
         $this->initErrorHandling();
         $this->determineClient();
-        $this->initHTTPServices($GLOBALS["DIC"]);
+        $this->initHTTPServices();
         $this->loadClientIniFile();
         $this->initDatabase();
         $this->initLog(); //<-- required for ilCtrl error messages
