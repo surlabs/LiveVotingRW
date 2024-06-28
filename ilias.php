@@ -47,4 +47,3 @@ LiveVotingConfig::load();
 global $DIC;
 $DIC->ctrl()->setTargetScript(LiveVotingConfig::getFullApiURL());
 $DIC->ctrl()->callBaseClass();
-$DIC->benchmark()->save();

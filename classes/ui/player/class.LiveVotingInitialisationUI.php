@@ -328,6 +328,8 @@ class LiveVotingInitialisationUI
         // set constants
         define("SESSION_REMINDER_LEADTIME", 30);
         define("DEBUG", $ilClientIniFile->readVariable("system", "DEBUG"));
+        define("DEVMODE", $ilClientIniFile->readVariable("system", "DEVMODE"));
+        define("ERROR_HANDLER", $ilClientIniFile->readVariable('system', 'ERROR_HANDLER') ?: "PRETTY_PAGE");
         define("SHOWNOTICES", $ilClientIniFile->readVariable("system", "SHOWNOTICES"));
         define("DEBUGTOOLS", $ilClientIniFile->readVariable("system", "DEBUGTOOLS"));
         define("ROOT_FOLDER_ID", $ilClientIniFile->readVariable('system', 'ROOT_FOLDER_ID'));
@@ -525,14 +527,6 @@ class LiveVotingInitialisationUI
         error_reporting(E_ALL&~E_DEPRECATED&~E_STRICT&~E_NOTICE);
 
         $this->requireCommonIncludes();
-
-        // error handler
-        if (!defined('ERROR_HANDLER')) {
-            define('ERROR_HANDLER', 'PRETTY_PAGE');
-        }
-        if (!defined('DEVMODE')) {
-            define('DEVMODE', false);
-        }
 
         require_once "./libs/composer/vendor/filp/whoops/src/Whoops/Util/SystemFacade.php";
         require_once "./libs/composer/vendor/filp/whoops/src/Whoops/RunInterface.php";
