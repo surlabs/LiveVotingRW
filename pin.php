@@ -46,7 +46,7 @@ try {
     $DIC->ctrl()->setTargetScript(LiveVotingConfig::getFullApiUrl());
 
     if(!empty($pin)) {
-        $DIC->ctrl()->redirectByClass(["ilUIPluginRouterGUI", "LiveVotingPlayerGUI"], 'index');
+        $DIC->ctrl()->redirectByClass(["ilUIPluginRouterGUI", "LiveVotingPlayerGUI"], 'startVoterPlayer');
     } else {
         $DIC->ctrl()->redirectByClass(["ilUIPluginRouterGUI", "LiveVotingPlayerGUI"], 'requestPin');
     }

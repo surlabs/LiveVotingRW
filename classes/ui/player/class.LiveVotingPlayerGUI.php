@@ -19,6 +19,7 @@ declare(strict_types=1);
  */
 
 use LiveVoting\platform\LiveVotingException;
+use LiveVoting\Utils\LiveVotingJs;
 use LiveVoting\Utils\ParamManager;
 use LiveVoting\votings\LiveVoting;
 use LiveVoting\votings\LiveVotingParticipant;
@@ -43,10 +44,11 @@ class LiveVotingPlayerGUI
 
     /**
      * @throws LiveVotingException
+     * @throws ilCtrlException
      */
     public function executeCommand(): void
     {
-        global $DIC;
+        global $DIC, $tpl;
 
         $this->pl = ilLiveVotingPlugin::getInstance();
         $param_manager = ParamManager::getInstance();
@@ -60,29 +62,31 @@ class LiveVotingPlayerGUI
 
         $this->liveVoting = LiveVoting::getLiveVotingFromPin($pin);
 
-        $cmd = $DIC->ctrl()->getCmd('index');
+        $nextClass = $DIC->ctrl()->getNextClass();
 
-        $this->{$cmd}();
-    }
+        switch ($nextClass) {
+            case '':
+                if (!$this->liveVoting->isAnonymous() && (is_null($DIC->user()) || $DIC->user()->getId() == 13 || $DIC->user()->getId() == 0)) {
+                    $plugin_path = substr(ilLiveVotingPlugin::getInstance()->getDirectory(), 2);
+                    $ilias_base_path = str_replace($plugin_path, '', ILIAS_HTTP_PATH);
+                    $login_target = "{$ilias_base_path}goto.php?target=xlvo_1_pin_" . $pin;
 
-    /**
-     * @throws ilCtrlException
-     * @throws ilTemplateException
-     */
-    public function index(): void
-    {
-        global $DIC;
-        if($this->liveVoting->getId()>0){
-            $DIC->ctrl()->redirect($this, 'startVoterPlayer');
+                    $DIC->ctrl()->redirectToURL($login_target);
+                } else {
+                    LiveVotingJs::getInstance()->name('Main')->init()->setRunCode();
+
+                    $cmd = $DIC->ctrl()->getCmd("startVoterPlayer");
+                    $this->{$cmd}();
+                }
+
+                break;
+            default:
+                require_once $DIC->ctrl()->lookupClassPath($nextClass);
+                $gui = new $nextClass();
+
+                $DIC->ctrl()->forwardCommand($gui);
+                break;
         }
-
-
-      /*  try{
-            $this->getHTML();
-        } catch (LiveVotingException $e) {
-            dump($e->getMessage());
-            exit;
-        }*/
     }
 
     /**
@@ -90,8 +94,9 @@ class LiveVotingPlayerGUI
      * @throws ilSystemStyleException
      * @throws LiveVotingException
      */
-    protected function startVoterPlayer()
+    protected function startVoterPlayer(): void
     {
+        dump("startVoterPlayer"); exit();
 /*        global $DIC, $tpl;
         $this->initJsAndCss();
         $tpl_voter = new ilTemplate($this->pl->getDirectory() .'/templates/default/Voter/tpl.voter_player.html', true, false);
