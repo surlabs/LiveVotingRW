@@ -96,7 +96,7 @@ class LiveVotingPlayerGUI
      */
     protected function startVoterPlayer(): void
     {
-        dump("startVoterPlayer"); exit();
+        // TODO: Objetivo -> Que con esta funcion se quede la pantalla en blanco o con el header del livevoting
 /*        global $DIC, $tpl;
         $this->initJsAndCss();
         $tpl_voter = new ilTemplate($this->pl->getDirectory() .'/templates/default/Voter/tpl.voter_player.html', true, false);
