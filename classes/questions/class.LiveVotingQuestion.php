@@ -159,7 +159,7 @@ abstract class LiveVotingQuestion
      *
      * @throws LiveVotingException
      */
-    public function save(?int $obj_id) : int {
+    public function save(?int $obj_id = null) : int {
         $database = new LiveVotingDatabase();
 
         if ($this->id != 0) {
