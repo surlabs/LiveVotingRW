@@ -25,6 +25,7 @@ use LiveVoting\UI\LiveVotingFreeInputUI;
 use LiveVoting\UI\LiveVotingManageUI;
 use LiveVoting\UI\LiveVotingPrioritiesUI;
 use LiveVoting\UI\LiveVotingRangeUI;
+use LiveVoting\UI\LiveVotingResultsUI;
 use LiveVoting\UI\LiveVotingSettingsUI;
 use LiveVoting\UI\LiveVotingUI;
 
@@ -68,6 +69,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
                 break;
             case 'editProperties':
             case 'manage':
+            case 'results':
             case 'selectType':
             case 'selectedChoices':
             case 'selectedFreeInput':
@@ -123,6 +125,19 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
         }
         //$this->tpl->setContent("Contenido de la pestaña de edición");
+    }
+
+    public function results(): void
+    {
+        $this->tabs->activateTab("tab_results");
+
+        if (!ilObjLiveVotingAccess::hasWriteAccess()) {
+            $this->tpl->setContent("Error de acceso");
+            //TODO: Mostrar error
+        } else {
+            $liveVotingResultsUI = new LiveVotingResultsUI();
+            $this->tpl->setContent($liveVotingResultsUI->showResults($this));
+        }
     }
 
     /**
@@ -302,6 +317,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
     {
         $this->tabs->addTab("tab_content", $this->lng->txt("tab_content"), $this->ctrl->getLinkTarget($this, "index"));
         $this->tabs->addTab("tab_manage", $this->plugin->txt("tab_manage"), $this->ctrl->getLinkTarget($this, "manage"));
+        $this->tabs->addTab("tab_results", $this->plugin->txt("tab_results"), $this->ctrl->getLinkTarget($this, "results"));
         $this->tabs->addTab("info_short", $this->lng->txt('info_short'), $this->ctrl->getLinkTargetByClass(array(
             get_class($this),
             "ilInfoScreenGUI",
