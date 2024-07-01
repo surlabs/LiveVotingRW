@@ -24,8 +24,11 @@ use ilAdvancedSelectionListGUI;
 use ilCtrlException;
 use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
+use iljQueryUtil;
 use ilLinkButton;
 use ilLiveVotingPlugin;
+use ilObjLiveVotingGUI;
+use ilSetting;
 use ilSystemStyleException;
 use ilTemplate;
 use ilTemplateException;
@@ -35,6 +38,7 @@ use LiveVoting\platform\LiveVotingException;
 use LiveVoting\Utils\LiveVotingJs;
 use LiveVoting\Utils\ParamManager;
 use LiveVoting\votings\LiveVoting;
+use stdClass;
 
 /**
  * Class LiveVotingUI
@@ -181,4 +185,62 @@ class LiveVotingUI
 
         return $current_selection_list;
     }
+
+    /**
+     * @param LiveVoting $liveVoting
+     * @param ilObjLiveVotingGUI $parent
+     * @throws ilCtrlException
+     */
+    public function initJsAndCss(ilObjLiveVotingGUI $parent) :void
+    {
+        global $DIC;
+        $mathJaxSetting = new ilSetting("MathJax");
+        $settings = array(
+            'status_running' => 1,
+            'identifier'     => 'xvi',
+            'use_mathjax'    => (bool) $mathJaxSetting->get("enable"),
+            'debug'          => false
+        );
+
+        //LiveVotingJS::getInstance()->initMathJax();
+        //TODO: Implementar initMathJax
+
+
+        $keyboard = new stdClass();
+        $keyboard->active = $this->liveVoting->isKeyboardActive();
+        if ($keyboard->active) {
+            $keyboard->toggle_results = 9;
+            $keyboard->toggle_freeze = 32;
+            $keyboard->previous = 37;
+            $keyboard->next = 39;
+        }
+        $settings['keyboard'] = $keyboard;
+
+        $param_manager = ParamManager::getInstance();
+
+        $settings['xlvo_ppt'] = $param_manager->isPpt();
+
+        iljQueryUtil::initjQuery();
+
+
+        LiveVotingJS::getInstance()->addLibToHeader('screenfull.js');
+        LiveVotingJS::getInstance()->ilias($parent)->addSettings($settings)->name('Player')->addTranslations(array(
+            'voting_confirm_reset',
+        ))->init()->setRunCode();
+
+        //xlvoJs::getInstance()->ilias($this)->name('PPT')->init()->setRunCode();
+
+
+
+        $DIC->ui()->mainTemplate()->addCss($this->pl->getDirectory() . '/templates/css/player.css');
+        $DIC->ui()->mainTemplate()->addCss($this->pl->getDirectory() . '/templates/css/bar.css');
+
+        /* xlvoFreeInputResultsGUI::addJsAndCss();
+         xlvoCorrectOrderResultsGUI::addJsAndCss();
+         xlvoFreeOrderResultsGUI::addJsAndCss();
+         xlvoNumberRangeResultsGUI::addJsAndCss();
+         xlvoSingleVoteResultsGUI::addJsAndCss();*/
+    }
+
+
 }

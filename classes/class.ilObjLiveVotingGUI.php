@@ -28,6 +28,9 @@ use LiveVoting\UI\LiveVotingRangeUI;
 use LiveVoting\UI\LiveVotingResultsUI;
 use LiveVoting\UI\LiveVotingSettingsUI;
 use LiveVoting\UI\LiveVotingUI;
+use LiveVoting\Utils\LiveVotingJs;
+use LiveVoting\Utils\ParamManager;
+use LiveVoting\votings\LiveVotingPlayer;
 
 /**
  * Class ilObjLiveVotingGUI
@@ -53,9 +56,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         return 'index';
     }
 
-    /**
-     * @throws ilCtrlException
-     */
+
     public function performCommand(string $cmd): void
     {
         global $DIC;
@@ -68,6 +69,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
                 $this->showContent();
                 break;
             case 'editProperties':
+            case 'startPlayer':
             case 'manage':
             case 'results':
             case 'selectType':
@@ -560,4 +562,35 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
 
     }
+
+
+    /**
+     * @throws ilCtrlException
+     */
+    protected function startPlayer():void
+    {
+        $this->tabs->activateTab("tab_content");
+
+        $liveVotingUI = new LiveVotingUI($this->object->getLiveVoting());
+        $liveVotingUI->initJsAndCss($this);
+
+        //TODO: Implementar el resto del bloque en la clase LiveVotingUI
+/*        $liveVoting = $this->object->getLiveVoting();
+        $liveVoting->regenerateOptionSorting();
+        $liveVoting->getPlayer()->setStatus(LiveVotingPlayer::STAT_RUNNING);
+        $liveVoting->getPlayer()->freeze();
+
+        $param_manager = ParamManager::getInstance();
+
+        if ($voting_id = $param_manager->getVoting()) {
+            $liveVoting->getPlayer()->setActiveVoting($voting_id);
+            $liveVoting->getPlayer()->save();
+        }*/
+
+       /* $this->initToolbarDuringVoting();
+        $modal = xlvoQRModalGUI::getInstanceFromVotingConfig($this->manager->getVotingConfig())->getHTML();
+        $this->setContent($modal . $this->getPlayerHTML());
+        $this->handlePreview();*/
+    }
+
 }

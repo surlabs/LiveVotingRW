@@ -22,6 +22,8 @@ namespace LiveVoting\Utils;
 
 use ilCtrlException;
 use ilLiveVotingPlugin;
+use ilObjLiveVotingGUI;
+use LiveVoting\GUI\xlvoGUI;
 use LiveVoting\Utils\ParamManager;
 use LiveVotingPlayerGUI;
 
@@ -174,6 +176,12 @@ final class LiveVotingJs
 
     /**
      * @throws ilCtrlException
+     *
+     * @param LiveVotingPlayerGUI $playerGUI
+     * @param array               $additional_classes
+     * @param string              $cmd
+     *
+     * @return LiveVotingJs
      */
     public function api(LiveVotingPlayerGUI $playerGUI, array $additional_classes = array(), $cmd = ''): LiveVotingJs
     {
@@ -184,6 +192,22 @@ final class LiveVotingJs
         ParamManager::getInstance();
 
         $this->addSetting('base_url', $DIC->ctrl()->getLinkTargetByClass($additional_classes, $cmd, null, true));
+
+        return $this;
+    }
+
+    /**
+     * @throws ilCtrlException
+     *
+     * @param ilObjLiveVotingGUI $liveVotingGUI
+     * @param string  $cmd
+     *
+     * @return LiveVotingJs
+     */
+    public function ilias(ilObjLiveVotingGUI $liveVotingGUI, string $cmd = ''): LiveVotingJs
+    {
+        global $DIC;
+        $this->addSetting('base_url', $DIC->ctrl()->getLinkTarget($liveVotingGUI, $cmd, '', true));
 
         return $this;
     }
