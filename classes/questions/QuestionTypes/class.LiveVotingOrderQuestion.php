@@ -50,7 +50,7 @@ class LiveVotingOrderQuestion extends LiveVotingQuestion
         }
     }
 
-    public function save(?int $obj_id): int {
+    public function save(?int $obj_id = null): int {
         $id = parent::save($obj_id);
 
         $database = new LiveVotingDatabase();
