@@ -20,7 +20,10 @@ declare(strict_types=1);
 
 namespace LiveVoting\Utils;
 
+use ilCtrlException;
 use ilLiveVotingPlugin;
+use LiveVoting\Utils\ParamManager;
+use LiveVotingPlayerGUI;
 
 /**
  * Class ParamManager
@@ -65,7 +68,7 @@ final class LiveVotingJs
     public function addTranslations(array $translations): LiveVotingJs
     {
         foreach ($translations as $k => $v) {
-            $this->translations[$k] = $v;
+            $this->translations[$v] = ilLiveVotingPlugin::getInstance()->txt($v);
         }
 
         return $this;
@@ -161,10 +164,27 @@ final class LiveVotingJs
             $arr[$name] = $value;
         }
 
+
         foreach ($this->translations as $key => $string) {
             $arr['lng'][$key] = $string;
         }
 
         return $this->call("init", json_encode($arr));
+    }
+
+    /**
+     * @throws ilCtrlException
+     */
+    public function api(LiveVotingPlayerGUI $playerGUI, array $additional_classes = array(), $cmd = ''): LiveVotingJs
+    {
+
+        global $DIC;
+        $additional_classes[] = get_class($playerGUI);
+
+        ParamManager::getInstance();
+
+        $this->addSetting('base_url', $DIC->ctrl()->getLinkTargetByClass($additional_classes, $cmd, null, true));
+
+        return $this;
     }
 }

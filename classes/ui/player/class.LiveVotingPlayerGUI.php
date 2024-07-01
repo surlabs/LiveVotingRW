@@ -18,11 +18,13 @@ declare(strict_types=1);
  *
  */
 
+use LiveVoting\platform\LiveVotingConfig;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\Utils\LiveVotingJs;
 use LiveVoting\Utils\ParamManager;
 use LiveVoting\votings\LiveVoting;
 use LiveVoting\votings\LiveVotingParticipant;
+use LiveVoting\votings\LiveVotingPlayer;
 
 /**
  * Class LiveVotingPlayerGUI
@@ -35,12 +37,22 @@ class LiveVotingPlayerGUI
     /**
      * @var ilLiveVotingPlugin
      */
-    protected ilLiveVotingPlugin $pl;
+    private ilLiveVotingPlugin $plugin_object;
 
     /**
-     * @var LiveVoting
+     * @var LiveVoting Object
      */
-    protected LiveVoting $liveVoting;
+    private LiveVoting $live_voting;
+
+    /**
+     * @var ilTemplate Template for the framework surrounding the voting
+     */
+    private ilTemplate $voter_template;
+
+    /**
+     * @var ilTemplate Template for the voting itself
+     */
+    private ilTemplate $voting_template;
 
     /**
      * @throws LiveVotingException
@@ -50,7 +62,7 @@ class LiveVotingPlayerGUI
     {
         global $DIC, $tpl;
 
-        $this->pl = ilLiveVotingPlugin::getInstance();
+        $this->setPluginObject(ilLiveVotingPlugin::getInstance());
         $param_manager = ParamManager::getInstance();
 
         $pin = $param_manager->getPin();
@@ -60,21 +72,19 @@ class LiveVotingPlayerGUI
             return;
         }
 
-        $this->liveVoting = LiveVoting::getLiveVotingFromPin($pin);
+        $this->setLiveVoting(LiveVoting::getLiveVotingFromPin($pin));
 
         $nextClass = $DIC->ctrl()->getNextClass();
 
         switch ($nextClass) {
             case '':
-                if (!$this->liveVoting->isAnonymous() && (is_null($DIC->user()) || $DIC->user()->getId() == 13 || $DIC->user()->getId() == 0)) {
+                if (!$this->getLiveVoting()->isAnonymous() && (is_null($DIC->user()) || $DIC->user()->getId() == 13 || $DIC->user()->getId() == 0)) {
                     $plugin_path = substr(ilLiveVotingPlugin::getInstance()->getDirectory(), 2);
                     $ilias_base_path = str_replace($plugin_path, '', ILIAS_HTTP_PATH);
                     $login_target = "{$ilias_base_path}goto.php?target=xlvo_1_pin_" . $pin;
 
                     $DIC->ctrl()->redirectToURL($login_target);
                 } else {
-                    LiveVotingJs::getInstance()->name('Main')->init()->setRunCode();
-
                     $cmd = $DIC->ctrl()->getCmd("startVoterPlayer");
                     $this->{$cmd}();
                 }
@@ -93,39 +103,173 @@ class LiveVotingPlayerGUI
      * @throws ilTemplateException
      * @throws ilSystemStyleException
      * @throws LiveVotingException
+     * @throws ilCtrlException
      */
     protected function startVoterPlayer(): void
     {
-/*        global $DIC, $tpl;
-        $this->initJsAndCss();
-        $tpl_voter = new ilTemplate($this->pl->getDirectory() .'/templates/default/Voter/tpl.voter_player.html', true, false);
-        $tpl->addCss($this->pl->getDirectory().'/templates/css/default.css');
-        $tpl->setVariable("PLAYER_CONTENT", $tpl_voter->get());
-        //$this->getHTML();
-        */
-        throw new LiveVotingException("Lo de que el template no funcione no se que es, pero ya funcionan los errores y no te manda a error.php :)");
+        global $DIC;
+
+
+        $this->prepareFrameworkTemplate();
+        $this->prepareVotingTemplate();
+
     }
 
     /**
-     * @throws LiveVotingException
      * @throws ilTemplateException
+     * @throws ilSystemStyleException
      */
-    protected function initJsAndCss()
+    private function prepareFrameworkTemplate(): void
     {
-        global $DIC, $tpl;
-        $tpl->addCss($this->pl->getDirectory().'/templates/default/Voter/voter.css');
-        $tpl->addCss($this->pl->getDirectory().'/templates/default/libs/bootstrap-slider.min.css');
-        $tpl->addCss($this->pl->getDirectory().'/templates/default/QuestionTypes/NumberRange/number_range.css');
+        global $DIC;
+
+        $DIC->ui()->mainTemplate()->addCss($this->getPluginObject()->getDirectory() . '/templates/default/Voter/voter.css', '');
+        $DIC->ui()->mainTemplate()->addCss($this->getPluginObject()->getDirectory() . '/templates/default/libs/bootstrap-slider.min.css', '');
+        $DIC->ui()->mainTemplate()->addCss($this->getPluginObject()->getDirectory() . '/templates/default/QuestionTypes/NumberRange/number_range.css', '');
+    }
+
+    /**
+     * @throws ilTemplateException
+     * @throws ilSystemStyleException
+     */
+    private function prepareVotingTemplate(): void
+    {
+        global $DIC;
+
+        $tpl_voter_player = new ilTemplate($this->getPluginObject()->getDirectory() . '/templates/default/Voter/tpl.voter_player.html', false, false);
+
+        $this->setVoterPlayerTemplate($tpl_voter_player);
+
+
+
+        $DIC->ui()->mainTemplate()->addCss($this->getPluginObject()->getDirectory() . '/templates/default/default.css', '');
+
 
         iljQueryUtil::initjQueryUI();
 
+        //TODO: Cargar initMathJax en JS
+
         $t = array('player_seconds');
 
+        $delay = LiveVotingConfig::get('request_frequency');
+        //TODO: CAMBIAR ESTO PARA QUE LLEGUE BIEN EL DELAY
+        if (is_numeric($delay)) {
+            $delay = ((float) $delay);
+        } else {
+            $delay = 1;
+        }
+        $delay *= 1000;
+
+        $mathJaxSetting = new ilSetting("MathJax");
+        $settings = array(
+            'use_mathjax' => (bool) $mathJaxSetting->get("enable"),
+            'debug'       => false,
+            'delay'       => $delay,
+        );
+
+
+        LiveVotingJs::getInstance()->name('Main')->init()->setRunCode();
+        LiveVotingJs::getInstance()->api($this, array(IlUIPluginRouterGUI::class))->addSettings($settings)->name('Voter')->addTranslations($t)->init()->setRunCode();
+
+
+        //Show voting template
+        $this->showVotingTemplate();
+
+       // $this->fillVotingTemplate();
+
+
+    }
+
+    /**
+     * @throws ilTemplateException
+     */
+    public function showVotingTemplate(): void
+    {
+        global $DIC;
+/*        dump($this->getFrameworkTemplate()->get(), $this->getVotingTemplate()->get());
+        exit;*/
+
+
+        $DIC->ui()->mainTemplate()->setVariable("PLAYER_CONTENT", $this->getVoterPlayerTemplate()->get());
+
+        $DIC->ui()->mainTemplate()->fillCssFiles();
+        $DIC->ui()->mainTemplate()->fillJavaScriptFiles();
+        $DIC->ui()->mainTemplate()->fillOnLoadCode();
+        $DIC->ui()->mainTemplate()->printToStdout('DEFAULT', false, true);
 
 
 
-        //TODO: Implementar esto
-        //xlvoJs::getInstance()->initMathJax();
+        //echo $DIC->ui()->mainTemplate()->get();
+        //echo $this->getFrameworkTemplate()->get();
+        //echo $this->getVotingTemplate()->get();
+        //exit;
+    }
+
+    /**
+     * @throws ilSystemStyleException
+     * @throws ilTemplateException
+     */
+    public function getHTML(): void
+    {
+        $tpl_voting = new ilTemplate($this->getPluginObject()->getDirectory() . '/templates/default/Voter/tpl.inner_screen.html', true, true);
+        $this->setVotingTemplate($tpl_voting);
+
+        if ($this->getLiveVoting()->getFrozenBehaviour()) {
+            $this->getVotingTemplate()->setVariable('TITLE', $this->txt('voter_header_frozen'));
+            $this->getVotingTemplate()->setVariable('DESCRIPTION', $this->txt('voter_info_frozen'));
+            $this->getVotingTemplate()->setVariable('COUNT', (string)$this->getLiveVoting()->countQuestions());
+            $this->getVotingTemplate()->setVariable('POSITION', (string)$this->getLiveVoting()->getQuestionPosition());
+            $this->getVotingTemplate()->setVariable('PIN', $this->getLiveVoting()->getPin());
+            $this->getVotingTemplate()->setVariable('GLYPH', "pause");
+            echo $this->getVotingTemplate()->get();
+            exit();
+        } else {
+            switch ($this->getLiveVoting()->getPlayer()->getStatus()) {
+                case LiveVotingPlayer::STAT_STOPPED:
+                    $this->getVotingTemplate()->setVariable('TITLE', $this->txt('header_stopped'));
+                    $this->getVotingTemplate()->setVariable('DESCRIPTION', $this->txt('info_stopped'));
+                    $this->getVotingTemplate()->setVariable('COUNT', (string)$this->getLiveVoting()->countQuestions());
+                    $this->getVotingTemplate()->setVariable('POSITION', (string)$this->getLiveVoting()->getQuestionPosition());
+                    $this->getVotingTemplate()->setVariable('PIN', $this->getLiveVoting()->getPin());
+                    break;
+                case LiveVotingPlayer::STAT_RUNNING:
+                    $this->getVotingTemplate()->setVariable('TITLE', 'TITLE');
+                    $this->getVotingTemplate()->setVariable('DESCRIPTION', 'DESCRIPTION');
+                    $this->getVotingTemplate()->setVariable('COUNT', (string)$this->getLiveVoting()->countQuestions());
+                    $this->getVotingTemplate()->setVariable('POSITION', (string)$this->getLiveVoting()->getQuestionPosition());
+                    $this->getVotingTemplate()->setVariable('PIN', $this->getLiveVoting()->getPin());
+
+                    /*
+                    $xlvoQuestionTypesGUI = xlvoQuestionTypesGUI::getInstance($this->manager);
+                    if ($xlvoQuestionTypesGUI->isShowQuestion()) {
+                        $this->getVotingTemplate()->setCurrentBlock('question_text');
+                        $this->getVotingTemplate()->setVariable('QUESTION_TEXT', $this->manager->getVoting()->getQuestionForPresentation());
+                        $this->getVotingTemplate()->parseCurrentBlock();
+                    }
+                    $this->getVotingTemplate()->setVariable('QUESTION', $xlvoQuestionTypesGUI->getMobileHTML());*/
+                    break;
+                case LiveVotingPlayer::STAT_START_VOTING:
+                    $this->getVotingTemplate()->setVariable('TITLE', $this->txt('header_start'));
+                    $this->getVotingTemplate()->setVariable('DESCRIPTION', $this->txt('info_start'));
+                    $this->getVotingTemplate()->setVariable('GLYPH', "TODO No glyph");
+                    break;
+                case LiveVotingPlayer::STAT_END_VOTING:
+                    $this->getVotingTemplate()->setVariable('TITLE', $this->txt('header_end'));
+                    $this->getVotingTemplate()->setVariable('DESCRIPTION', $this->txt('info_end'));;
+                    $this->getVotingTemplate()->setVariable('GLYPH', "TODO No glyph");
+                    break;
+                case LiveVotingPlayer::STAT_FROZEN:
+                    $this->getVotingTemplate()->setVariable('TITLE', $this->txt('header_frozen'));
+                    $this->getVotingTemplate()->setVariable('DESCRIPTION', $this->txt('info_frozen'));
+                    $this->getVotingTemplate()->setVariable('COUNT', (string)$this->getLiveVoting()->countQuestions());
+                    $this->getVotingTemplate()->setVariable('POSITION', (string)$this->getLiveVoting()->getQuestionPosition());
+                    $this->getVotingTemplate()->setVariable('PIN', $this->getLiveVoting()->getPin());
+                    $this->getVotingTemplate()->setVariable('GLYPH', "TODO No glyph");
+                    break;
+            }
+            echo $this->getVotingTemplate()->get();
+            exit();
+        }
     }
 
     public function requestPin(): void
@@ -134,101 +278,57 @@ class LiveVotingPlayerGUI
         exit();
     }
 
-    /**
-     * @throws LiveVotingException
-     * @throws ilTemplateException
-     */
-    protected function getHTML(): void
-    {
-
-        try {
-            $tpl_inner = new ilTemplate($this->pl->getDirectory() . "/templates/default/Voter/tpl.inner_screen.html", true, true);
-        } catch (ilSystemStyleException|ilTemplateException $e) {
-            throw new LiveVotingException($e->getMessage());
-        }
-
-
-
-        if (!$this->liveVoting) {
-            dump("Mensaje de que el PIN no es válido");
-            exit();
-            return;
-        }
-
-        if (!$this->liveVoting->isOnline()) {
-            dump("Mensaje de que el objeto LiveVoting no está disponible");
-            exit();
-            return;
-        }
-
-        if (!$this->liveVoting->isAnonymous() && LiveVotingParticipant::getInstance()->isPINUser()) {
-            dump("Mensaje de que el usuario debe iniciar sesión para votar");
-            exit();
-            return;
-        }
-        global $DIC, $tpl;
-
-        if ($this->liveVoting->getFrozenBehaviour()) {
-            $tpl_inner->setVariable('TITLE', $this->txt('header_frozen'));
-            $tpl_inner->setVariable('DESCRIPTION', $this->txt('info_frozen'));
-            $tpl_inner->setVariable('COUNT',$this->liveVoting->countQuestions());
-            $tpl_inner->setVariable('POSITION', $this->liveVoting->getQuestionPosition());
-            //$tpl->setVariable('PIN', xlvoPin::formatPin($this->manager->getVotingConfig()->getPin()));
-            //$tpl->setVariable('GLYPH', GlyphGUI::get('pause'));
-            //echo $tpl->get();
-            dump($tpl->get());
-            //exit;
-            exit;
-        }
-
-     /*   switch ($this->manager->getPlayer()->getStatus(false)) {
-            case xlvoPlayer::STAT_STOPPED:
-                $tpl->setVariable('TITLE', $this->txt('header_stopped'));
-                $tpl->setVariable('DESCRIPTION', $this->txt('info_stopped'));
-                $tpl->setVariable('COUNT', $this->manager->countVotings());
-                $tpl->setVariable('POSITION', $this->manager->getVotingPosition());
-                $tpl->setVariable('PIN', xlvoPin::formatPin($this->manager->getVotingConfig()->getPin()));
-                break;
-            case xlvoPlayer::STAT_RUNNING:
-                $tpl->setVariable('TITLE', $this->manager->getVoting()->getTitle());
-                $tpl->setVariable('DESCRIPTION', $this->manager->getVoting()->getDescription());
-                $tpl->setVariable('COUNT', $this->manager->countVotings());
-                $tpl->setVariable('POSITION', $this->manager->getVotingPosition());
-                $tpl->setVariable('PIN', xlvoPin::formatPin($this->manager->getVotingConfig()->getPin()));
-
-                $xlvoQuestionTypesGUI = xlvoQuestionTypesGUI::getInstance($this->manager);
-                if ($xlvoQuestionTypesGUI->isShowQuestion()) {
-                    $tpl->setCurrentBlock('question_text');
-                    $tpl->setVariable('QUESTION_TEXT', $this->manager->getVoting()->getQuestionForPresentation());
-                    $tpl->parseCurrentBlock();
-                }
-                $tpl->setVariable('QUESTION', $xlvoQuestionTypesGUI->getMobileHTML());
-                break;
-            case xlvoPlayer::STAT_START_VOTING:
-                $tpl->setVariable('TITLE', $this->txt('header_start'));
-                $tpl->setVariable('DESCRIPTION', $this->txt('info_start'));
-                $tpl->setVariable('GLYPH', GlyphGUI::get('pause'));
-                break;
-            case xlvoPlayer::STAT_END_VOTING:
-                $tpl->setVariable('TITLE', $this->txt('header_end'));
-                $tpl->setVariable('DESCRIPTION', $this->txt('info_end'));;
-                $tpl->setVariable('GLYPH', GlyphGUI::get('stop'));
-                break;
-            case xlvoPlayer::STAT_FROZEN:
-                $tpl->setVariable('TITLE', $this->txt('header_frozen'));
-                $tpl->setVariable('DESCRIPTION', $this->txt('info_frozen'));
-                $tpl->setVariable('COUNT', $this->manager->countVotings());
-                $tpl->setVariable('POSITION', $this->manager->getVotingPosition());
-                $tpl->setVariable('PIN', xlvoPin::formatPin($this->manager->getVotingConfig()->getPin()));
-                $tpl->setVariable('GLYPH', GlyphGUI::get('pause'));
-                break;
-        }
-        echo $tpl->get();
-        exit;*/
-    }
-
     protected function txt(string $key): string
     {
-        return $this->pl->txt($key);
+        return $this->getPluginObject()->txt($key);
+    }
+
+    /*
+     * Getters and Setters
+     */
+
+    public function getPluginObject(): ilLiveVotingPlugin
+    {
+        return $this->plugin_object;
+    }
+
+    public function setPluginObject(ilLiveVotingPlugin $plugin_object): void
+    {
+        $this->plugin_object = $plugin_object;
+    }
+
+    public function getLiveVoting(): LiveVoting
+    {
+        return $this->live_voting;
+    }
+
+    public function setLiveVoting(LiveVoting $live_voting): void
+    {
+        $this->live_voting = $live_voting;
+    }
+
+    public function getVoterPlayerTemplate(): ilTemplate
+    {
+        return $this->voter_template;
+    }
+
+    public function setVoterPlayerTemplate(ilTemplate $framework_template): void
+    {
+        $this->voter_template = $framework_template;
+    }
+
+    public function getVotingTemplate(): ilTemplate
+    {
+        return $this->voting_template;
+    }
+
+    public function setVotingTemplate(ilTemplate $voting_template): void
+    {
+        $this->voting_template = $voting_template;
+    }
+
+    protected function getVotingData(): void
+    {
+
     }
 }

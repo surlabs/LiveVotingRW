@@ -219,6 +219,10 @@ class LiveVotingInitialisationUI
         $tpl->addCss('./templates/default/delos.css');
         $tpl->addCss(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/default.css');
 
+        $tpl->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/js/xlvoMain.js');
+        $tpl->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/js/xlvoVoter.js');
+        $tpl->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/js/QuestionTypes/SingleVote/xlvoSingleVote.js');
+
         $tpl->addBlockFile("CONTENT", "content", "tpl.main_voter.html", "Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting");
 
         $tpl->setVariable("BASE", LiveVotingConfig::getBaseVoteUrl());
