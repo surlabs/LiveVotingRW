@@ -22,6 +22,7 @@ namespace LiveVoting\UI;
 
 use ilAdvancedSelectionListGUI;
 use ilCtrlException;
+use ilGlyphGUI;
 use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
 use iljQueryUtil;
@@ -38,6 +39,7 @@ use LiveVoting\platform\LiveVotingException;
 use LiveVoting\Utils\LiveVotingJs;
 use LiveVoting\Utils\ParamManager;
 use LiveVoting\votings\LiveVoting;
+use LiveVoting\votings\LiveVotingPlayer;
 use stdClass;
 
 /**
@@ -242,5 +244,149 @@ class LiveVotingUI
          xlvoSingleVoteResultsGUI::addJsAndCss();*/
     }
 
+    /**
+     * @throws LiveVotingException
+     */
+    public function showVoting(){
+        $liveVoting = $this->liveVoting;
+        $liveVoting->regenerateOptionSorting();
+        $liveVoting->getPlayer()->setStatus(LiveVotingPlayer::STAT_RUNNING);
+        $liveVoting->getPlayer()->freeze();
+
+        $param_manager = ParamManager::getInstance();
+
+        if ($voting_id = $param_manager->getVoting()) {
+            $liveVoting->getPlayer()->setActiveVoting($voting_id);
+            $liveVoting->getPlayer()->save();
+        }
+
+         $this->initToolbarDuringVoting();
+        //TODO: Completar este bloque
+/*         $modal = xlvoQRModalGUI::getInstanceFromVotingConfig($this->manager->getVotingConfig())->getHTML();
+         $this->setContent($modal . $this->getPlayerHTML());
+         $this->handlePreview();*/
+    }
+
+    protected function initToolbarDuringVoting()
+    {
+        global $DIC;
+        // Freeze
+        $suspendButton = ilLinkButton::getInstance();
+        $suspendButton->addCSSClass('btn-warning');
+        $suspendButton->setCaption(ilGlyphGUI::get('pause') . $this->pl->txt('freeze'), false);
+        $suspendButton->setUrl('#');
+        $suspendButton->setId('btn-freeze');
+        $DIC->toolbar()->addButtonInstance($suspendButton);
+
+        // Unfreeze
+        $playButton = ilLinkButton::getInstance();
+        $playButton->setPrimary(true);
+        $playButton->setCaption(ilGlyphGUI::get('play') . $this->pl->txt('unfreeze'), false);
+        $playButton->setUrl('#');
+        $playButton->setId('btn-unfreeze');
+
+      /*  $split = ilSplitButtonGUI::getInstance();
+        $split->setDefaultButton($playButton);
+        foreach (array(10, 30, 90, 120, 180, 240, 300) as $seconds) {
+            $cd = ilLinkButton::getInstance();
+            $cd->setUrl('#');
+            $cd->setCaption($seconds . ' ' . self::plugin()->translate('player_seconds'), false);
+            $cd->setOnClick("xlvoPlayer.countdown(event, $seconds);");
+            $ilSplitButtonMenuItem = new ilButtonToSplitButtonMenuItemAdapter($cd);
+            $split->addMenuItem($ilSplitButtonMenuItem);
+        }
+
+        $this->addStickyButtonToToolbar($split);*/
+
+        // Hide
+        $suspendButton = ilLinkButton::getInstance();
+        $suspendButton->setCaption($this->pl->txt('hide_results'), false);
+        $suspendButton->setUrl('#');
+        $suspendButton->setId('btn-hide-results');
+        $DIC->toolbar()->addButtonInstance($suspendButton);
+
+        // Show
+        $suspendButton = ilLinkButton::getInstance();
+        $suspendButton->setCaption($this->pl->txt('show_results'), false);
+        $suspendButton->setUrl('#');
+        $suspendButton->setId('btn-show-results');
+        $DIC->toolbar()->addButtonInstance($suspendButton);
+
+        // Reset
+        $suspendButton = ilLinkButton::getInstance();
+        $suspendButton->setCaption(ilGlyphGUI::get('remove') . $this->pl->txt('reset'), false);
+        $suspendButton->setUrl('#');
+        $suspendButton->setId('btn-reset');
+        $DIC->toolbar()->addButtonInstance($suspendButton);
+
+        //
+        //
+        $DIC->toolbar()->addSeparator();
+        //
+        //
+        $param_manager = ParamManager::getInstance();
+
+        if (!$param_manager->isPpt()) {
+            // PREV
+            $suspendButton = ilLinkButton::getInstance();
+            $suspendButton->setDisabled(true);
+            $suspendButton->setUrl(self::dic()->ctrl()->getLinkTarget($this, self::CMD_PREVIOUS));
+            $suspendButton->setCaption(GlyphGUI::get(GlyphGUI::PREVIOUS), false);
+            $suspendButton->setId('btn-previous');
+            $DIC->toolbar()->addButtonInstance($suspendButton);
+
+            // NEXT
+            $suspendButton = ilLinkButton::getInstance();
+            $suspendButton->setDisabled(true);
+            $suspendButton->setCaption(GlyphGUI::get(GlyphGUI::NEXT), false);
+            $suspendButton->setUrl(self::dic()->ctrl()->getLinkTarget($this, self::CMD_NEXT));
+            $suspendButton->setId('btn-next');
+            $DIC->toolbar()->addButtonInstance($suspendButton);
+        }
+
+        // Votings
+        if (!$param_manager->isPpt()) {
+            $current_selection_list = $this->getVotingSelectionList();
+            self::dic()->toolbar()->addText($current_selection_list->getHTML());
+        }
+
+        //
+        //
+        $DIC->toolbar()->addSeparator();
+        //
+        //
+
+        //TODO: Continuar implementando este bloque
+        // Fullscreen
+/*        if ($this->manager->getVotingConfig()->isFullScreen() && !$this->param_manager->isPpt()) {
+            $suspendButton = ilLinkButton::getInstance();
+            $suspendButton->setCaption(GlyphGUI::get('fullscreen'), false);
+            $suspendButton->setUrl('#');
+            $suspendButton->setId('btn-start-fullscreen');
+            self::dic()->toolbar()->addButtonInstance($suspendButton);
+
+            $suspendButton = ilLinkButton::getInstance();
+            $suspendButton->setCaption(GlyphGUI::get('resize-small'), false);
+            $suspendButton->setUrl('#');
+            $suspendButton->setId('btn-close-fullscreen');
+            self::dic()->toolbar()->addButtonInstance($suspendButton);
+        }
+
+        // END
+        $suspendButton = ilLinkButton::getInstance();
+        $suspendButton->setCaption(GlyphGUI::get('stop') . $this->txt('terminate'), false);
+        $suspendButton->setUrl(self::dic()->ctrl()->getLinkTarget(new xlvoPlayerGUI(), self::CMD_TERMINATE));
+        $suspendButton->setId('btn-terminate');
+        self::dic()->toolbar()->addButtonInstance($suspendButton);
+        if (self::DEBUG) {
+
+            // PAUSE PULL
+            $suspendButton = ilLinkButton::getInstance();
+            $suspendButton->setCaption('Toogle Pulling', false);
+            $suspendButton->setUrl('#');
+            $suspendButton->setId('btn-toggle-pull');
+            self::dic()->toolbar()->addButtonInstance($suspendButton);
+        }*/
+    }
 
 }

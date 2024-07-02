@@ -575,22 +575,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         $liveVotingUI->initJsAndCss($this);
 
         //TODO: Implementar el resto del bloque en la clase LiveVotingUI
-/*        $liveVoting = $this->object->getLiveVoting();
-        $liveVoting->regenerateOptionSorting();
-        $liveVoting->getPlayer()->setStatus(LiveVotingPlayer::STAT_RUNNING);
-        $liveVoting->getPlayer()->freeze();
 
-        $param_manager = ParamManager::getInstance();
-
-        if ($voting_id = $param_manager->getVoting()) {
-            $liveVoting->getPlayer()->setActiveVoting($voting_id);
-            $liveVoting->getPlayer()->save();
-        }*/
-
-       /* $this->initToolbarDuringVoting();
-        $modal = xlvoQRModalGUI::getInstanceFromVotingConfig($this->manager->getVotingConfig())->getHTML();
-        $this->setContent($modal . $this->getPlayerHTML());
-        $this->handlePreview();*/
     }
 
 }
