@@ -35,8 +35,8 @@ use LiveVoting\votings\LiveVotingPlayer;
 /**
  * Class ilObjLiveVotingGUI
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
- * @ilCtrl_isCalledBy ilObjLiveVotingGUI: ilRepositoryGUI, ilObjPluginDispatchGUI, ilAdministrationGUI, LiveVotingUI, LiveVotingChoicesUI, LiveVotingManageUI, LiveVotingSettingsUI, LiveVotingFreeInputUI, LiveVotingRangeUI, LiveVotingPrioritiesUI, LiveVotingCorrectOrderUI
- * @ilCtrl_Calls      ilObjLiveVotingGUI: ilObjectCopyGUI, ilPermissionGUI, ilInfoScreenGUI, ilCommonActionDispatcherGUI, LiveVotingUI, LiveVotingChoicesUI, LiveVotingManageUI, LiveVotingSettingsUI, LiveVotingFreeInputUI, LiveVotingRangeUI, LiveVotingPrioritiesUI, LiveVotingCorrectOrderUI
+ * @ilCtrl_isCalledBy ilObjLiveVotingGUI: ilRepositoryGUI, ilObjPluginDispatchGUI, ilAdministrationGUI, LiveVotingUI, LiveVotingChoicesUI, LiveVotingManageUI, LiveVotingSettingsUI, LiveVotingFreeInputUI, LiveVotingRangeUI, LiveVotingPrioritiesUI, LiveVotingCorrectOrderUI, LiveVotingResultsUI
+ * @ilCtrl_Calls      ilObjLiveVotingGUI: ilObjectCopyGUI, ilPermissionGUI, ilInfoScreenGUI, ilCommonActionDispatcherGUI, LiveVotingUI, LiveVotingChoicesUI, LiveVotingManageUI, LiveVotingSettingsUI, LiveVotingFreeInputUI, LiveVotingRangeUI, LiveVotingPrioritiesUI, LiveVotingCorrectOrderUI, LiveVotingResultsUI
  */
 class ilObjLiveVotingGUI extends ilObjectPluginGUI
 {
@@ -129,6 +129,11 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         //$this->tpl->setContent("Contenido de la pestaña de edición");
     }
 
+    /**
+     * @throws ilCtrlException
+     * @throws LiveVotingException
+     * @throws ilException
+     */
     public function results(): void
     {
         $this->tabs->activateTab("tab_results");
@@ -137,7 +142,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             $this->tpl->setContent("Error de acceso");
             //TODO: Mostrar error
         } else {
-            $liveVotingResultsUI = new LiveVotingResultsUI();
+            $liveVotingResultsUI = new LiveVotingResultsUI($this->object->getLiveVoting());
             $this->tpl->setContent($liveVotingResultsUI->showResults($this));
         }
     }
@@ -578,4 +583,29 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
     }
 
+    public function confirmNewRound(): void
+    {
+        global $DIC;
+        $conf = new ilConfirmationGUI();
+        $conf->setFormAction($this->ctrl->getFormAction($this));
+        $conf->setHeaderText($this->plugin->txt('common_confirm_new_round'));
+        $conf->setConfirm($this->plugin->txt("common_new_round"), "newRound");
+        $conf->setCancel($this->plugin->txt('common_cancel'), "results");
+        $DIC->ui()->mainTemplate()->setContent($conf->getHTML());
+    }
+
+    public function newRound()
+    {
+        // TODO: Implement newRound() method.
+    }
+
+    public function changeRound()
+    {
+        // TODO: Implement changeRound() method.
+    }
+
+    public function applyFilter()
+    {
+        // TODO: Implement applyFilter() method.
+    }
 }

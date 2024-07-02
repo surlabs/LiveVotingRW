@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace LiveVoting\votings;
 
+use ilLiveVotingPlugin;
 use LiveVoting\platform\LiveVotingDatabase;
 use LiveVoting\platform\LiveVotingException;
 
@@ -29,10 +30,22 @@ use LiveVoting\platform\LiveVotingException;
  */
 class LiveVotingRound
 {
-    private int $id;
+    private ?int $id = null;
     private int $obj_id;
-    private int $round_number;
-    private string $title;
+    private int $round_number = 1;
+    private ?string $title = null;
+
+    /**
+     * @throws LiveVotingException
+     */
+    public function __construct(?int $id = null)
+    {
+        if ($id !== null && $id != 0) {
+            $this->setId($id);
+
+            $this->loadFromDB();
+        }
+    }
 
     public function getId(): int
     {
@@ -66,7 +79,7 @@ class LiveVotingRound
 
     public function getTitle(): string
     {
-        return $this->title;
+        return $this->title ?? ilLiveVotingPlugin::getInstance()->txt("common_round") . " " . $this->round_number;
     }
 
     public function setTitle(string $title): void
@@ -118,9 +131,11 @@ class LiveVotingRound
         $result = $database->select("rep_robj_xlvo_round_n", ["id" => $this->getId()]);
 
         if (isset($result[0])) {
-            $this->setObjId($result[0]["obj_id"]);
-            $this->setRoundNumber($result[0]["round_number"]);
-            $this->setTitle($result[0]["title"]);
+            $this->setObjId((int) $result[0]["obj_id"]);
+            $this->setRoundNumber((int) $result[0]["round_number"]);
+            if (isset($result[0]["title"])) {
+            	$this->setTitle($result[0]["title"]);
+            }
         } else {
             throw new LiveVotingException("Round not found");
         }
@@ -137,12 +152,12 @@ class LiveVotingRound
     }
 
     /**
-     * @param $obj_id
+     * @param int $obj_id
      *
      * @return int
      * @throws LiveVotingException
      */
-    public static function getLatestRoundId($obj_id): int
+    public static function getLatestRoundId(int $obj_id): int
     {
         $database = new LiveVotingDatabase();
 
@@ -170,11 +185,7 @@ class LiveVotingRound
     {
         $round_id = self::getLatestRoundId($obj_id);
 
-        $round = new self();
-        $round->setId($round_id);
-        $round->loadFromDB();
-
-        return $round;
+        return new self($round_id);
     }
 
 
@@ -191,8 +202,37 @@ class LiveVotingRound
         $round->setRoundNumber(1);
         $round->setObjId($obj_id);
 
-        $round->save();
+        $round->save($obj_id);
 
         return $round;
+    }
+
+    /**
+     * @param $obj_id int
+     *
+     * @return LiveVotingRound[]
+     * @throws LiveVotingException
+     */
+    public static function getRounds(int $obj_id): array
+    {
+        $database = new LiveVotingDatabase();
+
+        $result = $database->select("rep_robj_xlvo_round_n", ["obj_id" => $obj_id], null, "ORDER BY id ASC");
+
+        $rounds = array();
+
+        foreach ($result as $row) {
+            $round = new self();
+            $round->setId((int) $row["id"]);
+            $round->setObjId((int) $row["obj_id"]);
+            $round->setRoundNumber((int) $row["round_number"]);
+            if (isset($row["title"])) {
+            	$round->setTitle($row["title"]);
+            }
+
+            $rounds[] = $round;
+        }
+
+        return $rounds;
     }
 }

@@ -20,6 +20,8 @@ declare(strict_types=1);
 
 namespace LiveVoting\votings;
 
+use ilLiveVotingPlugin;
+use ilObjUser;
 use LiveVoting\platform\LiveVotingDatabase;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\questions\LiveVotingQuestionOption;
@@ -42,6 +44,17 @@ class LiveVotingVote
     private int $round_id = 0;
     private string $free_input;
     private int $free_input_category;
+
+    /**
+     * @throws LiveVotingException
+     */
+    public function __construct(?int $id = null)
+    {
+        if ($id !== null && $id != 0) {
+            $this->setId($id);
+            $this->loadFromDB();
+        }
+    }
 
     public function getId(): int
     {
@@ -303,6 +316,18 @@ class LiveVotingVote
         return LiveVotingQuestionOption::loadOptionById($this->getOptionId());
     }
 
+    public function getParticipantName(): string
+    {
+        if ($this->getUserIdType() == 1 && $this->getUserId()) {
+            $name = ilObjUser::_lookupName($this->getUserId());
+
+            return $name['firstname'] . " " . $name['lastname'];
+        }
+
+
+        return ilLiveVotingPlugin::getInstance()->txt("common_participant") . " " . substr($this->getUserIdentifier(), 0, 4);
+    }
+
     /**
      * @param LiveVotingParticipant $participant
      * @param int $voting_id
@@ -391,5 +416,32 @@ class LiveVotingVote
     public static function createHistoryObject(LiveVotingParticipant $participant, int $voting_id, int $round_id): void
     {
         // TODO: Implement createHistoryObject() method.
+    }
+
+
+    /**
+     * @throws LiveVotingException
+     */
+    public static function getVotesForRound(int $round_id, $filter = null): array
+    {
+        $votes = array();
+
+        $database = new LiveVotingDatabase();
+
+        if ($filter) {
+            $result = $database->select("rep_robj_xlvo_vote_n", array(
+                "round_id" => $round_id
+            ), ["id"], "AND (user_identifier LIKE " . $filter . " OR user_id = " . $filter . ")");
+        } else {
+            $result = $database->select("rep_robj_xlvo_vote_n", array(
+                "round_id" => $round_id
+            ), ["id"]);
+        }
+
+        foreach ($result as $row) {
+            $votes[] = new LiveVotingVote((int) $row["id"]);
+        }
+
+        return $votes;
     }
 }

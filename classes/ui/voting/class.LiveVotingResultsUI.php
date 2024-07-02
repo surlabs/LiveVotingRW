@@ -20,26 +20,20 @@ declare(strict_types=1);
 
 namespace LiveVoting\UI;
 
+use Closure;
 use Exception;
 use ilCtrlException;
-use ilCtrlInterface;
 use ilException;
-use ilHtmlPurifierFactory;
-use ilHtmlPurifierNotFoundException;
-use ILIAS\UI\Factory;
-use ILIAS\UI\Renderer;
+use ilLinkButton;
 use ilLiveVotingPlugin;
-use ilObject;
 use ilObjLiveVotingGUI;
-use ilPlugin;
-use ilPropertyFormGUI;
-use ilSystemStyleException;
-use ilTemplate;
-use ilTemplateException;
-use ilTextAreaInputGUI;
-use LiveVoting\legacy\liveVotingTableGUI;
-use LiveVoting\questions\LiveVotingQuestion;
-use LiveVoting\questions\LiveVotingQuestionOption;
+use ilSelectInputGUI;
+use ilSubmitButton;
+use LiveVoting\legacy\LiveVotingResultsTableGUI;
+use LiveVoting\platform\LiveVotingException;
+use LiveVoting\votings\LiveVoting;
+use LiveVoting\votings\LiveVotingRound;
+use LiveVoting\votings\LiveVotingVote;
 
 /**
  * Class LiveVotingResultsUI
@@ -48,9 +42,153 @@ use LiveVoting\questions\LiveVotingQuestionOption;
  */
 class LiveVotingResultsUI
 {
+    private LiveVoting $liveVoting;
+    private ?LiveVotingRound $round;
 
-    public function showResults(ilObjLiveVotingGUI $param): string
+    /**
+     * @throws LiveVotingException
+     */
+    public function __construct(LiveVoting $liveVoting)
     {
-        return "En proceso :D";
+        $this->liveVoting = $liveVoting;
+        $this->buildRound();
+    }
+
+    /**
+     * @throws LiveVotingException
+     */
+    private function buildRound(): void
+    {
+        if ($_GET['round_id']) {
+            $this->round = new LiveVotingRound($_GET['round_id']);
+        } else {
+            $this->round = LiveVotingRound::getLatestRound($this->liveVoting->getId());
+        }
+    }
+
+    /**
+     * @throws ilCtrlException
+     * @throws LiveVotingException
+     * @throws ilException
+     * @throws Exception
+     */
+    public function showResults(ilObjLiveVotingGUI $parent): string
+    {
+        global $DIC;
+
+        $this->buildToolbar();
+
+        $liveVotingTableGUI = new LiveVotingResultsTableGUI($parent, 'showResults');
+        $this->buildFilters($liveVotingTableGUI);
+        $liveVotingTableGUI->initFilter();
+        $liveVotingTableGUI->buildData($this->liveVoting->getId(), $this->round->getId());
+
+        if (isset($_SESSION['onscreen_message'])) {
+            $message = $_SESSION['onscreen_message'];
+            $DIC->ui()->mainTemplate()->setOnScreenMessage($message['type'], $message['msg']);
+            unset($_SESSION['onscreen_message']);
+        }
+
+
+        return $liveVotingTableGUI->getHTML();
+    }
+
+    /**
+     * @throws ilCtrlException
+     * @throws LiveVotingException
+     */
+    private function buildToolbar(): void
+    {
+        global $DIC;
+
+        $button = ilLinkButton::getInstance();
+        $button->setUrl($DIC->ctrl()->getLinkTargetByClass("ilObjLiveVotingGUI", "confirmNewRound"));
+        $button->setCaption(ilLiveVotingPlugin::getInstance()->txt("new_round"), false);
+        $DIC->toolbar()->addButtonInstance($button);
+
+        $DIC->toolbar()->addSeparator();
+
+        $rounds = LiveVotingRound::getRounds($this->liveVoting->getId());
+        if (!empty($rounds)) {
+            $table_selection = new ilSelectInputGUI('', 'round_id');
+            $options = array();
+            foreach ($rounds as $round) {
+                $options[$round->getId()] = $round->getTitle();
+            }
+            $table_selection->setOptions($options);
+            $table_selection->setValue($this->liveVoting->getPlayer()->getRoundId());
+
+            $DIC->toolbar()->setFormAction($DIC->ctrl()->getFormActionByClass("ilObjLiveVotingGUI", "changeRound"));
+            $DIC->toolbar()->addText(ilLiveVotingPlugin::getInstance()->txt("common_round"));
+            $DIC->toolbar()->addInputItem($table_selection);
+
+            $button = ilSubmitButton::getInstance();
+            $button->setCaption(ilLiveVotingPlugin::getInstance()->txt('common_change'), false);
+            $button->setCommand("changeRound");
+            $DIC->toolbar()->addButtonInstance($button);
+        }
+    }
+
+    /**
+     * @param LiveVotingResultsTableGUI $table
+     * @throws Exception
+     */
+    private function buildFilters(LiveVotingResultsTableGUI &$table): void
+    {
+        global $DIC;
+
+        $plugin = ilLiveVotingPlugin::getInstance();
+        $filter = new ilSelectInputGUI($plugin->txt("common_participant"), "participant");
+
+        $votes = LiveVotingVote::getVotesForRound($this->round->getId());
+        $options = array(0 => $plugin->txt("common_all"));
+        foreach ($votes as $vote) {
+            $options[$vote->getUserIdentifier() ?? $vote->getUserId()] = $vote->getParticipantName($vote);
+        }
+        $filter->setOptions($options);
+        $table->addFilterItem($filter);
+        $filter->readFromSession();
+
+        $titles = array(
+            0 => $plugin->txt("common_all")
+        );
+        $questions = array(
+            0 => $plugin->txt("common_all")
+        );
+        $closure = $this->getShortener();
+
+        foreach ($this->liveVoting->getQuestions() as $question) {
+            $titles[$question->getId()] = $question->getTitle();
+            $questions[$question->getId()] = $question->getQuestion();
+        }
+
+        // Title
+        $filter = new ilSelectInputGUI($plugin->txt("voting_title"), "voting_title");
+        array_walk($titles, $closure);
+        $filter->setOptions($titles);
+        $table->addFilterItem($filter);
+        $filter->readFromSession();
+
+        // Question
+        $filter = new ilSelectInputGUI($plugin->txt("common_question"), "voting");
+        array_walk($questions, $closure);
+        $filter->setOptions($questions);
+        $table->addFilterItem($filter);
+        $filter->readFromSession();
+
+        // Read values
+        $table->setFormAction($DIC->ctrl()->getFormActionByClass("ilObjLiveVotingGUI", "applyFilter"));
+    }
+
+    public function getShortener($length = 40): Closure
+    {
+        return function (&$question) use ($length) {
+            $qs = nl2br($question, false);
+            $qs = strip_tags($qs);
+
+            $question = strlen($qs) > $length ? substr($qs, 0, $length) . "..." : $qs;
+
+            return $question;
+        };
     }
 }

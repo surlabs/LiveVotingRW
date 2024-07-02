@@ -68,6 +68,49 @@ abstract class LiveVotingQuestion
     /**
      * @throws LiveVotingException
      */
+    public static function loadAllQuestionsByObjectId(int $obj_id): array
+    {
+        $questions = array();
+
+        $database = new LiveVotingDatabase();
+
+        $result = $database->select("rep_robj_xlvo_voting_n", array(
+            "obj_id" => $obj_id
+        ));
+
+        if ($result) {
+            foreach ($result as $row) {
+                $row["options"] = LiveVotingQuestionOption::loadAllOptionsByVotingId((int) $row["id"]);
+
+                switch ($row["voting_type"]) {
+                    case self::QUESTION_TYPES_IDS["Choices"]:
+                        $question = new LiveVotingChoicesQuestion($row);
+                        break;
+                    case self::QUESTION_TYPES_IDS["FreeText"]:
+                        $question = new LiveVotingFreeTextQuestion($row);
+                        break;
+                    case self::QUESTION_TYPES_IDS["CorrectOrder"]:
+                        $question = new LiveVotingOrderQuestion($row);
+                        $question->setCorrectOrder(true);
+                        break;
+                    case self::QUESTION_TYPES_IDS["Priorities"]:
+                        $question = new LiveVotingOrderQuestion($row);
+                        break;
+                    case self::QUESTION_TYPES_IDS["NumberRange"]:
+                        $question = new LiveVotingNumberRangeQuestion($row);
+                        break;
+                }
+
+                $questions[] = $question;
+            }
+        }
+
+        return $questions;
+    }
+
+    /**
+     * @throws LiveVotingException
+     */
     public static function loadQuestionById(int $id) : ?LiveVotingQuestion {
         $question = null;
 
