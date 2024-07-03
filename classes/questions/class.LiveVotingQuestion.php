@@ -76,7 +76,7 @@ abstract class LiveVotingQuestion
 
         $result = $database->select("rep_robj_xlvo_voting_n", array(
             "obj_id" => $obj_id
-        ));
+        ), null, "ORDER BY position ASC");
 
         if ($result) {
             foreach ($result as $row) {

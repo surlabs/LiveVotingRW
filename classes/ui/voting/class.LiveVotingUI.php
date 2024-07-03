@@ -106,6 +106,12 @@ class LiveVotingUI
 
         if ($this->liveVoting->isOnline()) {
             if (!empty($this->liveVoting->getQuestions())) {
+                if (isset($this->liveVoting->getQuestions()[0])) {
+                    $this->liveVoting->getPlayer()->prepareStart($this->liveVoting->getQuestions()[0]->getId());
+                } else {
+                    return $this->renderer->render($this->factory->messageBox()->failure($this->pl->txt("player_msg_no_start_2")));
+                }
+
                 // TODO: Refactor this code to remove deprecated button
                 $b = ilLinkButton::getInstance();
                 $b->setCaption($this->pl->txt('player_start_voting'), false);
