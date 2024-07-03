@@ -292,7 +292,7 @@ class LiveVotingUI
         // Freeze
         $suspendButton = ilLinkButton::getInstance();
         $suspendButton->addCSSClass('btn-warning');
-        $suspendButton->setCaption($DIC->ui()->renderer()->render($DIC->ui()->factory()->symbol()->glyph()->next()) . $this->pl->txt('freeze'), false);
+        $suspendButton->setCaption($DIC->ui()->renderer()->render($DIC->ui()->factory()->symbol()->glyph()->next()) . $this->pl->txt('player_freeze'), false);
         $suspendButton->setUrl('#');
         $suspendButton->setId('btn-freeze');
         $DIC->toolbar()->addButtonInstance($suspendButton);
@@ -300,7 +300,7 @@ class LiveVotingUI
         // Unfreeze
         $playButton = ilLinkButton::getInstance();
         $playButton->setPrimary(true);
-        $playButton->setCaption($DIC->ui()->renderer()->render($DIC->ui()->factory()->symbol()->glyph()->next()) . $this->pl->txt('unfreeze'), false);
+        $playButton->setCaption($DIC->ui()->renderer()->render($DIC->ui()->factory()->symbol()->glyph()->next()) . $this->pl->txt('player_unfreeze'), false);
         $playButton->setUrl('#');
         $playButton->setId('btn-unfreeze');
 
@@ -319,14 +319,14 @@ class LiveVotingUI
 
         // Hide
         $suspendButton = ilLinkButton::getInstance();
-        $suspendButton->setCaption($this->pl->txt('hide_results'), false);
+        $suspendButton->setCaption($this->pl->txt('player_hide_results'), false);
         $suspendButton->setUrl('#');
         $suspendButton->setId('btn-hide-results');
         $DIC->toolbar()->addButtonInstance($suspendButton);
 
         // Show
         $suspendButton = ilLinkButton::getInstance();
-        $suspendButton->setCaption($this->pl->txt('show_results'), false);
+        $suspendButton->setCaption($this->pl->txt('player_show_results'), false);
         $suspendButton->setUrl('#');
         $suspendButton->setId('btn-show-results');
         $DIC->toolbar()->addButtonInstance($suspendButton);
