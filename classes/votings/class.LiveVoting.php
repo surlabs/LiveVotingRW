@@ -77,7 +77,6 @@ class LiveVoting
     private int $results_behaviour = 1;
     private string $puk = "";
     private LiveVotingPlayer $player;
-    private bool $keyboard_active = false;
 
     /**
      * LiveVoting constructor.
@@ -291,14 +290,6 @@ class LiveVoting
 
     public function setPlayer(LiveVotingPlayer $player): void {
         $this->player = $player;
-    }
-
-    public function isKeyboardActive(): bool {
-        return $this->keyboard_active;
-    }
-
-    public function setKeyboardActive(bool $keyboard_active): void {
-        $this->keyboard_active = $keyboard_active;
     }
 
     /**
