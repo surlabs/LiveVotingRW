@@ -333,7 +333,7 @@ class LiveVotingUI
 
         // Reset
         $suspendButton = ilLinkButton::getInstance();
-        $suspendButton->setCaption(ilGlyphGUI::get('remove') . $this->pl->txt('reset'), false);
+        $suspendButton->setCaption(ilGlyphGUI::get('remove') . " " . $this->pl->txt('player_reset'), false);
         $suspendButton->setUrl('#');
         $suspendButton->setId('btn-reset');
         $DIC->toolbar()->addButtonInstance($suspendButton);
