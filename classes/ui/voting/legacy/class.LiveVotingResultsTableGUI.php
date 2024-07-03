@@ -113,7 +113,7 @@ class LiveVotingResultsTableGUI extends ilTable2GUI
         }
 
         $participant = isset($this->filter['participant']) && $this->filter['participant'] != "" ? $this->filter['participant'] : null;
-        $votes = LiveVotingVote::getVotesForRound($round_id, $participant);
+        $votes = LiveVotingVote::getVotesForRound($round_id, (string) $participant);
 
 
         foreach ($votes as $index => $vote) {

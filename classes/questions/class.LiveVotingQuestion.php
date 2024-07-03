@@ -318,4 +318,40 @@ abstract class LiveVotingQuestion
             }
         }
     }
+
+    /**
+     * @throws LiveVotingException
+     */
+    public function isFirst(): bool
+    {
+        $database = new LiveVotingDatabase();
+
+        $result = $database->select("rep_robj_xlvo_voting_n", array(
+            "obj_id" => $this->id
+        ), ["id"], "ORDER BY position ASC");
+
+        if (isset($result[0])) {
+            return (int) $result[0]["id"] == $this->id;
+        }
+
+        return false;
+    }
+
+    /**
+     * @throws LiveVotingException
+     */
+    public function isLast(): bool
+    {
+        $database = new LiveVotingDatabase();
+
+        $result = $database->select("rep_robj_xlvo_voting_n", array(
+            "obj_id" => $this->id
+        ), ["id"], "ORDER BY position DESC");
+
+        if (isset($result[0])) {
+            return (int) $result[0]["id"] == $this->id;
+        }
+
+        return false;
+    }
 }

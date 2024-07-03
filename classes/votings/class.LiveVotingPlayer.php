@@ -20,8 +20,10 @@ declare(strict_types=1);
 
 namespace LiveVoting\votings;
 
+use ilLiveVotingPlugin;
 use LiveVoting\platform\LiveVotingDatabase;
 use LiveVoting\platform\LiveVotingException;
+use LiveVoting\questions\LiveVotingQuestion;
 use LiveVoting\Utils\ParamManager;
 
 /**
@@ -91,6 +93,17 @@ class LiveVotingPlayer
     public function setActiveVoting(int $active_voting): void
     {
         $this->active_voting = $active_voting;
+    }
+
+    /**
+     * @throws LiveVotingException
+     */
+    public function getActiveVotingObject(): ?LiveVotingQuestion {
+        if ($this->active_voting > 0) {
+            return LiveVotingQuestion::loadQuestionById($this->active_voting);
+        } else {
+            return null;
+        }
     }
 
     public function getStatus(): int
@@ -483,6 +496,38 @@ class LiveVotingPlayer
         if ($this->remainingCountDown() <= 0 && $this->getCountdownStart() > 0) {
             $this->freeze();
         }
+    }
+
+    /**
+     * @throws LiveVotingException
+     */
+    public function getPlayerData(): array
+    {
+        $database = new LiveVotingDatabase();
+
+        $votes = $database->select("rep_robj_xlvo_vote_n", array(
+            'voting_id' => $this->getActiveVoting(),
+            'status'    => 1,
+            'round_id'  => $this->getRoundId()
+        ), ["last_update"], "ORDER BY last_update DESC");
+
+        $array = array_values($votes);
+        $last_update = array_shift($array);
+
+        return array(
+            "is_first" => $this->getActiveVotingObject()->isFirst(),
+            "is_last" => $this->getActiveVotingObject()->isLast(),
+            "status" => $this->getStatus(),
+            "active_voting_id" => $this->getActiveVoting(),
+            "show_results" => $this->isShowResults(),
+            "frozen" => $this->isFrozen(),
+            "votes" => count($votes),
+            "last_update" => $last_update,
+            "attendees" => vsprintf(ilLiveVotingPlugin::getInstance()->txt("start_online"), [LiveVotingVoter::countVoters($this->getId())]),
+            "qtype" => $this->getActiveVotingObject()->getQuestionType(),
+            "countdown" => $this->remainingCountDown(),
+            "has_countdown" => $this->isCountDownRunning()
+        );
     }
 
     /**

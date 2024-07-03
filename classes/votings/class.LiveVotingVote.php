@@ -27,7 +27,7 @@ use LiveVoting\platform\LiveVotingException;
 use LiveVoting\questions\LiveVotingQuestionOption;
 
 /**
- * Class LiveVotingPlayer
+ * Class LiveVotingVote
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
  */
 class LiveVotingVote
@@ -422,7 +422,7 @@ class LiveVotingVote
     /**
      * @throws LiveVotingException
      */
-    public static function getVotesForRound(int $round_id, $filter = null): array
+    public static function getVotesForRound(int $round_id, string $filter = null): array
     {
         $votes = array();
 
