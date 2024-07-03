@@ -35,7 +35,7 @@ abstract class LiveVotingQuestion
 {
     const QUESTION_TYPES_IDS = array(
         "Choices" => 1,
-        "FreeText" =>2,
+        "FreeText" => 2,
         "CorrectOrder" => 4,
         "Priorities" => 5,
         "NumberRange" => 6,
