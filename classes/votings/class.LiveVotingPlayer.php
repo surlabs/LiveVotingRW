@@ -48,6 +48,7 @@ class LiveVotingPlayer
     private int $countdown_start = 0;
     private bool $force_reload = false;
     private int $round_id = 0;
+    private bool $full_screen = false;
 
     /**
      * @throws LiveVotingException
@@ -179,6 +180,16 @@ class LiveVotingPlayer
     public function setRoundId(int $round_id): void
     {
         $this->round_id = $round_id;
+    }
+
+    public function isFullScreen(): bool
+    {
+        return $this->full_screen;
+    }
+
+    public function setFullScreen(bool $full_screen): void
+    {
+        $this->full_screen = $full_screen;
     }
 
     /**
