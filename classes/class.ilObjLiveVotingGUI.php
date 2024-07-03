@@ -70,6 +70,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
                 break;
             case 'editProperties':
             case 'startPlayer':
+            case 'getPlayerData':
             case 'manage':
             case 'results':
             case 'selectType':
@@ -564,23 +565,58 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         }
         //TODO: Traer prev y next question para navegación
 
-
-
     }
 
 
     /**
      * @throws ilCtrlException
+     * @throws LiveVotingException
      */
     protected function startPlayer():void
     {
+
         $this->tabs->activateTab("tab_content");
 
         $liveVotingUI = new LiveVotingUI($this->object->getLiveVoting());
         $liveVotingUI->initJsAndCss($this);
+        $liveVotingUI->showVoting();
 
-        //TODO: Implementar el resto del bloque en la clase LiveVotingUI
+    }
 
+    /**
+     * @throws LiveVotingException
+     */
+    protected function getPlayerData()
+    {
+
+        $liveVotingPlayer = LiveVotingPlayer::loadFromObjId($this->object->getLiveVoting()->getId());
+
+        $liveVotingPlayer->attend();
+
+        $param_manager = ParamManager::getInstance();
+
+        //Set Active Voting of Presenter via URL - bot don't save it - PLLV-272
+        if ($param_manager->getVoting() > 0) {
+            $this->object->getLiveVoting()->getPlayer()->setActive($param_manager->getVoting());
+        }
+
+        $liveVotingUI = new LiveVotingUI($this->object->getLiveVoting());
+
+        try {
+            $results = array(
+                'player' => $this->object->getLiveVoting()->getPlayer()->getPlayerData(),
+                'player_html' => $liveVotingUI->getPlayerHTML(true),
+                //'buttons_html' => $this->getButtonsHTML(),
+                'buttons_html' => ""
+            );
+            header('Content-type: application/json');
+            echo json_encode($results);
+            exit;
+        } catch (LiveVotingException|ilTemplateException|ilException $e) {
+            //TODO: Mostrar error
+        }
+
+        //xlvoJsResponse::getInstance($results)->send();
     }
 
     public function confirmNewRound(): void

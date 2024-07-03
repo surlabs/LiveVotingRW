@@ -265,7 +265,9 @@ var xlvoPlayer = {
 			return;
 		}
 		xlvoPlayer.startRequest();
+		console.log(xlvoPlayer.config.base_url, {cmd: 'getPlayerData'});
 		$.get(xlvoPlayer.config.base_url, {cmd: 'getPlayerData'}).done(function (data) {
+			console.log(data);
 			xlvoPlayer.counter++;
 			if ((xlvoPlayer.counter > xlvoPlayer.forced_update_interval) // Forced update of HTML
 				|| (data.player.last_update !== xlvoPlayer.player.last_update) // Player is out of sync

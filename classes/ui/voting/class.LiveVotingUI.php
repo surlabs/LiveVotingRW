@@ -21,7 +21,9 @@ declare(strict_types=1);
 namespace LiveVoting\UI;
 
 use ilAdvancedSelectionListGUI;
+use ilButtonToSplitButtonMenuItemAdapter;
 use ilCtrlException;
+use ilException;
 use ilGlyphGUI;
 use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
@@ -30,6 +32,7 @@ use ilLinkButton;
 use ilLiveVotingPlugin;
 use ilObjLiveVotingGUI;
 use ilSetting;
+use ilSplitButtonGUI;
 use ilSystemStyleException;
 use ilTemplate;
 use ilTemplateException;
@@ -189,7 +192,6 @@ class LiveVotingUI
     }
 
     /**
-     * @param LiveVoting $liveVoting
      * @param ilObjLiveVotingGUI $parent
      * @throws ilCtrlException
      */
@@ -248,6 +250,7 @@ class LiveVotingUI
      * @throws LiveVotingException
      */
     public function showVoting(){
+        global $DIC;
         $liveVoting = $this->liveVoting;
         $liveVoting->regenerateOptionSorting();
         $liveVoting->getPlayer()->setStatus(LiveVotingPlayer::STAT_RUNNING);
@@ -260,20 +263,30 @@ class LiveVotingUI
             $liveVoting->getPlayer()->save();
         }
 
-         $this->initToolbarDuringVoting();
-        //TODO: Completar este bloque
-/*         $modal = xlvoQRModalGUI::getInstanceFromVotingConfig($this->manager->getVotingConfig())->getHTML();
-         $this->setContent($modal . $this->getPlayerHTML());
-         $this->handlePreview();*/
+        try {
+            $this->initToolbarDuringVoting();
+        } catch (JsonException|ilCtrlException $e) {
+        }
+
+        //TODO: Implementar este modal
+         //$modal = xlvoQRModalGUI::getInstanceFromVotingConfig($this->manager->getVotingConfig())->getHTML();
+         //$this->setContent($modal . $this->getPlayerHTML());
+         //$this->handlePreview();
+
+        $DIC->ui()->mainTemplate()->setVariable("PLAYER_CONTENT", "HOLA");
     }
 
+    /**
+     * @throws ilCtrlException
+     * @throws JsonException
+     */
     protected function initToolbarDuringVoting()
     {
         global $DIC;
         // Freeze
         $suspendButton = ilLinkButton::getInstance();
         $suspendButton->addCSSClass('btn-warning');
-        $suspendButton->setCaption(ilGlyphGUI::get('pause') . $this->pl->txt('freeze'), false);
+        $suspendButton->setCaption($DIC->ui()->renderer()->render($DIC->ui()->factory()->symbol()->glyph()->next()) . $this->pl->txt('freeze'), false);
         $suspendButton->setUrl('#');
         $suspendButton->setId('btn-freeze');
         $DIC->toolbar()->addButtonInstance($suspendButton);
@@ -281,22 +294,22 @@ class LiveVotingUI
         // Unfreeze
         $playButton = ilLinkButton::getInstance();
         $playButton->setPrimary(true);
-        $playButton->setCaption(ilGlyphGUI::get('play') . $this->pl->txt('unfreeze'), false);
+        $playButton->setCaption($DIC->ui()->renderer()->render($DIC->ui()->factory()->symbol()->glyph()->next()) . $this->pl->txt('unfreeze'), false);
         $playButton->setUrl('#');
         $playButton->setId('btn-unfreeze');
 
-      /*  $split = ilSplitButtonGUI::getInstance();
+        $split = ilSplitButtonGUI::getInstance();
         $split->setDefaultButton($playButton);
         foreach (array(10, 30, 90, 120, 180, 240, 300) as $seconds) {
             $cd = ilLinkButton::getInstance();
             $cd->setUrl('#');
-            $cd->setCaption($seconds . ' ' . self::plugin()->translate('player_seconds'), false);
+            $cd->setCaption($seconds . ' ' . $this->pl->txt('player_seconds'), false);
             $cd->setOnClick("xlvoPlayer.countdown(event, $seconds);");
             $ilSplitButtonMenuItem = new ilButtonToSplitButtonMenuItemAdapter($cd);
             $split->addMenuItem($ilSplitButtonMenuItem);
         }
 
-        $this->addStickyButtonToToolbar($split);*/
+        $DIC->toolbar()->addStickyItem($split);
 
         // Hide
         $suspendButton = ilLinkButton::getInstance();
@@ -330,16 +343,16 @@ class LiveVotingUI
             // PREV
             $suspendButton = ilLinkButton::getInstance();
             $suspendButton->setDisabled(true);
-            $suspendButton->setUrl(self::dic()->ctrl()->getLinkTarget($this, self::CMD_PREVIOUS));
-            $suspendButton->setCaption(GlyphGUI::get(GlyphGUI::PREVIOUS), false);
+            $suspendButton->setUrl($DIC->ctrl()->getLinkTarget($this, 'previous'));
+            $suspendButton->setCaption(ilGlyphGUI::get(ilGlyphGUI::PREVIOUS), false);
             $suspendButton->setId('btn-previous');
             $DIC->toolbar()->addButtonInstance($suspendButton);
 
             // NEXT
             $suspendButton = ilLinkButton::getInstance();
             $suspendButton->setDisabled(true);
-            $suspendButton->setCaption(GlyphGUI::get(GlyphGUI::NEXT), false);
-            $suspendButton->setUrl(self::dic()->ctrl()->getLinkTarget($this, self::CMD_NEXT));
+            $suspendButton->setCaption(ilGlyphGUI::get(ilGlyphGUI::NEXT), false);
+            $suspendButton->setUrl($DIC->ctrl()->getLinkTarget($this, 'next'));
             $suspendButton->setId('btn-next');
             $DIC->toolbar()->addButtonInstance($suspendButton);
         }
@@ -347,46 +360,87 @@ class LiveVotingUI
         // Votings
         if (!$param_manager->isPpt()) {
             $current_selection_list = $this->getVotingSelectionList();
-            self::dic()->toolbar()->addText($current_selection_list->getHTML());
+            $DIC->toolbar()->addText($current_selection_list->getHTML());
         }
 
-        //
-        //
         $DIC->toolbar()->addSeparator();
-        //
-        //
 
-        //TODO: Continuar implementando este bloque
+        $player = $this->liveVoting->getPlayer();
+
         // Fullscreen
-/*        if ($this->manager->getVotingConfig()->isFullScreen() && !$this->param_manager->isPpt()) {
+        if ($player->isFullScreen() && !$param_manager->isPpt()) {
             $suspendButton = ilLinkButton::getInstance();
-            $suspendButton->setCaption(GlyphGUI::get('fullscreen'), false);
+            $suspendButton->setCaption(ilGlyphGUI::get('fullscreen'), false);
             $suspendButton->setUrl('#');
             $suspendButton->setId('btn-start-fullscreen');
-            self::dic()->toolbar()->addButtonInstance($suspendButton);
+            $DIC->toolbar()->addButtonInstance($suspendButton);
 
             $suspendButton = ilLinkButton::getInstance();
-            $suspendButton->setCaption(GlyphGUI::get('resize-small'), false);
+            $suspendButton->setCaption(ilGlyphGUI::get('resize-small'), false);
             $suspendButton->setUrl('#');
             $suspendButton->setId('btn-close-fullscreen');
-            self::dic()->toolbar()->addButtonInstance($suspendButton);
+            $DIC->toolbar()->addButtonInstance($suspendButton);
         }
 
         // END
         $suspendButton = ilLinkButton::getInstance();
-        $suspendButton->setCaption(GlyphGUI::get('stop') . $this->txt('terminate'), false);
-        $suspendButton->setUrl(self::dic()->ctrl()->getLinkTarget(new xlvoPlayerGUI(), self::CMD_TERMINATE));
+        $suspendButton->setCaption(ilGlyphGUI::get('stop') . $this->pl->txt('terminate'), false);
+        $suspendButton->setUrl($DIC->ctrl()->getLinkTarget(new ilObjLiveVotingGUI(), 'terminate'));
         $suspendButton->setId('btn-terminate');
-        self::dic()->toolbar()->addButtonInstance($suspendButton);
-        if (self::DEBUG) {
-
+        $DIC->toolbar()->addButtonInstance($suspendButton);
+/*        if (false) {
             // PAUSE PULL
             $suspendButton = ilLinkButton::getInstance();
             $suspendButton->setCaption('Toogle Pulling', false);
             $suspendButton->setUrl('#');
             $suspendButton->setId('btn-toggle-pull');
-            self::dic()->toolbar()->addButtonInstance($suspendButton);
+            $DIC->toolbar()->addButtonInstance($suspendButton);
         }*/
+    }
+
+    /**
+     * @param bool $async
+     *
+     * @return ilAdvancedSelectionListGUI
+     * @throws ilCtrlException
+     */
+    protected function getVotingSelectionList(bool $async = true): ilAdvancedSelectionListGUI
+    {
+        global $DIC;
+        $current_selection_list = new ilAdvancedSelectionListGUI();
+        $current_selection_list->setItemLinkClass('xlvo-preview');
+        $current_selection_list->setListTitle($this->pl->txt('voting_list'));
+        $current_selection_list->setId('xlvo_select');
+        $current_selection_list->setTriggerEvent('xlvo_voting');
+        $current_selection_list->setUseImages(false);
+        /**
+         * @var liveVoting[] $votings
+         */
+        foreach ($this->liveVoting->getQuestions() as $voting) {
+            $id = $voting->getId();
+            $t = $voting->getTitle();
+            $DIC->ctrl()->setParameterByClass(ilObjLiveVotingGUI::class, 'xlvo_voting', $id);
+
+            $target = $DIC->ctrl()->getLinkTarget(new ilObjLiveVotingGUI(), 'startPlayer');
+            if ($async) {
+                $current_selection_list->addItem($t, $id, $target, '', '', '', '', false, 'xlvoPlayer.open(' . $id . ')');
+            } else {
+                $current_selection_list->addItem($t, $id, $target);
+            }
+        }
+
+        return $current_selection_list;
+    }
+
+    /**
+     * @throws ilException
+     * @throws ilTemplateException|LiveVotingException
+     */
+    public function getPlayerHTML(bool $inner = false): string
+    {
+        $liveVotingDisplayPlayerUI = new LiveVotingDisplayPlayerUI($this->liveVoting);
+
+        return $liveVotingDisplayPlayerUI->getHTML($inner);
     }
 
 }
