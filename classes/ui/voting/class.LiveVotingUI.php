@@ -209,7 +209,7 @@ class LiveVotingUI
 
 
         $keyboard = new stdClass();
-        $keyboard->active = $this->liveVoting->isKeyboardActive();
+        $keyboard->active = $this->liveVoting->getPlayer()->isKeyboardActive();
         if ($keyboard->active) {
             $keyboard->toggle_results = 9;
             $keyboard->toggle_freeze = 32;
