@@ -48,6 +48,7 @@ class LiveVotingPlayer
     private int $countdown_start = 0;
     private bool $force_reload = false;
     private int $round_id = 0;
+    private bool $keyboard_active = false;
     private bool $full_screen = false;
 
     /**
@@ -180,6 +181,14 @@ class LiveVotingPlayer
     public function setRoundId(int $round_id): void
     {
         $this->round_id = $round_id;
+    }
+
+    public function isKeyboardActive(): bool {
+        return $this->keyboard_active;
+    }
+
+    public function setKeyboardActive(bool $keyboard_active): void {
+        $this->keyboard_active = $keyboard_active;
     }
 
     public function isFullScreen(): bool
