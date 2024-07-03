@@ -204,4 +204,9 @@ class LiveVotingQuestionOption
     {
         $this->correct_position = $correct_position;
     }
+
+    public function getCipher(): string
+    {
+        return chr($this->getPosition() + 64);
+    }
 }
