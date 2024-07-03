@@ -354,4 +354,6 @@ abstract class LiveVotingQuestion
 
         return false;
     }
+
+    abstract function getComputedColums(): float;
 }

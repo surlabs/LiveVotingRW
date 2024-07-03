@@ -118,4 +118,9 @@ class LiveVotingNumberRangeQuestion extends LiveVotingQuestion
     {
         $this->alt_result_display_mode = $alt_result_display_mode;
     }
+
+    public function getComputedColums(): float
+    {
+        return 12;
+    }
 }

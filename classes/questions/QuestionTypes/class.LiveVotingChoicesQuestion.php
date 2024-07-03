@@ -79,4 +79,14 @@ class LiveVotingChoicesQuestion extends LiveVotingQuestion
     {
         $this->columns = $columns;
     }
+
+    public function getComputedColums(): float
+    {
+        return (12 / (in_array($this->getColumns(), array(
+            1,
+            2,
+            3,
+            4,
+        )) ? $this->getColumns() : 1));
+    }
 }

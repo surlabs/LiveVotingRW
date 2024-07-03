@@ -94,4 +94,14 @@ class LiveVotingOrderQuestion extends LiveVotingQuestion
     {
         $this->correct_order = $correct_order;
     }
+
+    public function getComputedColums(): float
+    {
+        return (12 / (in_array($this->getColumns(), array(
+                1,
+                2,
+                3,
+                4,
+            )) ? $this->getColumns() : 1));
+    }
 }

@@ -79,4 +79,9 @@ class LiveVotingFreeTextQuestion extends LiveVotingQuestion
     {
         $this->answer_field = $answer_field;
     }
+
+    public function getComputedColums(): float
+    {
+        return 12;
+    }
 }
