@@ -260,7 +260,7 @@ class LiveVotingChoicesUI
                             }
 
                             if (isset($option_data->id) && $option_data->id == $old_option->getId()) {
-                                $old_option->setPosition($index);
+                                $old_option->setPosition($index + 1);
 
                                 if (isset($option_data->text)) {
                                     $old_option->setText($option_data->text);
@@ -293,7 +293,7 @@ class LiveVotingChoicesUI
                             $option->setText($option_data->text);
                         }
 
-                        $option->setPosition($index);
+                        $option->setPosition($index + 1);
                         $old_options[] = $option;
                     }
                 }
