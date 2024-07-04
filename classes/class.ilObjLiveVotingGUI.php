@@ -703,4 +703,5 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         $table->resetFilter();
         $DIC->ctrl()->redirect($this, "results");
     }
+
 }

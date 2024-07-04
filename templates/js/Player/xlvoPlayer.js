@@ -386,6 +386,7 @@ var xlvoPlayer = {
 	 * @param id
 	 */
 	open: function (id) {
+		console.log("Tengo que cambiar a", id);
 		this.callPlayer('open', {xvi: id});
 		return false;
 	},

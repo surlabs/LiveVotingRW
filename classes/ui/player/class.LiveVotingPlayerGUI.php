@@ -115,10 +115,6 @@ class LiveVotingPlayerGUI
 
     }
 
-    /**
-     * @throws ilTemplateException
-     * @throws ilSystemStyleException
-     */
     private function prepareFrameworkTemplate(): void
     {
         global $DIC;
@@ -131,6 +127,7 @@ class LiveVotingPlayerGUI
     /**
      * @throws ilTemplateException
      * @throws ilSystemStyleException
+     * @throws ilCtrlException|LiveVotingException
      */
     private function prepareVotingTemplate(): void
     {
