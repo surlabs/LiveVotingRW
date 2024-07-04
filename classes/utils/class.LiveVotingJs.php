@@ -22,9 +22,9 @@ namespace LiveVoting\Utils;
 
 use ilCtrlException;
 use ilLiveVotingPlugin;
+use ilMathJax;
 use ilObjLiveVotingGUI;
-use JetBrains\PhpStorm\NoReturn;
-use LiveVoting\GUI\xlvoGUI;
+use ilSetting;
 use LiveVoting\Utils\ParamManager;
 use LiveVotingPlayerGUI;
 
@@ -213,10 +213,23 @@ final class LiveVotingJs
         return $this;
     }
 
-    #[NoReturn] public static function sendResponse($data): void
+    public static function sendResponse($data): void
     {
         header('Content-type: application/json');
         echo json_encode($data);
         exit();
+    }
+
+    /**
+     * @return void
+     */
+    public function initMathJax(): void
+    {
+        $mathJaxSetting = new ilSetting("MathJax");
+        if (strpos($mathJaxSetting->get('path_to_mathjax'), 'mathjax@3') !== false) { // not sure if this check will work with >v3
+            // mathjax v3 needs to be configured differently
+            $this->addLibToHeader('mathjax_config.js');
+        }
+        ilMathJax::getInstance()->includeMathJax();
     }
 }

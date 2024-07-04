@@ -347,6 +347,8 @@ var xlvoPlayer = {
 		var input_data = input_data ? input_data : {};
 		var post_data = $.extend({call: cmd}, input_data);
 
+		console.log(xlvoPlayer.config.base_url + '&cmd=apiCall', post_data);
+
 		$.post(xlvoPlayer.config.base_url + '&cmd=apiCall', post_data).always(function () {
 			xlvoPlayer.handleSwitch();
 			xlvoPlayer.getPlayerData();

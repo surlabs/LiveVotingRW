@@ -133,6 +133,8 @@ class LiveVotingUI
                 $DIC->toolbar()->addButtonInstance($b2);
 
                 $template = new ilTemplate($this->pl->getDirectory() . "/templates/default/Player/tpl.start.html", true, true);
+                $DIC->ui()->mainTemplate()->addCss($this->pl->getDirectory() . '/templates/default/default.css');
+
 
                 $template->setVariable('PIN', $this->liveVoting->getPin());
 
@@ -212,9 +214,7 @@ class LiveVotingUI
             'debug'          => false
         );
 
-        //LiveVotingJS::getInstance()->initMathJax();
-        //TODO: Implementar initMathJax
-
+        LiveVotingJS::getInstance()->initMathJax();
 
         $keyboard = new stdClass();
         $keyboard->active = $this->liveVoting->getPlayer()->isKeyboardActive();
@@ -460,6 +460,7 @@ class LiveVotingUI
      */
     protected function getButtonsHTML(): string
     {
+        //TODO: Implementar todo esto de alguna manera.
         // Buttons from Questions
         $xlvoQuestionTypesGUI = xlvoQuestionTypesGUI::getInstance($this->manager);
         if ($xlvoQuestionTypesGUI->hasButtons()) {
