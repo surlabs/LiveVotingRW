@@ -230,7 +230,7 @@ class LiveVotingVote
         $database = new LiveVotingDatabase();
 
         if ($this->getId() == 0) {
-            throw new LiveVotingException("Invalid round id");
+            throw new LiveVotingException("Invalid vote id");
         }
 
         $result = $database->select("rep_robj_xlvo_vote_n", ["id" => $this->getId()]);
@@ -247,8 +247,6 @@ class LiveVotingVote
             $this->setRoundId((int) $result[0]["round_id"]);
             $this->setFreeInput($result[0]["free_input"]);
             $this->setFreeInputCategory((int) $result[0]["free_input_category"]);
-        } else {
-            throw new LiveVotingException("Round not found");
         }
     }
 

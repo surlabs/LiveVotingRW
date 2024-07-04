@@ -18,6 +18,7 @@ declare(strict_types=1);
  *
  */
 
+use JetBrains\PhpStorm\NoReturn;
 use LiveVoting\platform\LiveVotingConfig;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\Utils\LiveVotingJs;
@@ -25,6 +26,8 @@ use LiveVoting\Utils\ParamManager;
 use LiveVoting\votings\LiveVoting;
 use LiveVoting\votings\LiveVotingParticipant;
 use LiveVoting\votings\LiveVotingPlayer;
+use LiveVoting\votings\LiveVotingRound;
+use LiveVoting\votings\LiveVotingVote;
 
 /**
  * Class LiveVotingPlayerGUI
@@ -324,5 +327,106 @@ class LiveVotingPlayerGUI
     protected function getVotingData(): void
     {
 
+    }
+
+    /**
+     * @throws LiveVotingException
+     */
+    #[NoReturn] protected function apiCall(): void
+    {
+        $return_value = true;
+
+        switch ($_POST['call']) {
+            case 'toggle_freeze':
+                $param_manager = ParamManager::getInstance();
+                $this->live_voting->getPlayer()->toggleFreeze($param_manager->getVoting());
+                break;
+            case 'toggle_results':
+                $this->live_voting->getPlayer()->toggleResults();
+                break;
+            case 'reset':
+                $this->live_voting->getPlayer()->reset();
+                break;
+            case 'next':
+                $this->live_voting->getPlayer()->nextQuestion();
+                break;
+            case 'previous':
+                $this->live_voting->getPlayer()->previousQuestion();
+                break;
+            case 'open':
+                $this->live_voting->getPlayer()->open((int) $_POST["xvi"]);
+                break;
+            case 'countdown':
+                $this->live_voting->getPlayer()->startCountDown((int) $_POST['seconds']);
+                break;
+            case 'input':
+                // TODO
+                break;
+            case 'add_vote':
+                $vote = new LiveVotingVote();
+                $user = LiveVotingParticipant::getInstance();
+                $vote->setUserId((int) $user->getIdentifier());
+                $vote->setUserIdType(1);
+                $vote->setVotingId($this->live_voting->getPlayer()->getActiveVoting());
+                $options = $this->live_voting->getPlayer()->getActiveVotingObject()->getOptions();
+                $var=array_values($options);
+                $option = array_shift($var);
+                $vote->setOptionId($option->getId());
+                $vote->setType(2);
+                $vote->setStatus(1);
+                $vote->setFreeInput($_POST['input']);
+                $vote->setRoundId(LiveVotingRound::getLatestRoundId($this->live_voting->getId()));
+                $vote->save();
+
+                $return_value = ['vote_id' => $vote->getId()];
+
+                break;
+            case 'remove_vote':
+                $vote = new LiveVotingVote((int) $_POST['vote_id']);
+                $vote->delete();
+                break;
+            default:
+                $return_value = false;
+                break;
+        }
+
+        LiveVotingJs::sendResponse($return_value);
+    }
+
+    /**
+     * @throws LiveVotingException
+     */
+    private function input(array $array): void
+    {
+        foreach ($array as $item) {
+            $vote = new LiveVotingVote((int) $item['vote_id']);
+            $user = LiveVotingParticipant::getInstance();
+
+            if ($user->getType() == 1) {
+                $vote->setUserId((int) $user->getIdentifier());
+                $vote->setUserIdType(0);
+            } else {
+                $vote->setUserIdentifier($user->getIdentifier());
+                $vote->setUserIdType(1);
+            }
+
+            $vote->setVotingId($this->live_voting->getPlayer()->getActiveVoting());
+            $options = $this->live_voting->getPlayer()->getActiveVotingObject()->getOptions();
+            $var=array_values($options);
+            $option = array_shift($var);
+            $vote->setOptionId($option->getId());
+            $vote->setType(2);
+            $vote->setStatus(1);
+            $vote->setFreeInput($item['input']);
+            $vote->setRoundId(LiveVotingRound::getLatestRoundId($this->live_voting->getId()));
+            $vote->save();
+            if (!$this->live_voting->getPlayer()->getActiveVotingObject()->isMultiFreeInput()) {
+                $this->live_voting->getPlayer()->unvoteAll($vote->getId());
+            }
+        }
+
+        if ($this->live_voting->isVotingHistory()) {
+            LiveVotingVote::createHistoryObject(LiveVotingParticipant::getInstance(), $this->live_voting->getPlayer()->getActiveVotingObject()->getId(), $this->live_voting->getPlayer()->getRoundId());
+        }
     }
 }

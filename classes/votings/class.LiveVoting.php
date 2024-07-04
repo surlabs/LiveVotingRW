@@ -81,9 +81,10 @@ class LiveVoting
     /**
      * LiveVoting constructor.
      * @param int|null $id
+     * @param bool $loadPlayer
      * @throws LiveVotingException
      */
-    public function __construct(?int $id = null)
+    public function __construct(?int $id = null, bool $loadPlayer = true)
     {
         if ($id !== null && $id != 0) {
             $this->setId($id);
@@ -91,7 +92,9 @@ class LiveVoting
             $this->loadFromDB();
         }
 
-        $this->player = LiveVotingPlayer::loadFromObjId($this->getId());
+        if ($loadPlayer) {
+            $this->player = LiveVotingPlayer::loadFromObjId($this->getId());
+        }
     }
 
     /**

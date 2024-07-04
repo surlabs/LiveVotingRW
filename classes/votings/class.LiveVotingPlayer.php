@@ -551,4 +551,140 @@ class LiveVotingPlayer
 
         return $player;
     }
+
+    public function handleQuestionSwitching(LiveVoting $liveVoting): void
+    {
+        switch ($liveVoting->getResultsBehaviour()) {
+            case 1:
+                $this->setShowResults(true);
+                break;
+            case 0:
+                $this->setShowResults(false);
+                break;
+            case 2:
+                $this->setShowResults($this->isShowResults());
+                break;
+        }
+
+        switch ($liveVoting->getFrozenBehaviour()) {
+            case 1:
+                $this->setFrozen(false);
+                break;
+            case 0:
+                $this->setFrozen(true);
+                break;
+            case 2:
+                $this->setFrozen($this->isFrozen());
+                break;
+        }
+    }
+
+
+    /**
+     * @throws LiveVotingException
+     */
+    public function previousQuestion(): void
+    {
+        $active_voting = $this->getActiveVotingObject();
+
+        if ($active_voting->isFirst()) {
+            return;
+        }
+
+        $liveVoting = new LiveVoting($this->obj_id, false);
+
+        $questions = $liveVoting->getQuestions();
+
+        $prev = false;
+
+        foreach ($questions as $question) {
+            if ($question->getId() == $active_voting->getId()) {
+                if ($prev) {
+                    $this->handleQuestionSwitching($liveVoting);
+                    $this->setActiveVoting($prev->getId());
+                    $this->save();
+                    return;
+                }
+            }
+            $prev = $question;
+        }
+
+        throw new LiveVotingException("Question not found");
+    }
+
+    /**
+     * @throws LiveVotingException
+     */
+    public function nextQuestion(): void
+    {
+        $active_voting = $this->getActiveVotingObject();
+
+        if ($active_voting->isLast()) {
+            return;
+        }
+
+        $liveVoting = new LiveVoting($this->obj_id, false);
+
+        $questions = $liveVoting->getQuestions();
+
+        $next = false;
+
+        foreach ($questions as $question) {
+            if ($next) {
+                $this->handleQuestionSwitching($liveVoting);
+                $this->setActiveVoting($question->getId());
+                $this->save();
+                return;
+            }
+            if ($question->getId() == $active_voting->getId()) {
+                $next = true;
+            }
+        }
+
+        throw new LiveVotingException("Question not found");
+    }
+
+    /**
+     * @throws LiveVotingException
+     */
+    public function reset(): void
+    {
+        $this->setButtonStates([]);
+        $this->save();
+
+        foreach (LiveVotingVote::getVotesForRound($this->getRoundId()) as $vote) {
+            $vote->delete();
+        }
+    }
+
+    /**
+     * @throws LiveVotingException
+     */
+    public function open(int $question_id): void
+   {
+       $this->setActiveVoting($question_id);
+       $this->save();
+   }
+
+    /**
+     * @throws LiveVotingException
+     */
+    public function unvoteAll(int $except_vote_id): void
+    {
+        foreach ($this->getVotesOfUser() as $vote) {
+            if ($except_vote_id && $vote->getId() == $except_vote_id) {
+                continue;
+            }
+            $vote->setStatus(0);
+            $vote->save();
+        }
+    }
+
+    /**
+     * @throws LiveVotingException
+     */
+    public function getVotesOfUser($incl_inactive = false): array
+    {
+        return LiveVotingVote::getVotesOfUser(LiveVotingParticipant::getInstance(), $this->getActiveVotingObject()->getId(), $this->getRoundId(), $incl_inactive);
+    }
 }

@@ -23,6 +23,7 @@ namespace LiveVoting\Utils;
 use ilCtrlException;
 use ilLiveVotingPlugin;
 use ilObjLiveVotingGUI;
+use JetBrains\PhpStorm\NoReturn;
 use LiveVoting\GUI\xlvoGUI;
 use LiveVoting\Utils\ParamManager;
 use LiveVotingPlayerGUI;
@@ -210,5 +211,12 @@ final class LiveVotingJs
         $this->addSetting('base_url', $DIC->ctrl()->getLinkTarget($liveVotingGUI, $cmd, '', true));
 
         return $this;
+    }
+
+    #[NoReturn] public static function sendResponse($data): void
+    {
+        header('Content-type: application/json');
+        echo json_encode($data);
+        exit();
     }
 }
