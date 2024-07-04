@@ -18,6 +18,7 @@ declare(strict_types=1);
  *
  */
 
+use LiveVoting\legacy\LiveVotingResultsTableGUI;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\UI\LiveVotingChoicesUI;
 use LiveVoting\UI\LiveVotingCorrectOrderUI;
@@ -31,6 +32,7 @@ use LiveVoting\UI\LiveVotingUI;
 use LiveVoting\Utils\LiveVotingJs;
 use LiveVoting\Utils\ParamManager;
 use LiveVoting\votings\LiveVotingPlayer;
+use LiveVoting\votings\LiveVotingRound;
 
 /**
  * Class ilObjLiveVotingGUI
@@ -80,6 +82,11 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             case 'selectedPriorities':
             case 'selectedRange':
             case 'updateProperties':
+            case 'confirmNewRound':
+            case 'newRound':
+            case 'changeRound':
+            case 'applyFilter':
+            case 'resetFilter':
                 $this->{$cmd}();
                 break;
             case 'edit':
@@ -622,6 +629,9 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
     public function confirmNewRound(): void
     {
         global $DIC;
+
+        $this->tabs->activateTab("tab_results");
+
         $conf = new ilConfirmationGUI();
         $conf->setFormAction($this->ctrl->getFormAction($this));
         $conf->setHeaderText($this->plugin->txt('common_confirm_new_round'));
@@ -630,18 +640,67 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         $DIC->ui()->mainTemplate()->setContent($conf->getHTML());
     }
 
-    public function newRound()
+    /**
+     * @throws LiveVotingException
+     * @throws ilCtrlException
+     */
+    public function newRound(): void
     {
-        // TODO: Implement newRound() method.
+        global $DIC;
+
+        $obj_id = $this->object->getLiveVoting()->getId();
+        $lastRound = LiveVotingRound::getLatestRound($obj_id);
+        $newRound = new LiveVotingRound();
+        $newRound->setObjId($obj_id);
+        $newRound->setRoundNumber($lastRound->getRoundNumber() + 1);
+        $newRound->save();
+
+        $DIC->ctrl()->setParameter($this, 'round_id', LiveVotingRound::getLatestRound($obj_id)->getId());
+        $_SESSION['onscreen_message'] = array('type' => 'success', 'msg' => $this->plugin->txt("common_new_round_created"));
+        $DIC->ctrl()->redirect($this, "results");
     }
 
-    public function changeRound()
+    /**
+     * @throws ilCtrlException
+     */
+    public function changeRound(): void
     {
-        // TODO: Implement changeRound() method.
+        global $DIC;
+
+        $round = $_POST['round_id'];
+        $DIC->ctrl()->setParameter($this, 'round_id', $round);
+        $DIC->ctrl()->redirect($this, "results");
     }
 
-    public function applyFilter()
+    /**
+     * @throws ilException
+     * @throws ilCtrlException
+     * @throws LiveVotingException
+     */
+    public function applyFilter(): void
     {
-        // TODO: Implement applyFilter() method.
+        global $DIC;
+
+        $table = new LiveVotingResultsTableGUI($this, "results");
+        LiveVOtingResultsUI::buildFilters($table, (int) $_GET['round_id'], $this->object->getLiveVoting()->getQuestions());
+        $table->initFilter();
+        $table->writeFilterToSession();
+        $DIC->ctrl()->redirect($this, "results");
+    }
+
+    /**
+     * @throws ilException
+     * @throws ilCtrlException
+     * @throws LiveVotingException
+     */
+    public function resetFilter(): void
+    {
+        global $DIC;
+
+        $table = new LiveVotingResultsTableGUI($this, "results");
+        LiveVOtingResultsUI::buildFilters($table, (int) $_GET['round_id'], $this->object->getLiveVoting()->getQuestions());
+        $table->initFilter();
+        $table->resetFilter();
+        $DIC->ctrl()->redirect($this, "results");
     }
 }
