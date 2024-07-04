@@ -238,7 +238,8 @@ class LiveVotingUI
             'voting_confirm_reset',
         ))->init()->setRunCode();
 
-        //xlvoJs::getInstance()->ilias($this)->name('PPT')->init()->setRunCode();
+        //TODO: Revisar si esta línea de abajo es necesaria. Creo que PPT son referencias a PowerPoint que ya no se soportará.
+        //LiveVotingJs::getInstance()->ilias($parent)->name('PPT')->init()->setRunCode();
 
 
 
@@ -270,16 +271,20 @@ class LiveVotingUI
         }
 
         try {
+            $DIC->ui()->mainTemplate()->setContent($this->getPlayerHTML());
+
             $this->initToolbarDuringVoting();
-        } catch (JsonException|ilCtrlException $e) {
+            //$DIC->ui()->mainTemplate()->setVariable("PLAYER_CONTENT", $this->getPlayerHTML());
+
+
+        } catch (JsonException|ilCtrlException|LiveVotingException|ilTemplateException|ilException $e) {
+            //TODO: Mostrar error.
         }
 
         //TODO: Implementar este modal
          //$modal = xlvoQRModalGUI::getInstanceFromVotingConfig($this->manager->getVotingConfig())->getHTML();
-         //$this->setContent($modal . $this->getPlayerHTML());
          //$this->handlePreview();
 
-        $DIC->ui()->mainTemplate()->setVariable("PLAYER_CONTENT", "HOLA");
     }
 
     /**
@@ -292,7 +297,7 @@ class LiveVotingUI
         // Freeze
         $suspendButton = ilLinkButton::getInstance();
         $suspendButton->addCSSClass('btn-warning');
-        $suspendButton->setCaption($DIC->ui()->renderer()->render($DIC->ui()->factory()->symbol()->glyph()->next()) . $this->pl->txt('player_freeze'), false);
+        $suspendButton->setCaption($this->pl->txt('player_freeze'), false);
         $suspendButton->setUrl('#');
         $suspendButton->setId('btn-freeze');
         $DIC->toolbar()->addButtonInstance($suspendButton);
@@ -300,7 +305,7 @@ class LiveVotingUI
         // Unfreeze
         $playButton = ilLinkButton::getInstance();
         $playButton->setPrimary(true);
-        $playButton->setCaption($DIC->ui()->renderer()->render($DIC->ui()->factory()->symbol()->glyph()->next()) . $this->pl->txt('player_unfreeze'), false);
+        $playButton->setCaption($this->pl->txt('player_unfreeze'), false);
         $playButton->setUrl('#');
         $playButton->setId('btn-unfreeze');
 
@@ -374,6 +379,8 @@ class LiveVotingUI
         $player = $this->liveVoting->getPlayer();
 
         // Fullscreen
+        dump($player->isFullScreen(), $param_manager->isPpt());
+        exit;
         if ($player->isFullScreen() && !$param_manager->isPpt()) {
             $suspendButton = ilLinkButton::getInstance();
             $suspendButton->setCaption(ilGlyphGUI::get('fullscreen'), false);
@@ -445,8 +452,30 @@ class LiveVotingUI
     public function getPlayerHTML(bool $inner = false): string
     {
         $liveVotingDisplayPlayerUI = new LiveVotingDisplayPlayerUI($this->liveVoting);
-
         return $liveVotingDisplayPlayerUI->getHTML($inner);
     }
+
+    /**
+     * @return string
+     */
+    protected function getButtonsHTML(): string
+    {
+        // Buttons from Questions
+        $xlvoQuestionTypesGUI = xlvoQuestionTypesGUI::getInstance($this->manager);
+        if ($xlvoQuestionTypesGUI->hasButtons()) {
+            $toolbar = new xlvoToolbarGUI();
+
+            foreach ($xlvoQuestionTypesGUI->getButtonInstances() as $buttonInstance) {
+                if ($buttonInstance instanceof ilButton || $buttonInstance instanceof ilButtonBase) {
+                    $toolbar->addButtonInstance($buttonInstance);
+                }
+            }
+
+            return $toolbar->getHTML();
+        }
+
+        return '';
+    }
+
 
 }

@@ -140,7 +140,7 @@ class LiveVotingPlayerGUI
 
         $this->setVoterPlayerTemplate($tpl_voter_player);
 
-        $DIC->ui()->mainTemplate()->addCss($this->getPluginObject()->getDirectory() . '/templates/default/default.css', '');
+        $DIC->ui()->mainTemplate()->addCss($this->getPluginObject()->getDirectory() . '/templates/default/default.css');
 
         iljQueryUtil::initjQueryUI();
 
