@@ -224,7 +224,7 @@ class LiveVotingPlayer
             $database->update("rep_robj_xlvo_player_n", array(
                 "active_voting" => $this->active_voting,
                 "status" => $this->status,
-                "frozen" => $this->frozen,
+                "frozen" => (int) $this->frozen,
                 "timestamp_refresh" => $this->timestamp_refresh,
                 "show_results" => (int) $this->show_results,
                 "button_states" => json_encode($this->button_states),
@@ -243,7 +243,7 @@ class LiveVotingPlayer
                 "obj_id" => $this->obj_id,
                 "active_voting" => $this->active_voting,
                 "status" => $this->status,
-                "frozen" => $this->frozen,
+                "frozen" => (int) $this->frozen,
                 "timestamp_refresh" => $this->timestamp_refresh,
                 "show_results" => (int) $this->show_results,
                 "button_states" => json_encode($this->button_states),
