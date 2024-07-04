@@ -144,12 +144,11 @@ class LiveVotingPlayerGUI
 
         iljQueryUtil::initjQueryUI();
 
-        //TODO: Cargar initMathJax en JS
+        LiveVotingJs::getInstance()->initMathJax();
 
         $t = array('player_seconds');
 
         $delay = LiveVotingConfig::get('request_frequency');
-        //TODO: CAMBIAR ESTO PARA QUE LLEGUE BIEN EL DELAY
         if (is_numeric($delay)) {
             $delay = ((float) $delay);
         } else {
@@ -174,6 +173,11 @@ class LiveVotingPlayerGUI
 
        // $this->fillVotingTemplate();
 
+        //TODO: Este foreach parece necesario. Pendiente implementar.
+        /*foreach (xlvoQuestionTypes::getActiveTypes() as $type) {
+            xlvoQuestionTypesGUI::getInstance($this->manager, $type)->initJS($type == $this->manager->getVoting()->getVotingType());
+        }*/
+
 
     }
 
@@ -183,9 +187,6 @@ class LiveVotingPlayerGUI
     public function showVotingTemplate(): void
     {
         global $DIC;
-/*        dump($this->getFrameworkTemplate()->get(), $this->getVotingTemplate()->get());
-        exit;*/
-
 
         $DIC->ui()->mainTemplate()->setVariable("PLAYER_CONTENT", $this->getVoterPlayerTemplate()->get());
 
@@ -327,70 +328,6 @@ class LiveVotingPlayerGUI
     protected function getVotingData(): void
     {
 
-    }
-
-    /**
-     * @throws LiveVotingException
-     */
-    #[NoReturn] protected function apiCall(): void
-    {
-        $return_value = true;
-
-        switch ($_POST['call']) {
-            case 'toggle_freeze':
-                $param_manager = ParamManager::getInstance();
-                $this->live_voting->getPlayer()->toggleFreeze($param_manager->getVoting());
-                break;
-            case 'toggle_results':
-                $this->live_voting->getPlayer()->toggleResults();
-                break;
-            case 'reset':
-                $this->live_voting->getPlayer()->reset();
-                break;
-            case 'next':
-                $this->live_voting->getPlayer()->nextQuestion();
-                break;
-            case 'previous':
-                $this->live_voting->getPlayer()->previousQuestion();
-                break;
-            case 'open':
-                $this->live_voting->getPlayer()->open((int) $_POST["xvi"]);
-                break;
-            case 'countdown':
-                $this->live_voting->getPlayer()->startCountDown((int) $_POST['seconds']);
-                break;
-            case 'input':
-                // TODO
-                break;
-            case 'add_vote':
-                $vote = new LiveVotingVote();
-                $user = LiveVotingParticipant::getInstance();
-                $vote->setUserId((int) $user->getIdentifier());
-                $vote->setUserIdType(1);
-                $vote->setVotingId($this->live_voting->getPlayer()->getActiveVoting());
-                $options = $this->live_voting->getPlayer()->getActiveVotingObject()->getOptions();
-                $var=array_values($options);
-                $option = array_shift($var);
-                $vote->setOptionId($option->getId());
-                $vote->setType(2);
-                $vote->setStatus(1);
-                $vote->setFreeInput($_POST['input']);
-                $vote->setRoundId(LiveVotingRound::getLatestRoundId($this->live_voting->getId()));
-                $vote->save();
-
-                $return_value = ['vote_id' => $vote->getId()];
-
-                break;
-            case 'remove_vote':
-                $vote = new LiveVotingVote((int) $_POST['vote_id']);
-                $vote->delete();
-                break;
-            default:
-                $return_value = false;
-                break;
-        }
-
-        LiveVotingJs::sendResponse($return_value);
     }
 
     /**
