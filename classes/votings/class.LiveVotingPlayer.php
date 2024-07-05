@@ -522,7 +522,7 @@ class LiveVotingPlayer
             "show_results" => $this->isShowResults(),
             "frozen" => $this->isFrozen(),
             "votes" => count($votes),
-            "last_update" => $last_update,
+            "last_update" => (int) $last_update,
             "attendees" => vsprintf(ilLiveVotingPlugin::getInstance()->txt("start_online"), [LiveVotingVoter::countVoters($this->getId())]),
             "qtype" => $this->getActiveVotingObject()->getQuestionType(),
             "countdown" => $this->remainingCountDown(),
