@@ -384,6 +384,8 @@ class LiveVoting
         foreach ($this->getQuestions() as $question) {
             $question->delete();
         }
+
+        $this->player->delete();
     }
 
     public function getQuestionById(int $id): ?LiveVotingQuestion
