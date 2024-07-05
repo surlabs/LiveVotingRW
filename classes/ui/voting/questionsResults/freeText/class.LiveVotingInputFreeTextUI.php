@@ -25,16 +25,13 @@ use ilLiveVotingPlugin;
 use ilSystemStyleException;
 use ilTemplate;
 use ilTemplateException;
-use LiveVoting\Display\Bar\xlvoBarFreeInputsGUI;
-use LiveVoting\Exceptions\xlvoPlayerException;
 use LiveVoting\platform\LiveVotingException;
-use LiveVoting\questions\LiveVotingQuestionOption;
 use LiveVoting\UI\Voting\Bar\LiveVotingBarFreeTextUI;
 use LiveVoting\UI\Voting\Bar\LiveVotingBarGroupingCollectionUI;
 use LiveVoting\votings\LiveVotingPlayer;
 use LiveVoting\votings\LiveVotingVote;
 
-abstract class LiveVotingInputFreeTextUI extends LiveVotingInputResultsGUI
+class LiveVotingInputFreeTextUI extends LiveVotingInputResultsGUI
 {
     /**
      * @var bool
@@ -70,23 +67,19 @@ abstract class LiveVotingInputFreeTextUI extends LiveVotingInputResultsGUI
         $bars->setRemovable($this->edit_mode);
         $bars->setShowTotalVotes(true);
 
-        $option = $this->player->getActiveVotingObject()->getFirstOption();
-
         $votes = LiveVotingVote::getVotesOfOption($this->player->getActiveVotingObject()->getId(), $this->player->getRoundId());
-
-
 
         foreach ($votes as $vote){
             if ($cat_id = $vote->getFreeInputCategory()) {
                 try {
-                    $categories->addBar(new LiveVotingBarFreeTextUI($this->player->getActiveVoting(), $vote), $cat_id);
+                    $categories->addBar(new LiveVotingBarFreeTextUI($vote), $cat_id);
                 } catch (LiveVotingException $e) {
                     if ($e->getCode() == 3) {
-                        $bars->addBar(new xlvoBarFreeInputsGUI($this->manager->getVoting(), $vote));
+                        $bars->addBar(new LiveVotingBarFreeTextUI($vote));
                     }
                 }
             } else {
-                $bars->addBar(new xlvoBarFreeInputsGUI($this->manager->getVoting(), $vote));
+                $bars->addBar(new LiveVotingBarFreeTextUI($vote));
             }
         }
 
@@ -95,16 +88,52 @@ abstract class LiveVotingInputFreeTextUI extends LiveVotingInputResultsGUI
         $tpl->setVariable('ANSWERS', $bars->getHTML());
         $tpl->setVariable('CATEGORIES', $categories->getHTML());
         if ($this->edit_mode) {
-            $tpl->setVariable('LABEL_ADD_CATEGORY', self::plugin()->translate('btn_add_category'));
-            $tpl->setVariable('PLACEHOLDER_ADD_CATEGORY', self::plugin()->translate('category_title'));
-            $tpl->setVariable('LABEL_ADD_ANSWER', self::plugin()->translate('btn_add_answer'));
-            $tpl->setVariable('PLACEHOLDER_ADD_ANSWER', self::plugin()->translate('voter_answer'));
-            $tpl->setVariable('BASE_URL', self::dic()->ctrl()->getLinkTargetByClass(xlvoPlayerGUI::class, xlvoPlayerGUI::CMD_API_CALL, "", true));
+            $tpl->setVariable('LABEL_ADD_CATEGORY', ilLiveVotingPlugin::getInstance()->txt('btn_add_category'));
+            $tpl->setVariable('PLACEHOLDER_ADD_CATEGORY', ilLiveVotingPlugin::getInstance()->txt('category_title'));
+            $tpl->setVariable('LABEL_ADD_ANSWER', ilLiveVotingPlugin::getInstance()->txt('btn_add_answer'));
+            $tpl->setVariable('PLACEHOLDER_ADD_ANSWER', ilLiveVotingPlugin::getInstance()->txt('voter_answer'));
+            $tpl->setVariable('BASE_URL', $DIC->ctrl()->getLinkTargetByClass(\ilObjLiveVotingGUI::class, 'apiCall', "", true));
         }
 
         return $tpl->get();
 
     }
 
+/*    public function reset(): void
+    {
+        parent::reset();
+       //TODO: Puede ser que esto no funcione. El método original hacía otra cosa aparte del reset, pero si no entendí mal era lo mismo que ya hace el parent.
+    }*/
+
+
+
+    public static function addJsAndCss(): void
+    {
+        global $DIC;
+        //TODO: Implementar Waiter?
+        //Waiter::init(Waiter::TYPE_WAITER);
+
+        //TODO: CONTINUAR POR AQUÍ (PARA DANI)
+        $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory() . '/node_modules/dragula/dist/dragula.js');
+        $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/js/QuestionTypes/FreeInput/xlvoFreeInputCategorize.js');
+        $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory() . '/node_modules/dragula/dist/dragula.min.css');
+        $DIC->ui()->mainTemplate()->addCss(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/QuestionTypes/FreeInput/free_input.css');
+    }
+
+
+    /**
+     * @param LiveVotingVote[] $votes
+     *
+     * @return string
+     */
+    public function getTextRepresentationForVotes(array $votes): string
+    {
+        $string_votes = array();
+        foreach ($votes as $vote) {
+            $string_votes[] = str_replace(["\r\n", "\r", "\n"], " ", $vote->getFreeInput());
+        }
+
+        return implode(", ", $string_votes);
+    }
 
 }

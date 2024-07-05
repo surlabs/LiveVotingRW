@@ -34,10 +34,10 @@ abstract class LiveVotingInputResultsGUI
      * @var LiveVotingPlayer
      */
     protected LiveVotingPlayer $player;
+
     /**
      * LiveVotingInputResultsGUI constructor.
      *
-     * @param LiveVoting $liveVoting
      * @param LiveVotingPlayer $player
      */
     public function __construct(LiveVotingPlayer $player)
@@ -67,22 +67,21 @@ abstract class LiveVotingInputResultsGUI
     }
 
     /**
-     * @throws ilCtrlException
      * @throws LiveVotingException
      */
     public static function getInstance(LiveVotingPlayer $player)
     {
         switch($player->getActiveVotingObject()->getQuestionType()){
             case "Choices":
-                return new LiveVotingInputChoicesUI($player);
+                //return new LiveVotingInputChoicesUI($player);
             case "FreeText":
                 return new LiveVotingInputFreeTextUI($player);
             case "CorrectOrder":
-                return new LiveVotingCorrectOrderUI($player);
+                //return new LiveVotingCorrectOrderUI($player);
             case "Priorities":
                 return new LiveVotingPrioritiesUI($player);
             case "NumberRange":
-                return new LiveVotingNumberRangeUI($player);
+                //return new LiveVotingNumberRangeUI($player);
             default:
                 throw new LiveVotingException("Could not find the results gui for the given voting");
         }

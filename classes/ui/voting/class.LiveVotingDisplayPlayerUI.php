@@ -31,6 +31,7 @@ use ilTemplateException;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\questions\LiveVotingQuestion;
 use LiveVoting\questions\LiveVotingQuestionOption;
+use LiveVoting\UI\QuestionsResults\LiveVotingInputResultsGUI;
 use LiveVoting\Utils\ParamManager;
 use LiveVoting\votings\LiveVoting;
 use LiveVoting\votings\LiveVotingVoter;
@@ -126,12 +127,11 @@ class LiveVotingDisplayPlayerUI
         $question = $player->getActiveVotingObject();
 
 
-        //TODO: Implementar este GUI
-        //$xlvoInputResultGUI = xlvoInputResultsGUI::getInstance($this->manager);
+        $xlvoInputResultGUI = LiveVotingInputResultsGUI::getInstance($player);
 
         if ($player->isShowResults()) {
             //add result view to player
-            //$this->tpl->setVariable('OPTION_CONTENT', $xlvoInputResultGUI->getHTML());
+            $this->tpl->setVariable('OPTION_CONTENT', $xlvoInputResultGUI->getHTML());
         } else {
             //add options to player
             $xlvoOptions = LiveVotingQuestionOption::loadAllOptionsByVotingId($question->getId());

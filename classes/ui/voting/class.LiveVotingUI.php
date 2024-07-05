@@ -39,6 +39,7 @@ use ilTemplateException;
 use JsonException;
 use LiveVoting\legacy\LiveVotingQRModalGUI;
 use LiveVoting\platform\LiveVotingException;
+use LiveVoting\UI\QuestionsResults\LiveVotingInputFreeTextUI;
 use LiveVoting\Utils\LiveVotingJs;
 use LiveVoting\Utils\ParamManager;
 use LiveVoting\votings\LiveVoting;
@@ -246,8 +247,8 @@ class LiveVotingUI
         $DIC->ui()->mainTemplate()->addCss($this->pl->getDirectory() . '/templates/css/player.css');
         $DIC->ui()->mainTemplate()->addCss($this->pl->getDirectory() . '/templates/css/bar.css');
 
-        /* xlvoFreeInputResultsGUI::addJsAndCss();
-         xlvoCorrectOrderResultsGUI::addJsAndCss();
+        LiveVotingInputFreeTextUI::addJsAndCss();
+         /*xlvoCorrectOrderResultsGUI::addJsAndCss();
          xlvoFreeOrderResultsGUI::addJsAndCss();
          xlvoNumberRangeResultsGUI::addJsAndCss();
          xlvoSingleVoteResultsGUI::addJsAndCss();*/

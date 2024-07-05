@@ -136,6 +136,7 @@ class LiveVotingResultsUI
      *
      * @throws LiveVotingException
      * @throws ilCtrlException
+     * @throws Exception
      */
     public static function buildFilters(LiveVotingResultsTableGUI &$table, int $round_id, array $question_list): void
     {

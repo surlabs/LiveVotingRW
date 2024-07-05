@@ -626,6 +626,8 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
         } catch (LiveVotingException|ilTemplateException|ilException $e) {
             //TODO: Mostrar error
+            dump($e->getMessage(), $e);exit;
+
         }
 
         //xlvoJsResponse::getInstance($results)->send();
