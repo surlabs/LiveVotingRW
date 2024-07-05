@@ -329,41 +329,4 @@ class LiveVotingPlayerGUI
     {
 
     }
-
-    /**
-     * @throws LiveVotingException
-     */
-    private function input(array $array): void
-    {
-        foreach ($array as $item) {
-            $vote = new LiveVotingVote((int) $item['vote_id']);
-            $user = LiveVotingParticipant::getInstance();
-
-            if ($user->getType() == 1) {
-                $vote->setUserId((int) $user->getIdentifier());
-                $vote->setUserIdType(0);
-            } else {
-                $vote->setUserIdentifier($user->getIdentifier());
-                $vote->setUserIdType(1);
-            }
-
-            $vote->setVotingId($this->live_voting->getPlayer()->getActiveVoting());
-            $options = $this->live_voting->getPlayer()->getActiveVotingObject()->getOptions();
-            $var=array_values($options);
-            $option = array_shift($var);
-            $vote->setOptionId($option->getId());
-            $vote->setType(2);
-            $vote->setStatus(1);
-            $vote->setFreeInput($item['input']);
-            $vote->setRoundId(LiveVotingRound::getLatestRoundId($this->live_voting->getId()));
-            $vote->save();
-            if (!$this->live_voting->getPlayer()->getActiveVotingObject()->isMultiFreeInput()) {
-                $this->live_voting->getPlayer()->unvoteAll($vote->getId());
-            }
-        }
-
-        if ($this->live_voting->isVotingHistory()) {
-            LiveVotingVote::createHistoryObject(LiveVotingParticipant::getInstance(), $this->live_voting->getPlayer()->getActiveVotingObject()->getId(), $this->live_voting->getPlayer()->getRoundId());
-        }
-    }
 }

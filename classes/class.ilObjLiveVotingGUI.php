@@ -19,6 +19,7 @@ declare(strict_types=1);
  */
 
 use LiveVoting\legacy\LiveVotingResultsTableGUI;
+use LiveVoting\platform\LiveVotingDatabase;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\UI\LiveVotingChoicesUI;
 use LiveVoting\UI\LiveVotingCorrectOrderUI;
@@ -31,6 +32,7 @@ use LiveVoting\UI\LiveVotingSettingsUI;
 use LiveVoting\UI\LiveVotingUI;
 use LiveVoting\Utils\LiveVotingJs;
 use LiveVoting\Utils\ParamManager;
+use LiveVoting\votings\LiveVotingCategory;
 use LiveVoting\votings\LiveVotingParticipant;
 use LiveVoting\votings\LiveVotingPlayer;
 use LiveVoting\votings\LiveVotingRound;
@@ -741,22 +743,24 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
                 $liveVoting->getPlayer()->startCountDown((int) $_POST['seconds']);
                 break;
             case 'input':
-                // TODO
+                global $DIC;
+                LiveVotingParticipant::getInstance()->setIdentifier($DIC->user()->getId())->setType(1);
+                $this->input(['input' => $_POST['input']]);
                 break;
             case 'add_vote':
                 $vote = new LiveVotingVote();
                 $user = LiveVotingParticipant::getInstance();
                 $vote->setUserId((int) $user->getIdentifier());
                 $vote->setUserIdType(1);
-                $vote->setVotingId($this->live_voting->getPlayer()->getActiveVoting());
-                $options = $this->live_voting->getPlayer()->getActiveVotingObject()->getOptions();
+                $vote->setVotingId($liveVoting->getPlayer()->getActiveVoting());
+                $options = $liveVoting->getPlayer()->getActiveVotingObject()->getOptions();
                 $var=array_values($options);
                 $option = array_shift($var);
                 $vote->setOptionId($option->getId());
                 $vote->setType(2);
                 $vote->setStatus(1);
                 $vote->setFreeInput($_POST['input']);
-                $vote->setRoundId(LiveVotingRound::getLatestRoundId($this->live_voting->getId()));
+                $vote->setRoundId(LiveVotingRound::getLatestRoundId($liveVoting->getId()));
                 $vote->save();
 
                 $return_value = ['vote_id' => $vote->getId()];
@@ -765,6 +769,49 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             case 'remove_vote':
                 $vote = new LiveVotingVote((int) $_POST['vote_id']);
                 $vote->delete();
+                break;
+            case 'add_category':
+                $category = new LiveVotingCategory();
+                $category->setTitle($_POST['title']);
+                $category->setVotingId($liveVoting->getPlayer()->getActiveVoting());
+                $category->setRoundId($liveVoting->getPlayer()->getRoundId());
+                $category->save();
+                $return_value = ['category_id' => $category->getId()];
+                break;
+            case 'remove_category':
+                $database = new LiveVotingDatabase();
+
+                $database->update('rep_robj_xlvo_vote_n', array(
+                    "free_input_category" => 0
+                ), array(
+                    "voting_id" => $liveVoting->getPlayer()->getActiveVoting(),
+                    "round_id" => $liveVoting->getPlayer()->getRoundId(),
+                    "free_input_category" => $_POST['category_id']
+                ));
+
+                $database->delete('rep_robj_xlvo_cat', array(
+                    "id" => $_POST['category_id']
+                ));
+
+                break;
+            case 'change_category':
+                $vote = new LiveVotingVote((int) $_POST['vote_id']);
+
+                $database = new LiveVotingDatabase();
+
+                $votes = $database->select('rep_robj_xlvo_vote_n', array('id'), array(
+                    'voting_id'           => $vote->getVotingId(),
+                    'round_id'            => $vote->getRoundId(),
+                    'free_input'          => $vote->getFreeInput(),
+                    'free_input_category' => $vote->getFreeInputCategory()
+                ));
+
+                foreach ($votes as $vote) {
+                    $vote = new LiveVotingVote($vote['id']);
+                    $vote->setFreeInputCategory((int) $_POST['category_id']);
+                    $vote->save();
+                }
+
                 break;
             default:
                 $return_value = false;
@@ -775,4 +822,43 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
     }
 
 
+
+    /**
+     * @throws LiveVotingException
+     */
+    private function input(array $array): void
+    {
+        $liveVoting = $this->object->getLiveVoting();
+
+        foreach ($array as $item) {
+            $vote = new LiveVotingVote((int) $item['vote_id']);
+            $user = LiveVotingParticipant::getInstance();
+
+            if ($user->getType() == 1) {
+                $vote->setUserId((int) $user->getIdentifier());
+                $vote->setUserIdType(0);
+            } else {
+                $vote->setUserIdentifier($user->getIdentifier());
+                $vote->setUserIdType(1);
+            }
+
+            $vote->setVotingId($liveVoting->getPlayer()->getActiveVoting());
+            $options = $liveVoting->getPlayer()->getActiveVotingObject()->getOptions();
+            $var=array_values($options);
+            $option = array_shift($var);
+            $vote->setOptionId($option->getId());
+            $vote->setType(2);
+            $vote->setStatus(1);
+            $vote->setFreeInput($item['input']);
+            $vote->setRoundId(LiveVotingRound::getLatestRoundId($liveVoting->getId()));
+            $vote->save();
+            if (!$liveVoting->getPlayer()->getActiveVotingObject()->isMultiFreeInput()) {
+                $liveVoting->getPlayer()->unvoteAll($vote->getId());
+            }
+        }
+
+        if ($liveVoting->isVotingHistory()) {
+            LiveVotingVote::createHistoryObject(LiveVotingParticipant::getInstance(), $liveVoting->getPlayer()->getActiveVotingObject()->getId(), $liveVoting->getPlayer()->getRoundId());
+        }
+    }
 }
