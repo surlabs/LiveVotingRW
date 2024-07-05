@@ -21,51 +21,35 @@ declare(strict_types=1);
 namespace LiveVoting\UI\QuestionsResults;
 
 use ilCtrlException;
+use ilObjLiveVotingGUI;
+use LiveVoting\platform\LiveVotingException;
 use LiveVoting\votings\LiveVoting;
 use LiveVoting\votings\LiveVotingPlayer;
 
 abstract class LiveVotingInputResultsGUI
 {
-    /**
-     * @var LiveVoting
-     */
-    protected LiveVoting $liveVoting;
+
     /**
      * @var LiveVotingPlayer
      */
     protected LiveVotingPlayer $player;
-    const TYPE_SINGLE_VOTE = 1;
-    const TYPE_FREE_INPUT = 2;
-    const TYPE_RANGE = 3;
-    const TYPE_CORRECT_ORDER = 4;
-    const TYPE_FREE_ORDER = 5;
-    const TYPE_NUMBER_RANGE = 6;
-    const SINGLE_VOTE = 'SingleVote';
-    const FREE_INPUT = 'FreeInput';
-    const CORRECT_ORDER = 'CorrectOrder';
-    const FREE_ORDER = 'FreeOrder';
-    const NUMBER_RANGE = 'NumberRange';
-    /**
-     * @var array
-     */
-    protected static array $class_map
-        = array(
-            self::TYPE_SINGLE_VOTE   => self::SINGLE_VOTE,
-            self::TYPE_FREE_INPUT    => self::FREE_INPUT,
-            self::TYPE_CORRECT_ORDER => self::CORRECT_ORDER,
-            self::TYPE_FREE_ORDER    => self::FREE_ORDER,
-            self::TYPE_NUMBER_RANGE  => self::NUMBER_RANGE
-        );
     /**
      * LiveVotingInputResultsGUI constructor.
      *
      * @param LiveVoting $liveVoting
      * @param LiveVotingPlayer $player
      */
-    public function __construct(LiveVoting $liveVoting, LiveVotingPlayer $player)
+    public function __construct(LiveVotingPlayer $player)
     {
-        $this->liveVoting = $liveVoting;
+
         $this->player = $player;
+    }
+
+    /**
+     * void method to add necessary JS and CSS to maintemplate
+     */
+    public static function addJsAndCss() :void
+    {
     }
 
     public function reset() :void
@@ -75,24 +59,24 @@ abstract class LiveVotingInputResultsGUI
 
     /**
      * @throws ilCtrlException
+     * @throws LiveVotingException
      */
-    public static function getInstance(LiveVoting $liveVoting) :void
+    public static function getInstance(LiveVotingPlayer $player)
     {
-        //$class = self::getClassName($liveVoting->getVotingType());
-    }
-
-    /**
-     * @throws ilCtrlException
-     */
-    public static function getClassName($type)
-    {
-        global $DIC;
-        if (!isset(self::$class_map[$type])) {
-            //throw new xlvoVotingManagerException('Type not available');
-            $DIC->ctrl()->redirectByClass("ilObjLiveVoting", 'showTypeError');
-            //TODO: Implementar showTypeError
+        switch($player->getActiveVotingObject()->getQuestionType()){
+            case "Choices":
+                return new LiveVotingInputChoicesUI($player);
+            case "FreeText":
+                return new LiveVotingInputFreeTextUI($player);
+            case "CorrectOrder":
+                return new LiveVotingCorrectOrderUI($player);
+            case "Priorities":
+                return new LiveVotingPrioritiesUI($player);
+            case "NumberRange":
+                return new LiveVotingNumberRangeUI($player);
+            default:
+                throw new LiveVotingException("Could not find the results gui for the given voting");
         }
-
-        return self::$class_map[$type];
     }
+
 }
