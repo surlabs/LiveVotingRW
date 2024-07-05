@@ -398,7 +398,6 @@ class LiveVotingInitialisationUI
     private function initDependencyInjection():void
     {
         global $DIC;
-        //TODO: Aquí había un require_once al autoload de composer.
         $DIC = new Container();
         $DIC["ilLoggerFactory"] = function ($c){
             return ilLoggerFactory::getInstance();

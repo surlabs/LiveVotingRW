@@ -30,10 +30,7 @@ class ilLiveVotingPlugin extends ilRepositoryObjectPlugin
     const PLUGIN_NAME = 'LiveVoting';
     private static $instance;
 
-    protected function uninstallCustom(): void
-    {
-        // TODO: Implement uninstallCustom() method.
-    }
+    protected function uninstallCustom(): void {}
 
     public static function getInstance() {
         if (!isset(self::$instance)) {
