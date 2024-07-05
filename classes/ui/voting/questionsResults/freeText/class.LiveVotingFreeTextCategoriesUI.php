@@ -25,8 +25,10 @@ use ilLiveVotingPlugin;
 use ilObjLiveVotingGUI;
 use ilTemplate;
 use LiveVoting\Display\Bar\xlvoBarGroupingCollectionGUI;
+use LiveVoting\platform\LiveVotingDatabase;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\votings\LiveVoting;
+use LiveVoting\votings\LiveVotingCategory;
 use LiveVoting\votings\LiveVotingPlayer;
 
 abstract class LiveVotingFreeTextCategoriesUI
@@ -45,19 +47,30 @@ abstract class LiveVotingFreeTextCategoriesUI
      *
      * @param LiveVotingPlayer $player
      * @param bool $edit_mode
+     * @throws LiveVotingException
      */
     public function __construct(LiveVotingPlayer $player, bool $edit_mode = false)
     {
         $this->setRemovable($edit_mode);
 
-        foreach(){
+        $database = new LiveVotingDatabase();
+
+        $categories = $database->select("rep_robj_xlvo_cat", array("id"), array(
+            "voting_id" => $player->getActiveVoting(),
+            "round_id" => $player->getRoundId()
+        ));
+
+        foreach ($categories as $category) {
             $bar_collection = new xlvoBarGroupingCollectionGUI();
             $bar_collection->setRemovable($this->isRemovable());
+
+            $category = new LiveVotingCategory((int) $category["id"]);
 
             $this->categories[$category->getId()] = [
                 "title" => $category->getTitle(),
                 "votes" => $bar_collection
             ];
+        }
     }
 
     /**
@@ -76,6 +89,4 @@ abstract class LiveVotingFreeTextCategoriesUI
     {
         $this->removable = $removable;
     }
-
-
 }
