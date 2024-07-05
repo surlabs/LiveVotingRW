@@ -266,7 +266,7 @@ class LiveVotingChoicesUI
                                     $old_option->setText($option_data->text);
                                 }
 
-                                $old_option->save($question->getId());
+                                $old_option->save();
                                 $found = true;
                                 $options_data[$index] = false;
 

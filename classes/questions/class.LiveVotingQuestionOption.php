@@ -30,6 +30,7 @@ use LiveVoting\platform\LiveVotingException;
 class LiveVotingQuestionOption
 {
     private int $id = 0;
+    private int $voting_id = 0;
     private ?string $text = null;
     private int $type;
     private int $status = 1;
@@ -40,6 +41,7 @@ class LiveVotingQuestionOption
     {
         if ($data !== null) {
             $this->id = isset($data["id"]) ? (int) $data["id"] : 0;
+            $this->voting_id = isset($data["voting_id"]) ? (int) $data["voting_id"] : 0;
             $this->text = $data["text"] ?? null;
             $this->type = (int) $data["type"];
             $this->status = isset($data["status"]) ? (int) $data["status"] : 1;
@@ -113,11 +115,12 @@ class LiveVotingQuestionOption
     /**
      * @throws LiveVotingException
      */
-    public function save(?int $voting_id) : int {
+    public function save() : int {
         $database = new LiveVotingDatabase();
 
         if ($this->id != 0) {
             $database->update("rep_robj_xlvo_option_n", array(
+                "voting_id" => $this->voting_id,
                 "text" => $this->text,
                 "type" => $this->type,
                 "status" => $this->status,
@@ -126,20 +129,18 @@ class LiveVotingQuestionOption
             ), array(
                 "id" => $this->id
             ));
-        } else if ($voting_id !== null && $voting_id != 0) {
+        } else {
             $this->id = $database->nextId("rep_robj_xlvo_option_n");
 
             $database->insert("rep_robj_xlvo_option_n", array(
                 "id" => $this->id,
-                "voting_id" => $voting_id,
+                "voting_id" => $this->voting_id,
                 "text" => $this->text,
                 "type" => $this->type,
                 "status" => $this->status,
                 "position" => $this->position,
                 "correct_position" => $this->correct_position
             ));
-        } else {
-            throw new LiveVotingException("Invalid question id");
         }
 
         return $this->id;
@@ -153,6 +154,16 @@ class LiveVotingQuestionOption
     public function setId(int $id): void
     {
         $this->id = $id;
+    }
+
+    public function getVotingId(): int
+    {
+        return $this->voting_id;
+    }
+
+    public function setVotingId(int $voting_id): void
+    {
+        $this->voting_id = $voting_id;
     }
 
     public function getText(): ?string

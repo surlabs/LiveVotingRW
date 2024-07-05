@@ -209,6 +209,7 @@ abstract class LiveVotingQuestion
 
         if ($this->id != 0) {
             $database->update("rep_robj_xlvo_voting_n", array(
+                "obj_id" => $this->obj_id,
                 "title" => $this->title,
                 "question" => $this->question,
                 "voting_status" => $this->voting_status,
@@ -233,7 +234,8 @@ abstract class LiveVotingQuestion
         }
 
         foreach ($this->options as $option) {
-            $option->save($this->id);
+            $option->setVotingId($this->id);
+            $option->save();
         }
 
         return $this->id;

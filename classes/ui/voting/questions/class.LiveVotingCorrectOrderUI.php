@@ -289,7 +289,7 @@ class LiveVotingCorrectOrderUI
                                     $old_option->setCorrectPosition($option_data->order);
                                 }
 
-                                $old_option->save($question->getId());
+                                $old_option->save();
                                 $found = true;
                                 $options_data[$index] = false;
 
