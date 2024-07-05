@@ -73,8 +73,8 @@ class LiveVoting
     private bool $anonymous = false;
     private bool $voting_history = false;
     private bool $show_attendees = false;
-    private int $frozen_behaviour = 1;
-    private int $results_behaviour = 1;
+    private int $frozen_behaviour = 0;
+    private int $results_behaviour = 0;
     private string $puk = "";
     private LiveVotingPlayer $player;
 
