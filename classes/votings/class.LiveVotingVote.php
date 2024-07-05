@@ -440,4 +440,26 @@ class LiveVotingVote
 
         return $votes;
     }
+
+    /**
+     * @throws LiveVotingException
+     */
+    public static function getVotesOfOption(int $option_id, int $round_id): array
+    {
+        $database = new LiveVotingDatabase();
+
+        $result = $database->select("rep_robj_xlvo_vote_n", array(
+            "option_id" => $option_id,
+            "status" => 1,
+            "round_id" => $round_id
+        ), ["id"]);
+
+        $votes = array();
+
+        foreach ($result as $row) {
+            $votes[] = new LiveVotingVote((int) $row["id"]);
+        }
+
+        return $votes;
+    }
 }
