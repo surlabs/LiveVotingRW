@@ -52,6 +52,7 @@ abstract class LiveVotingQuestion
     public function __construct(?array $data = null) {
         if ($data !== null) {
             $this->id = (int) $data["id"];
+            $this->obj_id = (int) $data["obj_id"];
             $this->title = (string) $data["title"];
             $this->question = (string) $data["question"];
             $this->position = (int) $data["position"];
@@ -333,13 +334,13 @@ abstract class LiveVotingQuestion
     /**
      * @throws LiveVotingException
      */
-    public function isFirst(): bool
+    public function isFirst(): mixed
     {
         $database = new LiveVotingDatabase();
 
         $result = $database->select("rep_robj_xlvo_voting_n", array(
             "obj_id" => $this->obj_id
-        ), ["id"], "ORDER BY position ASC");
+        ), ["id"], "ORDER BY position ASC LIMIT 1");
 
         if (isset($result[0])) {
             return (int) $result[0]["id"] == $this->id;
@@ -357,7 +358,7 @@ abstract class LiveVotingQuestion
 
         $result = $database->select("rep_robj_xlvo_voting_n", array(
             "obj_id" => $this->obj_id
-        ), ["id"], "ORDER BY position DESC");
+        ), ["id"], "ORDER BY position DESC LIMIT 1");
 
         if (isset($result[0])) {
             return (int) $result[0]["id"] == $this->id;
