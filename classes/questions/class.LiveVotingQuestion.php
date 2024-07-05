@@ -42,6 +42,7 @@ abstract class LiveVotingQuestion
     );
 
     protected int $id = 0;
+    protected int $obj_id = 0;
     protected string $title = "";
     protected string $question = "";
     protected int $position = 99;
@@ -202,7 +203,7 @@ abstract class LiveVotingQuestion
      *
      * @throws LiveVotingException
      */
-    public function save(?int $obj_id = null) : int {
+    public function save() : int {
         $database = new LiveVotingDatabase();
 
         if ($this->id != 0) {
@@ -214,12 +215,12 @@ abstract class LiveVotingQuestion
             ), array(
                 "id" => $this->id
             ));
-        } else if ($obj_id !== null && $obj_id != 0) {
+        } else if ($this->obj_id != 0) {
             $this->id = $database->nextId("rep_robj_xlvo_voting_n");
 
             $database->insert("rep_robj_xlvo_voting_n", array(
                 "id" => $this->id,
-                "obj_id" => $obj_id,
+                "obj_id" => $this->obj_id,
                 "title" => $this->title,
                 "question" => $this->question,
                 "voting_type" => $this->getQuestionTypeId(),
@@ -257,6 +258,16 @@ abstract class LiveVotingQuestion
     public function setId(int $id): void
     {
         $this->id = $id;
+    }
+
+    public function getObjId(): int
+    {
+        return $this->obj_id;
+    }
+
+    public function setObjId(int $obj_id): void
+    {
+        $this->obj_id = $obj_id;
     }
 
     public function getTitle(): string
@@ -327,7 +338,7 @@ abstract class LiveVotingQuestion
         $database = new LiveVotingDatabase();
 
         $result = $database->select("rep_robj_xlvo_voting_n", array(
-            "obj_id" => $this->id
+            "obj_id" => $this->obj_id
         ), ["id"], "ORDER BY position ASC");
 
         if (isset($result[0])) {
@@ -345,7 +356,7 @@ abstract class LiveVotingQuestion
         $database = new LiveVotingDatabase();
 
         $result = $database->select("rep_robj_xlvo_voting_n", array(
-            "obj_id" => $this->id
+            "obj_id" => $this->obj_id
         ), ["id"], "ORDER BY position DESC");
 
         if (isset($result[0])) {

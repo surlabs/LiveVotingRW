@@ -200,7 +200,7 @@ class LiveVotingRound
         $round->setRoundNumber(1);
         $round->setObjId($obj_id);
 
-        $round->save($obj_id);
+        $round->save();
 
         return $round;
     }

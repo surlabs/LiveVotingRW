@@ -295,9 +295,10 @@ class LiveVotingPrioritiesUI
 
                 $question->setOptions($old_options);
                 $id = ilObject::_lookupObjId((int)$_GET['ref_id']);
+                $question->setObjId($id);
                 $this->question = $question;
 
-                return $question->save($id);
+                return $question->save();
             } else {
                 return 0;
             }

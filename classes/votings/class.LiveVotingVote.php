@@ -179,7 +179,7 @@ class LiveVotingVote
     /**
      * @throws LiveVotingException
      */
-    public function save(?int $obj_id = null): int {
+    public function save(): int {
         $database = new LiveVotingDatabase();
 
         if ($this->id != 0) {
@@ -198,7 +198,7 @@ class LiveVotingVote
             ), array(
                 "id" => $this->id
             ));
-        } else if ($obj_id !== null && $obj_id != 0) {
+        } else {
             $this->id = $database->nextId("rep_robj_xlvo_vote_n");
 
             $database->insert("rep_robj_xlvo_vote_n", array(
@@ -215,8 +215,6 @@ class LiveVotingVote
                 "free_input" => $this->free_input,
                 "free_input_category" => $this->free_input_category
             ));
-        } else {
-            throw new LiveVotingException("Invalid object id");
         }
 
         return $this->id;
