@@ -22,6 +22,7 @@ namespace LiveVoting\UI\QuestionsResults;
 
 use ilCtrlException;
 use ilObjLiveVotingGUI;
+use LiveVoting\platform\LiveVotingDatabase;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\votings\LiveVoting;
 use LiveVoting\votings\LiveVotingPlayer;
@@ -52,9 +53,17 @@ abstract class LiveVotingInputResultsGUI
     {
     }
 
+    /**
+     * @throws LiveVotingException
+     */
     public function reset() :void
     {
-        //TODO: Saaweel trabaja
+        $database = new LiveVotingDatabase();
+
+        $database->delete("rep_robj_xlvo_vote_n", array(
+            "voting_id" => $this->player->getActiveVoting(),
+            "round_id" => $this->player->getRoundId()
+        ));
     }
 
     /**
