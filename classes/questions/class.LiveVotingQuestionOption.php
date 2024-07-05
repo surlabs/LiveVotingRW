@@ -73,7 +73,7 @@ class LiveVotingQuestionOption
     /**
      * @throws LiveVotingException
      */
-    public static function loadAllOptionsByVotingId(int $voting_id) : array
+    public static function loadAllOptionsByVotingId(int $voting_id, bool $correct_position = false) : array
     {
         $options = array();
 
@@ -81,7 +81,7 @@ class LiveVotingQuestionOption
 
         $result = $database->select("rep_robj_xlvo_option_n", array(
             "voting_id" => $voting_id
-        ));
+        ), null, "ORDER BY " . ($correct_position ? "correct_position, position" : "position"));
 
         if ($result) {
             foreach ($result as $row) {

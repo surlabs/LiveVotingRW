@@ -48,6 +48,7 @@ abstract class LiveVotingQuestion
     protected int $position = 99;
     protected int $voting_status = 5;
     protected array $options = array();
+    private LiveVotingQuestionOption $first_voting_option;
 
     public function __construct(?array $data = null) {
         if ($data !== null) {
@@ -58,6 +59,10 @@ abstract class LiveVotingQuestion
             $this->position = (int) $data["position"];
             $this->voting_status = (int) $data["voting_status"];
             $this->options = $data["options"];
+
+            if (!empty($this->options)) {
+                $this->first_voting_option = $this->options[0];
+            }
         }
     }
 
@@ -323,14 +328,14 @@ abstract class LiveVotingQuestion
         $this->options = $options;
     }
 
-    public function removeOption(int $option_id): void
+    public function getFirstVotingOption(): LiveVotingQuestionOption
     {
-        foreach ($this->options as $key => $option) {
-            if ($option->getId() == $option_id) {
-                unset($this->options[$key]);
-                break;
-            }
-        }
+        return $this->first_voting_option;
+    }
+
+    public function setFirstVotingOption(LiveVotingQuestionOption $first_voting_option): void
+    {
+        $this->first_voting_option = $first_voting_option;
     }
 
     /**
