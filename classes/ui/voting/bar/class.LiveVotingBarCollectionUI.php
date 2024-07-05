@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 /**
  * This file is part of the LiveVoting Repository Object plugin for ILIAS.
@@ -18,17 +17,12 @@ declare(strict_types=1);
  * info@surlabs.es
  *
  */
-namespace LiveVoting\UI\QuestionsResults;
+namespace LiveVoting\UI\Voting\Bar;
 
-use ilCtrlException;
 use ilLiveVotingPlugin;
-use ilObjLiveVotingGUI;
 use ilSystemStyleException;
 use ilTemplate;
 use ilTemplateException;
-use LiveVoting\platform\LiveVotingException;
-use LiveVoting\votings\LiveVoting;
-use LiveVoting\votings\LiveVotingPlayer;
 
 abstract class LiveVotingBarCollectionUI
 {
@@ -62,6 +56,130 @@ abstract class LiveVotingBarCollectionUI
         $this->tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory().'/templates/default/QuestionTypes/FreeInput/tpl.free_input_results.html', true, true);
     }
 
+    /**
+     * @return string
+     * @throws ilTemplateException
+     */
+    public function getHTML(): string
+    {
+        $this->renderVotersAndVotes();
 
+        return $this->tpl->get();
+    }
+
+    /**
+     * @param LiveVotingGeneralBarUI $bar_gui
+     * @throws ilTemplateException
+     */
+    public function addBar(LiveVotingGeneralBarUI $bar_gui)
+    {
+        $this->tpl->setCurrentBlock('bar');
+        $this->tpl->setVariable('BAR', $bar_gui->getHTML());
+        $this->tpl->parseCurrentBlock();
+    }
+
+
+    /**
+     * @param $html
+     * @throws ilTemplateException
+     */
+    public function addSolution($html): void
+    {
+        $this->tpl->setCurrentBlock('solution');
+        $this->tpl->setVariable('SOLUTION', $html);
+        $this->tpl->parseCurrentBlock();
+    }
+
+
+    /**
+     * @return int
+     */
+    public function getTotalVotes(): int
+    {
+        return $this->total_votes;
+    }
+
+
+    /**
+     * @param int $total_votes
+     */
+    public function setTotalVotes(int $total_votes): void
+    {
+        $this->total_votes = $total_votes;
+    }
+
+
+    /**
+     * @return boolean
+     */
+    public function isShowTotalVotes(): bool
+    {
+        return $this->show_total_votes;
+    }
+
+
+    /**
+     * @param boolean $show_total_votes
+     */
+    public function setShowTotalVotes(bool $show_total_votes): void
+    {
+        $this->show_total_votes = $show_total_votes;
+    }
+
+
+    /**
+     * @return int
+     */
+    public function getTotalVoters(): int
+    {
+        return $this->total_voters;
+    }
+
+
+    /**
+     * @param int $total_voters
+     */
+    public function setTotalVoters(int $total_voters)
+    {
+        $this->total_voters = $total_voters;
+    }
+
+
+    /**
+     * @return boolean
+     */
+    public function isShowTotalVoters(): bool
+    {
+        return $this->show_total_voters;
+    }
+
+
+    /**
+     * @param boolean $show_total_voters
+     */
+    public function setShowTotalVoters(bool $show_total_voters)
+    {
+        $this->show_total_voters = $show_total_voters;
+    }
+
+
+    /**
+     *
+     * @throws ilTemplateException
+     */
+    protected function renderVotersAndVotes()
+    {
+        if ($this->isShowTotalVotes()) {
+            $this->tpl->setCurrentBlock('total_votes');
+            $this->tpl->setVariable('TOTAL_VOTES', ilLiveVotingPlugin::getInstance()->txt('qtype_1_total_votes') . ': ' . $this->getTotalVotes());
+            $this->tpl->parseCurrentBlock();
+        }
+        if ($this->isShowTotalVoters()) {
+            $this->tpl->setCurrentBlock('total_voters');
+            $this->tpl->setVariable('TOTAL_VOTERS', ilLiveVotingPlugin::getInstance()->txt('qtype_1_total_voters') . ': ' . $this->getTotalVoters());
+            $this->tpl->parseCurrentBlock();
+        }
+    }
 
 }
+

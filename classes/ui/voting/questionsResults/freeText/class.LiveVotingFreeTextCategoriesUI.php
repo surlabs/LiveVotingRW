@@ -20,18 +20,18 @@ declare(strict_types=1);
  */
 namespace LiveVoting\UI\QuestionsResults;
 
-use ilCtrlException;
 use ilLiveVotingPlugin;
-use ilObjLiveVotingGUI;
+use ilSystemStyleException;
 use ilTemplate;
-use LiveVoting\Display\Bar\xlvoBarGroupingCollectionGUI;
+use ilTemplateException;
 use LiveVoting\platform\LiveVotingDatabase;
 use LiveVoting\platform\LiveVotingException;
-use LiveVoting\votings\LiveVoting;
+use LiveVoting\UI\Voting\Bar\LiveVotingBarFreeTextUI;
+use LiveVoting\UI\Voting\Bar\LiveVotingBarGroupingCollectionUI;
 use LiveVoting\votings\LiveVotingCategory;
 use LiveVoting\votings\LiveVotingPlayer;
 
-abstract class LiveVotingFreeTextCategoriesUI
+class LiveVotingFreeTextCategoriesUI
 {
     /**
      * @var bool $removable
@@ -61,7 +61,7 @@ abstract class LiveVotingFreeTextCategoriesUI
         ));
 
         foreach ($categories as $category) {
-            $bar_collection = new xlvoBarGroupingCollectionGUI();
+            $bar_collection = new LiveVotingBarGroupingCollectionUI();
             $bar_collection->setRemovable($this->isRemovable());
 
             $category = new LiveVotingCategory((int) $category["id"]);
@@ -71,6 +71,49 @@ abstract class LiveVotingFreeTextCategoriesUI
                 "votes" => $bar_collection
             ];
         }
+    }
+
+    /**
+     * @param LiveVotingBarFreeTextUI $bar_gui
+     * @param integer $cat_id
+     *
+     * @throws LiveVotingException
+     */
+    public function addBar(LiveVotingBarFreeTextUI $bar_gui, int $cat_id)
+    {
+        $bar_gui->setRemovable($this->isRemovable());
+        if (!($this->categories[$cat_id]['votes'] instanceof LiveVotingBarGroupingCollectionUI)) {
+            throw new LiveVotingException('category not found', 3);
+        }
+        $this->categories[$cat_id]['votes']->addBar($bar_gui);
+    }
+
+
+    /**
+     * @return string
+     * @throws ilTemplateException
+     * @throws ilSystemStyleException
+     */
+    public function getHTML(): string
+    {
+
+        $tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory().'/templates/default/QuestionTypes/FreeInput/tpl.free_input_categories.html', true, true);
+        foreach ($this->categories as $cat_id => $data) {
+            $cat_tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory().'/templates/default/QuestionTypes/FreeInput/tpl.free_input_category.html', true, true);
+            /** @var LiveVotingCategory $category */
+            $cat_tpl->setVariable('ID', $cat_id);
+            $cat_tpl->setVariable('TITLE', $data['title']);
+            if ($this->isRemovable()) {
+                $cat_tpl->touchBlock('remove_button');
+            }
+
+            $cat_tpl->setVariable('VOTES', $data['votes']->getHTML());
+            $tpl->setCurrentBlock('category');
+            $tpl->setVariable('CATEGORY', $cat_tpl->get());
+            $tpl->parseCurrentBlock();
+        }
+
+        return $tpl->get();
     }
 
     /**

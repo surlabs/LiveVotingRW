@@ -20,13 +20,19 @@ declare(strict_types=1);
  */
 namespace LiveVoting\UI\QuestionsResults;
 
-use ilCtrlException;
+use ilException;
 use ilLiveVotingPlugin;
-use ilObjLiveVotingGUI;
+use ilSystemStyleException;
 use ilTemplate;
+use ilTemplateException;
+use LiveVoting\Display\Bar\xlvoBarFreeInputsGUI;
+use LiveVoting\Exceptions\xlvoPlayerException;
 use LiveVoting\platform\LiveVotingException;
-use LiveVoting\votings\LiveVoting;
+use LiveVoting\questions\LiveVotingQuestionOption;
+use LiveVoting\UI\Voting\Bar\LiveVotingBarFreeTextUI;
+use LiveVoting\UI\Voting\Bar\LiveVotingBarGroupingCollectionUI;
 use LiveVoting\votings\LiveVotingPlayer;
+use LiveVoting\votings\LiveVotingVote;
 
 abstract class LiveVotingInputFreeTextUI extends LiveVotingInputResultsGUI
 {
@@ -45,8 +51,10 @@ abstract class LiveVotingInputFreeTextUI extends LiveVotingInputResultsGUI
     }
 
     /**
-     * @throws \ilSystemStyleException
-     * @throws \ilTemplateException
+     * @throws ilSystemStyleException
+     * @throws ilTemplateException
+     * @throws LiveVotingException
+     * @throws ilException
      */
     public function getHTML() :string
     {
@@ -56,7 +64,45 @@ abstract class LiveVotingInputFreeTextUI extends LiveVotingInputResultsGUI
         $this->edit_mode = (array_key_exists('btn_categorize', $button_states) && $button_states['btn_categorize'] == 'true');
         $tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory().'/templates/default/QuestionTypes/FreeInput/tpl.free_input_results.html', true, true);
 
-        $categories = new LiveVotingChoicesCategoriesUI($this->player, $this->edit_mode);
+        $categories = new LiveVotingFreeTextCategoriesUI($this->player, $this->edit_mode);
+
+        $bars = new LiveVotingBarGroupingCollectionUI();
+        $bars->setRemovable($this->edit_mode);
+        $bars->setShowTotalVotes(true);
+
+        $option = $this->player->getActiveVotingObject()->getFirstOption();
+
+        $votes = LiveVotingVote::getVotesOfOption($this->player->getActiveVotingObject()->getId(), $this->player->getRoundId());
+
+
+
+        foreach ($votes as $vote){
+            if ($cat_id = $vote->getFreeInputCategory()) {
+                try {
+                    $categories->addBar(new LiveVotingBarFreeTextUI($this->player->getActiveVoting(), $vote), $cat_id);
+                } catch (LiveVotingException $e) {
+                    if ($e->getCode() == 3) {
+                        $bars->addBar(new xlvoBarFreeInputsGUI($this->manager->getVoting(), $vote));
+                    }
+                }
+            } else {
+                $bars->addBar(new xlvoBarFreeInputsGUI($this->manager->getVoting(), $vote));
+            }
+        }
+
+        $bars->setTotalVotes(count($votes));
+
+        $tpl->setVariable('ANSWERS', $bars->getHTML());
+        $tpl->setVariable('CATEGORIES', $categories->getHTML());
+        if ($this->edit_mode) {
+            $tpl->setVariable('LABEL_ADD_CATEGORY', self::plugin()->translate('btn_add_category'));
+            $tpl->setVariable('PLACEHOLDER_ADD_CATEGORY', self::plugin()->translate('category_title'));
+            $tpl->setVariable('LABEL_ADD_ANSWER', self::plugin()->translate('btn_add_answer'));
+            $tpl->setVariable('PLACEHOLDER_ADD_ANSWER', self::plugin()->translate('voter_answer'));
+            $tpl->setVariable('BASE_URL', self::dic()->ctrl()->getLinkTargetByClass(xlvoPlayerGUI::class, xlvoPlayerGUI::CMD_API_CALL, "", true));
+        }
+
+        return $tpl->get();
 
     }
 
