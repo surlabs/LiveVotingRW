@@ -18,6 +18,8 @@ declare(strict_types=1);
  *
  */
 
+use ILIAS\UI\Factory;
+use ILIAS\UI\Renderer;
 use LiveVoting\legacy\LiveVotingResultsTableGUI;
 use LiveVoting\platform\LiveVotingDatabase;
 use LiveVoting\platform\LiveVotingException;
@@ -46,6 +48,17 @@ use LiveVoting\votings\LiveVotingVote;
  */
 class ilObjLiveVotingGUI extends ilObjectPluginGUI
 {
+    private Factory $factory;
+    private Renderer $renderer;
+    public function __construct(int $a_ref_id = 0, int $a_id_type = self::REPOSITORY_NODE_ID, int $a_parent_node_id = 0)
+    {
+        global $DIC;
+
+        parent::__construct($a_ref_id, $a_id_type, $a_parent_node_id);
+
+        $this->factory = $DIC->ui()->factory();
+        $this->renderer = $DIC->ui()->renderer();
+    }
 
     public function getType(): string
     {
@@ -109,7 +122,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         try {
             $this->tpl->setContent($liveVotingUI->showIndex());
         } catch (ilSystemStyleException|ilTemplateException $e) {
-            //TODO: Mostrar error
+            $this->tpl->setContent($this->renderer->render($this->factory->messageBox()->failure($e->getMessage())));
         }
     }
 
@@ -122,24 +135,17 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         $this->tabs->activateTab("tab_manage");
 
         if (!ilObjLiveVotingAccess::hasWriteAccess()) {
-            $this->tpl->setContent("Error de acceso");
-            //TODO: Mostrar error
-
-
+            $this->tpl->setContent($this->renderer->render($this->factory->messageBox()->failure($this->plugin->txt("permission_denied"))));
         } elseif (ilObjLiveVotingAccess::hasWriteAccess()) {
             $liveVotingManageUI = new LiveVotingManageUI();
             try {
-/*                $DIC->toolbar()->addComponent($DIC->ui()->factory()->button()->primary($this->txt('voting_add'), $this->ctrl->getLinkTarget($this, "selectType")));
-                $DIC->toolbar()->addComponent($DIC->ui()->factory()->button()->standard($this->txt('voting_reset_all'), $this->ctrl->getLinkTarget($this, "selectType")));*/
-
                 $this->tpl->setContent($liveVotingManageUI->showManage($this));
             } catch (ilSystemStyleException|ilTemplateException $e) {
-                //TODO: Mostrar error
+                $this->tpl->setContent($this->renderer->render($this->factory->messageBox()->failure($e->getMessage())));
             }
 
 
         }
-        //$this->tpl->setContent("Contenido de la pestaña de edición");
     }
 
     /**
@@ -152,8 +158,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         $this->tabs->activateTab("tab_results");
 
         if (!ilObjLiveVotingAccess::hasWriteAccess()) {
-            $this->tpl->setContent("Error de acceso");
-            //TODO: Mostrar error
+            $this->tpl->setContent($this->renderer->render($this->factory->messageBox()->failure($this->plugin->txt("permission_denied"))));
         } else {
             $liveVotingResultsUI = new LiveVotingResultsUI($this->object->getLiveVoting());
             $this->tpl->setContent($liveVotingResultsUI->showResults($this));
@@ -625,9 +630,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             LiveVotingJs::sendResponse($results);
 
         } catch (LiveVotingException|ilTemplateException|ilException $e) {
-            //TODO: Mostrar error
-            dump($e->getMessage(), $e);exit;
-
+            $this->tpl->setContent($this->renderer->render($this->factory->messageBox()->failure($e->getMessage())));
         }
 
         //xlvoJsResponse::getInstance($results)->send();

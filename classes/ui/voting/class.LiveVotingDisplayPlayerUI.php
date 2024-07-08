@@ -91,7 +91,7 @@ class LiveVotingDisplayPlayerUI
             $this->tpl = new ilTemplate($this->pl->getDirectory() . "/templates/default/Player/tpl.player.html", true, true);
             $DIC->ui()->mainTemplate()->addCss($this->pl->getDirectory() . '/templates/default/default.css');
         } catch (ilSystemStyleException|ilTemplateException $e) {
-            //TODO: Mostrar error
+            $DIC->ui()->mainTemplate()->setContent($this->renderer->render($this->factory->messageBox()->failure($e->getMessage())));
         }
 
     }

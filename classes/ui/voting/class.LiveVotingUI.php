@@ -257,7 +257,8 @@ class LiveVotingUI
     /**
      * @throws LiveVotingException
      */
-    public function showVoting(){
+    public function showVoting(): void
+    {
         global $DIC;
         $liveVoting = $this->liveVoting;
         $liveVoting->regenerateOptionSorting();
@@ -275,11 +276,8 @@ class LiveVotingUI
             $DIC->ui()->mainTemplate()->setContent($this->getPlayerHTML());
 
             $this->initToolbarDuringVoting();
-            //$DIC->ui()->mainTemplate()->setVariable("PLAYER_CONTENT", $this->getPlayerHTML());
-
-
         } catch (JsonException|ilCtrlException|LiveVotingException|ilTemplateException|ilException $e) {
-            //TODO: Mostrar error.
+            $DIC->ui()->mainTemplate()->setContent($DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure($e->getMessage())));
         }
 
         //TODO: Implementar este modal

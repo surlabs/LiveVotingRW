@@ -60,12 +60,13 @@ class LiveVotingBarFreeTextUI extends LiveVotingAbstractBarUI implements LiveVot
      */
     public function __construct(LiveVotingVote $vote)
     {
+        global $DIC;
         parent::__construct();
         $this->vote = $vote;
         try {
             $this->tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/Display/Bar/tpl.bar_free_input.html', true, true);
         } catch (ilSystemStyleException|ilTemplateException $e) {
-            //TODO: Mostrar error
+            $DIC->ui()->mainTemplate()->setContent($DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure($e->getMessage())));
         }
         $this->occurrences = 0;
     }
