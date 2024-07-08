@@ -29,7 +29,7 @@ use LiveVoting\Utils\ParamManager;
 use LiveVotingPlayerGUI;
 
 /**
- * Class ParamManager
+ * Class LiveVotingJs
  *
  * @package LiveVoting\Context\Param
  *

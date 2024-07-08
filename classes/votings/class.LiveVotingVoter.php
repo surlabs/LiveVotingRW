@@ -20,9 +20,11 @@ declare(strict_types=1);
 
 namespace LiveVoting\votings;
 
+use Exception;
 use LiveVoting\platform\LiveVotingConfig;
 use LiveVoting\platform\LiveVotingDatabase;
 use LiveVoting\platform\LiveVotingException;
+use LiveVoting\Utils\LiveVotingUtils;
 
 /**
  * Class LiveVotingVoter
@@ -35,6 +37,9 @@ class LiveVotingVoter
     private string $user_identifier;
     private int $last_access;
 
+    /**
+     * @throws LiveVotingException
+     */
     public function __construct(?int $id = null)
     {
         if ($id !== null) {
@@ -143,6 +148,7 @@ class LiveVotingVoter
 
     /**
      * @throws LiveVotingException
+     * @throws Exception
      */
     public static function countVoters(int $player_id): int
     {
@@ -155,7 +161,7 @@ class LiveVotingVoter
         }
 
         // Calculate the cutoff time taking into account the delay and an additional 50% of delay
-        $cutoff_time = time() - ($delay + $delay * 0.5);
+        $cutoff_time = LiveVotingUtils::getTime() - ($delay + $delay * 0.5);
 
         // Format the cutoff time to match the format used in sleep (Y-m-d H:i:s)
         $formatted_cutoff_time = date('Y-m-d H:i:s', (int) $cutoff_time);
@@ -165,5 +171,30 @@ class LiveVotingVoter
         return count($database->select("xlvo_voter", [
             "player_id" => $player_id
         ], ["id"], "AND last_access > '$formatted_cutoff_time'"));
+    }
+
+    /**
+     * @throws LiveVotingException
+     * @throws Exception
+     */
+    public static function register(int $player_id): void
+    {
+        $database = new LiveVotingDatabase();
+
+        $result = $database->select("xlvo_voter", array(
+            "user_identifier" => LiveVotingParticipant::getInstance()->getIdentifier(),
+            "player_id" => $player_id,
+        ), ["id"]);
+
+        if (isset($result[0])) {
+            $voter = new self((int) $result[0]["id"]);
+        } else {
+            $voter = new self();
+            $voter->setPlayerId($player_id);
+            $voter->setUserIdentifier(LiveVotingParticipant::getInstance()->getIdentifier());
+        }
+
+        $voter->setLastAccess(LiveVotingUtils::getTime());
+        $voter->save();
     }
 }

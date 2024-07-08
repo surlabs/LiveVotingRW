@@ -20,10 +20,12 @@ declare(strict_types=1);
 
 namespace LiveVoting\votings;
 
+use Exception;
 use ilLiveVotingPlugin;
 use LiveVoting\platform\LiveVotingDatabase;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\questions\LiveVotingQuestion;
+use LiveVoting\Utils\LiveVotingUtils;
 use LiveVoting\Utils\ParamManager;
 
 /**
@@ -296,6 +298,7 @@ class LiveVotingPlayer
 
     /**
      * @throws LiveVotingException
+     * @throws Exception
      */
     public function freeze(): void
     {
@@ -303,7 +306,7 @@ class LiveVotingPlayer
         $this->resetCountDown(false);
         $this->setButtonStates([]);
         $this->resetCountDown(false);
-        $this->setTimestampRefresh(time() + 30);
+        $this->setTimestampRefresh(LiveVotingUtils::getTime() + 30);
         $this->save();
     }
 
@@ -311,6 +314,7 @@ class LiveVotingPlayer
     /**
      * @param int $question_id
      * @throws LiveVotingException
+     * @throws Exception
      */
     public function unfreeze(int $question_id = 0): void
     {
@@ -322,7 +326,7 @@ class LiveVotingPlayer
         $this->resetCountDown(false);
         $this->setButtonStates([]);
         $this->resetCountDown(false);
-        $this->setTimestampRefresh(time() + 30);
+        $this->setTimestampRefresh(LiveVotingUtils::getTime() + 30);
         $this->save();
     }
 
@@ -342,22 +346,24 @@ class LiveVotingPlayer
 
     /**
      * @return int
+     * @throws Exception
      */
     public function remainingCountDown(): int
     {
-        return $this->getCountdownStart() - time() + $this->getCountdown();
+        return $this->getCountdownStart() - LiveVotingUtils::getTime() + $this->getCountdown();
     }
 
     /**
      * @param int $seconds
      * @throws LiveVotingException
+     * @throws Exception
      */
     public function startCountDown(int $seconds): void
     {
         $param_manager = ParamManager::getInstance();
         $this->unfreeze($param_manager->getVoting());
         $this->setCountdown($seconds);
-        $this->setCountdownStart(time());
+        $this->setCountdownStart(LiveVotingUtils::getTime());
         $this->save();
     }
 
@@ -465,10 +471,11 @@ class LiveVotingPlayer
 
     /**
      * @throws LiveVotingException
+     * @throws Exception
      */
     public function isUnattended(): bool
     {
-        if ($this->getStatus() != self::STAT_STOPPED AND ($this->getTimestampRefresh() < (time() - 30))) {
+        if ($this->getStatus() != self::STAT_STOPPED AND ($this->getTimestampRefresh() < (LiveVotingUtils::getTime() - 30))) {
             $this->setStatus(self::STAT_STOPPED);
 
             $this->save();
@@ -480,18 +487,19 @@ class LiveVotingPlayer
             return false;
         }
 
-        return ($this->getTimestampRefresh() < (time() - 4));
+        return ($this->getTimestampRefresh() < (LiveVotingUtils::getTime() - 4));
     }
 
 
     /**
      * @throws LiveVotingException
+     * @throws Exception
      */
     public function attend(): void
     {
         $this->setStatus(self::STAT_RUNNING);
 
-        $this->setTimestampRefresh(time());
+        $this->setTimestampRefresh(LiveVotingUtils::getTime());
 
         if ($this->remainingCountDown() <= 0 && $this->getCountdownStart() > 0) {
             $this->freeze();

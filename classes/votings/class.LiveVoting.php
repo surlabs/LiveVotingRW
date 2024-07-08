@@ -27,7 +27,6 @@ use LiveVoting\platform\LiveVotingConfig;
 use LiveVoting\platform\LiveVotingDatabase;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\questions\LiveVotingQuestion;
-use LiveVoting\Utils\ParamManager;
 
 /**
  * Class LiveVoting

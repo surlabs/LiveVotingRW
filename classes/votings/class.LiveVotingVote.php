@@ -25,6 +25,7 @@ use ilObjUser;
 use LiveVoting\platform\LiveVotingDatabase;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\questions\LiveVotingQuestionOption;
+use LiveVoting\Utils\LiveVotingUtils;
 
 /**
  * Class LiveVotingVote
@@ -357,6 +358,7 @@ class LiveVotingVote
      * @param int|null $option_id
      * @return LiveVotingVote
      * @throws LiveVotingException
+     * @throws \Exception
      */
     protected static function getUserInstance(LiveVotingParticipant $participant, int $voting_id, ?int $option_id = null): LiveVotingVote
     {
@@ -386,7 +388,7 @@ class LiveVotingVote
         } else {
             $vote->setType(1);
             $vote->setStatus(0);
-            $vote->setLastUpdate(time());
+            $vote->setLastUpdate(LiveVotingUtils::getTime());
         }
 
         $vote->setUserIdType($participant->getType());
