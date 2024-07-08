@@ -508,6 +508,7 @@ class LiveVotingPlayer
 
     /**
      * @throws LiveVotingException
+     * @throws Exception
      */
     public function getPlayerData(): array
     {
@@ -538,18 +539,21 @@ class LiveVotingPlayer
         );
     }
 
+    /**
+     * @throws Exception
+     */
     public function getPlayerDataForVoter(): array
     {
         return array(
-            "status" => "TODO", // TODO
-            "force_reload" => "TODO", // TODO
-            "active_voting_id" => "TODO", // TODO
-            "countdown" => "TODO", // TODO
-            "has_countdown" => "TODO", // TODO
-            "countdown_classname" => "TODO", // TODO
-            "frozen" => "TODO", // TODO
-            "show_results" => "TODO", // TODO
-            "show_correct_order" => "TODO", // TODO
+            "status" => $this->getStatus(),
+            "force_reload" => false,
+            "active_voting_id" => $this->getActiveVoting(),
+            "countdown" => $this->remainingCountDown(),
+            "has_countdown" => $this->isCountDownRunning(),
+            "countdown_classname" => $this->getCountdownClassname(),
+            "frozen" => $this->isFrozen(),
+            "show_results" => $this->isShowResults(),
+            "show_correct_order" => false,
         );
     }
 
