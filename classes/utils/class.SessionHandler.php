@@ -17,19 +17,16 @@ declare(strict_types=1);
  * info@surlabs.es
  *
  */
-namespace LiveVoting\Session;
+namespace LiveVoting\Utils;
 
 use ilLiveVotingPlugin;
 
 /**
- * Class xlvoSessionHandler
+ * Class SessionHandler
  *
- * @package LiveVoting\Session
  * @author  Fabian Schmid <fs@studer-raimann.ch>
  * @version 1.0.0
  */
-
-//TODO: Revisar si esta clase tiene sentido
 class SessionHandler
 {
     const PLUGIN_CLASS_NAME = ilLiveVotingPlugin::class;
