@@ -18,16 +18,13 @@ declare(strict_types=1);
  *
  */
 
-use JetBrains\PhpStorm\NoReturn;
 use LiveVoting\platform\LiveVotingConfig;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\Utils\LiveVotingJs;
 use LiveVoting\Utils\ParamManager;
 use LiveVoting\votings\LiveVoting;
-use LiveVoting\votings\LiveVotingParticipant;
 use LiveVoting\votings\LiveVotingPlayer;
-use LiveVoting\votings\LiveVotingRound;
-use LiveVoting\votings\LiveVotingVote;
+use LiveVoting\votings\LiveVotingVoter;
 
 /**
  * Class LiveVotingPlayerGUI
@@ -206,6 +203,7 @@ class LiveVotingPlayerGUI
     /**
      * @throws ilSystemStyleException
      * @throws ilTemplateException
+     * @throws LiveVotingException
      */
     public function getHTML(): void
     {
@@ -224,19 +222,20 @@ class LiveVotingPlayerGUI
         } else {
             switch ($this->getLiveVoting()->getPlayer()->getStatus()) {
                 case LiveVotingPlayer::STAT_STOPPED:
-                    $this->getVotingTemplate()->setVariable('TITLE', $this->txt('header_stopped'));
-                    $this->getVotingTemplate()->setVariable('DESCRIPTION', $this->txt('info_stopped'));
+                    $this->getVotingTemplate()->setVariable('TITLE', $this->txt('voter_header_stopped'));
+                    $this->getVotingTemplate()->setVariable('DESCRIPTION', $this->txt('voter_info_stopped'));
                     $this->getVotingTemplate()->setVariable('COUNT', (string)$this->getLiveVoting()->countQuestions());
                     $this->getVotingTemplate()->setVariable('POSITION', (string)$this->getLiveVoting()->getQuestionPosition());
                     $this->getVotingTemplate()->setVariable('PIN', $this->getLiveVoting()->getPin());
                     break;
                 case LiveVotingPlayer::STAT_RUNNING:
-                    $this->getVotingTemplate()->setVariable('TITLE', 'TITLE');
-                    $this->getVotingTemplate()->setVariable('DESCRIPTION', 'DESCRIPTION');
+                    $this->getVotingTemplate()->setVariable('TITLE', $this->getLiveVoting()->getPlayer()->getActiveVotingObject()->getTitle());
+                    $this->getVotingTemplate()->setVariable('DESCRIPTION', $this->getLiveVoting()->getPlayer()->getActiveVotingObject()->getQuestion());
                     $this->getVotingTemplate()->setVariable('COUNT', (string)$this->getLiveVoting()->countQuestions());
                     $this->getVotingTemplate()->setVariable('POSITION', (string)$this->getLiveVoting()->getQuestionPosition());
                     $this->getVotingTemplate()->setVariable('PIN', $this->getLiveVoting()->getPin());
 
+                    //TODO: Implementar esto:
                     /*
                     $xlvoQuestionTypesGUI = xlvoQuestionTypesGUI::getInstance($this->manager);
                     if ($xlvoQuestionTypesGUI->isShowQuestion()) {
@@ -247,22 +246,22 @@ class LiveVotingPlayerGUI
                     $this->getVotingTemplate()->setVariable('QUESTION', $xlvoQuestionTypesGUI->getMobileHTML());*/
                     break;
                 case LiveVotingPlayer::STAT_START_VOTING:
-                    $this->getVotingTemplate()->setVariable('TITLE', $this->txt('header_start'));
-                    $this->getVotingTemplate()->setVariable('DESCRIPTION', $this->txt('info_start'));
-                    $this->getVotingTemplate()->setVariable('GLYPH', "TODO No glyph");
+                    $this->getVotingTemplate()->setVariable('TITLE', $this->txt('voter_header_start'));
+                    $this->getVotingTemplate()->setVariable('DESCRIPTION', $this->txt('voter_info_start'));
+                    $this->getVotingTemplate()->setVariable('GLYPH', "Glyph start_voting");
                     break;
                 case LiveVotingPlayer::STAT_END_VOTING:
-                    $this->getVotingTemplate()->setVariable('TITLE', $this->txt('header_end'));
-                    $this->getVotingTemplate()->setVariable('DESCRIPTION', $this->txt('info_end'));;
-                    $this->getVotingTemplate()->setVariable('GLYPH', "TODO No glyph");
+                    $this->getVotingTemplate()->setVariable('TITLE', $this->txt('voter_header_end'));
+                    $this->getVotingTemplate()->setVariable('DESCRIPTION', $this->txt('voter_info_end'));;
+                    $this->getVotingTemplate()->setVariable('GLYPH', "Glyph end_voting");
                     break;
                 case LiveVotingPlayer::STAT_FROZEN:
-                    $this->getVotingTemplate()->setVariable('TITLE', $this->txt('header_frozen'));
-                    $this->getVotingTemplate()->setVariable('DESCRIPTION', $this->txt('info_frozen'));
+                    $this->getVotingTemplate()->setVariable('TITLE', $this->txt('voter_header_frozen'));
+                    $this->getVotingTemplate()->setVariable('DESCRIPTION', $this->txt('voter_info_frozen'));
                     $this->getVotingTemplate()->setVariable('COUNT', (string)$this->getLiveVoting()->countQuestions());
                     $this->getVotingTemplate()->setVariable('POSITION', (string)$this->getLiveVoting()->getQuestionPosition());
                     $this->getVotingTemplate()->setVariable('PIN', $this->getLiveVoting()->getPin());
-                    $this->getVotingTemplate()->setVariable('GLYPH', "TODO No glyph");
+                    $this->getVotingTemplate()->setVariable('GLYPH', "Glyph frozen");
                     break;
             }
             echo $this->getVotingTemplate()->get();
@@ -325,8 +324,18 @@ class LiveVotingPlayerGUI
         $this->voting_template = $voting_template;
     }
 
+    /**
+     * @throws LiveVotingException
+     * @throws Exception
+     */
     protected function getVotingData(): void
     {
+        $showAttendees = $this->live_voting->isShowAttendees();
 
+        if($showAttendees) {
+            LiveVotingVoter::register($this->live_voting->getPlayer()->getId());
+        }
+
+        LiveVotingJs::sendResponse($this->live_voting->getPlayer()->getPlayerDataForVoter());
     }
 }
