@@ -538,6 +538,13 @@ class LiveVotingPlayer
         );
     }
 
+    public function getPlayerDataForVoter(): array
+    {
+        return array(
+
+        );
+    }
+
     /**
      * @throws LiveVotingException
      */
