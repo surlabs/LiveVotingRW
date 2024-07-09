@@ -750,7 +750,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             case 'input':
                 global $DIC;
                 LiveVotingParticipant::getInstance()->setIdentifier($DIC->user()->getId())->setType(1);
-                $this->input(['input' => $_POST['input']]);
+                $liveVoting->getPlayer()->input(['input' => $_POST['input']]);
                 break;
             case 'add_vote':
                 $vote = new LiveVotingVote();
@@ -824,46 +824,5 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         }
 
         LiveVotingJs::sendResponse($return_value);
-    }
-
-
-
-    /**
-     * @throws LiveVotingException
-     */
-    private function input(array $array): void
-    {
-        $liveVoting = $this->object->getLiveVoting();
-
-        foreach ($array as $item) {
-            $vote = new LiveVotingVote((int) $item['vote_id']);
-            $user = LiveVotingParticipant::getInstance();
-
-            if ($user->getType() == 1) {
-                $vote->setUserId((int) $user->getIdentifier());
-                $vote->setUserIdType(0);
-            } else {
-                $vote->setUserIdentifier($user->getIdentifier());
-                $vote->setUserIdType(1);
-            }
-
-            $vote->setVotingId($liveVoting->getPlayer()->getActiveVoting());
-            $options = $liveVoting->getPlayer()->getActiveVotingObject()->getOptions();
-            $var=array_values($options);
-            $option = array_shift($var);
-            $vote->setOptionId($option->getId());
-            $vote->setType(2);
-            $vote->setStatus(1);
-            $vote->setFreeInput($item['input']);
-            $vote->setRoundId(LiveVotingRound::getLatestRoundId($liveVoting->getId()));
-            $vote->save();
-            if (!$liveVoting->getPlayer()->getActiveVotingObject()->isMultiFreeInput()) {
-                $liveVoting->getPlayer()->unvoteAll($vote->getId());
-            }
-        }
-
-        if ($liveVoting->isVotingHistory()) {
-            LiveVotingVote::createHistoryObject(LiveVotingParticipant::getInstance(), $liveVoting->getPlayer()->getActiveVotingObject()->getId(), $liveVoting->getPlayer()->getRoundId());
-        }
     }
 }

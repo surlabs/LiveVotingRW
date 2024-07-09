@@ -714,4 +714,43 @@ class LiveVotingPlayer
     {
         return LiveVotingVote::getVotesOfUser(LiveVotingParticipant::getInstance(), $this->getActiveVotingObject()->getId(), $this->getRoundId(), $incl_inactive);
     }
+
+    /**
+     * @throws LiveVotingException
+     */
+    public function input(array $array): void
+    {
+        $liveVotingConfig = new LiveVoting($this->obj_id, false);
+
+        foreach ($array as $item) {
+            $vote = new LiveVotingVote((int) $item['vote_id']);
+            $user = LiveVotingParticipant::getInstance();
+
+            if ($user->getType() == 1) {
+                $vote->setUserId((int) $user->getIdentifier());
+                $vote->setUserIdType(0);
+            } else {
+                $vote->setUserIdentifier($user->getIdentifier());
+                $vote->setUserIdType(1);
+            }
+
+            $vote->setVotingId($this->getActiveVoting());
+            $options = $this->getActiveVotingObject()->getOptions();
+            $var=array_values($options);
+            $option = array_shift($var);
+            $vote->setOptionId($option->getId());
+            $vote->setType(2);
+            $vote->setStatus(1);
+            $vote->setFreeInput($item['input']);
+            $vote->setRoundId(LiveVotingRound::getLatestRoundId($liveVotingConfig->getId()));
+            $vote->save();
+            if ($this->getActiveVotingObject()->getQuestionType() == "FreeText" && !$this->getActiveVotingObject()->isMultiFreeInput()) {
+                $this->unvoteAll($vote->getId());
+            }
+        }
+
+        if ($liveVotingConfig->isVotingHistory()) {
+            LiveVotingVote::createHistoryObject(LiveVotingParticipant::getInstance(), $this->getActiveVotingObject()->getId(), $this->getRoundId());
+        }
+    }
 }
