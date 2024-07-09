@@ -696,7 +696,7 @@ class LiveVotingPlayer
     /**
      * @throws LiveVotingException
      */
-    public function unvoteAll(int $except_vote_id): void
+    public function unvoteAll(int $except_vote_id = null): void
     {
         foreach ($this->getVotesOfUser() as $vote) {
             if ($except_vote_id && $vote->getId() == $except_vote_id) {

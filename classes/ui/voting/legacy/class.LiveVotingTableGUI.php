@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace LiveVoting\legacy;
 
+use Exception;
 use ilAdvancedSelectionListGUI;
 use ilCheckboxInputGUI;
 use ilCtrlException;
@@ -152,6 +153,7 @@ class liveVotingTableGUI extends ilTable2GUI
 
     /**
      * @param ilFormPropertyGUI $item
+     * @throws Exception
      */
     protected function addAndReadFilterItem(ilFormPropertyGUI $item)
     {

@@ -101,9 +101,20 @@ final class LiveVotingJs
         return $this;
     }
 
+    /**
+     * @return LiveVotingJs
+     */
     public function setRunCode(): LiveVotingJs
     {
         return $this->call("run");
+    }
+
+    /**
+     * @return string
+     */
+    public function getRunCode(): string
+    {
+        return '<script>' . $this->getCallCode("run") . '</script>';
     }
 
     public function call($method, $params = ''): LiveVotingJs

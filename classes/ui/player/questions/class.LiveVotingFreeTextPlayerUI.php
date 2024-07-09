@@ -18,14 +18,17 @@ declare(strict_types=1);
  *
  */
 
+use LiveVoting\platform\LiveVotingException;
+use LiveVoting\UI\Player\CustomUI\MultiLineNewInputGUI;
 use LiveVoting\Utils\LiveVotingJs;
+use LiveVoting\votings\LiveVotingVote;
 
 
 /**
  * Class LiveVotingFreeTextPlayerUI
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
  */
-class LiveVotingFreeTextPlayerUI
+class LiveVotingFreeTextPlayerUI extends LiveVotingQuestionTypesUI
 {
     /**
      * @var ilTemplate
@@ -38,38 +41,45 @@ class LiveVotingFreeTextPlayerUI
      */
     public function initJS(bool $current = false)
     {
-        //TODO: Continuar por aquí (DANI)
-        //MultiLineNewInputGUI::init();
-        LiveVotingJs::getInstance()->api($this)->name('FreeInput')->category('QuestionTypes')->init();
+        global $tpl;
+
+        $liveVotingPlayerGUI = new LiveVotingPlayerGUI();
+
+        MultiLineNewInputGUI::init();
+        //LiveVotingJs::getInstance()->api($liveVotingPlayerGUI)->name('FreeInput')->category('QuestionTypes')->init();
+        $tpl->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory(). '/templates/js/QuestionTypes/FreeInput/xlvoFreeInput.js');
     }
 
 
     /**
      *
+     * @throws LiveVotingException
      */
     protected function submit()
     {
         $input_gui = $this->getTextInputGUI("", 'free_input');
 
-        $this->manager->unvoteAll();
-        if ($this->manager->getVoting()->isMultiFreeInput()) {
+        $this->getPlayer()->unvoteAll();
+        if ($this->player->getActiveVotingObject()->isMultiFreeInput()) {
             $array = array();
-            foreach (filter_input(INPUT_POST, self::F_VOTE_MULTI_LINE_INPUT, FILTER_DEFAULT, FILTER_FORCE_ARRAY) as $item) {
-                $input = ilUtil::secureString($item[self::F_FREE_INPUT]);
+            foreach (filter_input(INPUT_POST, 'vote_multi_line_input', FILTER_DEFAULT, FILTER_FORCE_ARRAY) as $item) {
+                //TODO: Deprecado
+                $input = ilUtil::secureString($item['free_input']);
                 if (!empty($input) && strlen($input) <= $input_gui->getMaxLength()) {
                     $array[] = array(
                         "input"   => $input,
-                        "vote_id" => $item[self::F_VOTE_ID],
+                        "vote_id" => $item['vote_id'],
                     );
                 }
             }
-            $this->manager->inputAll($array);
+            $this->player->input($array);
         } else {
-            $input = ilUtil::secureString(filter_input(INPUT_POST, self::F_FREE_INPUT));
+            //TODO: Deprecado
+            $input = ilUtil::secureString(filter_input(INPUT_POST, 'free_input'));
             if (!empty($input) && strlen($input) <= $input_gui->getMaxLength()) {
-                $this->manager->inputOne(array(
+                $this->player->input(array(
                     "input"   => $input,
-                    "vote_id" => filter_input(INPUT_POST, self::F_VOTE_ID),
+                    "vote_id" => filter_input(INPUT_POST, 'vote_id'),
                 ));
             }
         }
@@ -86,13 +96,17 @@ class LiveVotingFreeTextPlayerUI
 
     /**
      * @return string
+     * @throws ilTemplateException
+     * @throws ilSystemStyleException
+     * @throws LiveVotingException|ilCtrlException
      */
-    public function getMobileHTML()
+    public function getMobileHTML(): string
     {
-        $this->tpl = self::plugin()->template('default/QuestionTypes/FreeInput/tpl.free_input.html');
+
+        $this->tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory().'/templates/default/QuestionTypes/FreeInput/tpl.free_input.html', true, true);
         $this->render();
 
-        return $this->tpl->get() . xlvoJs::getInstance()->name(xlvoQuestionTypes::FREE_INPUT)->category('QuestionTypes')->getRunCode();
+        return $this->tpl->get() . LiveVotingJs::getInstance()->name('FreeInput')->category('QuestionTypes')->getRunCode();
     }
 
 
@@ -101,18 +115,19 @@ class LiveVotingFreeTextPlayerUI
      * @param string $a_postvar
      *
      * @return ilTextInputGUI|ilTextAreaInputGUI
+     * @throws LiveVotingException
      */
-    protected function getTextInputGUI($a_title = "", $a_postvar = "")
+    protected function getTextInputGUI(string $a_title = "", string $a_postvar = "")
     {
-        switch (intval($this->manager->getVoting()->getAnswerField())) {
-            case xlvoFreeInputSubFormGUI::ANSWER_FIELD_MULTI_LINE:
-                $input_gui = new TextAreaInputGUI($a_title, $a_postvar);
-                $input_gui->setMaxlength(1000);
+        switch (intval($this->player->getActiveVotingObject()->getAnswerField())) {
+            case 2:
+                $input_gui = new ilTextAreaInputGUI($a_title, $a_postvar);
+                $input_gui->setMaxNumOfChars(1000);
                 break;
 
-            case xlvoFreeInputSubFormGUI::ANSWER_FIELD_SINGLE_LINE:
+            case 1:
             default:
-                $input_gui = new TextInputGUI($a_title, $a_postvar);
+                $input_gui = new ilTextInputGUI($a_title, $a_postvar);
                 $input_gui->setMaxLength(200);
                 break;
         }
@@ -123,10 +138,12 @@ class LiveVotingFreeTextPlayerUI
 
     /**
      * @return ilPropertyFormGUI
+     * @throws LiveVotingException
+     * @throws ilCtrlException
      */
-    protected function getForm()
+    protected function getForm(): ilPropertyFormGUI
     {
-        if ($this->manager->getVoting()->isMultiFreeInput()) {
+        if ($this->player->getActiveVotingObject()->isMultiFreeInput()) {
             return $this->getMultiForm();
         } else {
             return $this->getSingleForm();
@@ -136,30 +153,33 @@ class LiveVotingFreeTextPlayerUI
 
     /**
      * @return ilPropertyFormGUI
+     * @throws LiveVotingException
+     * @throws ilCtrlException
      */
-    protected function getSingleForm()
+    protected function getSingleForm(): ilPropertyFormGUI
     {
+        global $DIC;
         $form = new ilPropertyFormGUI();
-        $form->setFormAction(self::dic()->ctrl()->getFormAction($this));
+        $form->setFormAction($DIC->ctrl()->getFormAction($this));
         $form->setId('xlvo_free_input');
 
-        $votes = array_values($this->manager->getVotesOfUser(true));
+        $votes = array_values($this->player->getVotesOfUser(true));
         $vote = array_shift($votes);
 
-        $an = $this->getTextInputGUI($this->txt('input'), self::F_FREE_INPUT);
-        $hi2 = new HiddenInputGUI(self::F_VOTE_ID);
+        $an = $this->getTextInputGUI(ilLiveVotingPlugin::getInstance()->txt('input'), 'free_input');
+        $hi2 = new ilHiddenInputGUI('vote_id');
 
-        if ($vote instanceof xlvoVote) {
+        if ($vote instanceof LiveVotingVote) {
             if ($vote->isActive()) {
                 $an->setValue($vote->getFreeInput());
             }
-            $hi2->setValue($vote->getId());
+            $hi2->setValue((string)$vote->getId());
             //$form->addCommandButton(self::CMD_CLEAR, $this->txt(self::CMD_CLEAR));
         }
 
         $form->addItem($an);
         $form->addItem($hi2);
-        $form->addCommandButton(self::CMD_SUBMIT, $this->txt('send'));
+        $form->addCommandButton('submit', ilLiveVotingPlugin::getInstance()->txt('send'));
 
         return $form;
     }
@@ -167,38 +187,43 @@ class LiveVotingFreeTextPlayerUI
 
     /**
      * @return ilPropertyFormGUI
+     * @throws LiveVotingException
+     * @throws ilCtrlException
      */
-    protected function getMultiForm()
+    protected function getMultiForm(): ilPropertyFormGUI
     {
+        global $DIC;
         $form = new ilPropertyFormGUI();
-        $form->setFormAction(self::dic()->ctrl()->getFormAction($this));
+        $gui = new LiveVotingPlayerGUI();
+        $form->setFormAction($DIC->ctrl()->getFormAction($gui));
 
-        $xlvoVotes = $this->manager->getVotesOfUser();
+        $xlvoVotes = $this->player->getVotesOfUser();
         if (count($xlvoVotes) > 0) {
             $te = new ilNonEditableValueGUI();
-            $te->setValue($this->txt('your_input'));
+            $te->setValue(ilLiveVotingPlugin::getInstance()->txt('your_input'));
             $form->addItem($te);
             //$form->addCommandButton(self::CMD_CLEAR, $this->txt('delete_all'));
         }
 
-        $mli = new MultiLineNewInputGUI($this->txt('answers'), self::F_VOTE_MULTI_LINE_INPUT);
-        $te = $this->getTextInputGUI($this->txt('text'), self::F_FREE_INPUT);
+        $mli = new MultiLineNewInputGUI(ilLiveVotingPlugin::getInstance()->txt('answers'), 'vote_multi_line_input');
+        $te = $this->getTextInputGUI(ilLiveVotingPlugin::getInstance()->txt('text'), 'free_input');
 
-        $hi2 = new HiddenInputGUI(self::F_VOTE_ID);
+        $hi2 = new ilHiddenInputGUI('vote_id');
         $mli->addInput($te);
         $mli->addInput($hi2);
 
         $form->addItem($mli);
         $array = array();
+
         foreach ($xlvoVotes as $xlvoVote) {
             $array[] = array(
-                self::F_FREE_INPUT => $xlvoVote->getFreeInput(),
-                self::F_VOTE_ID    => $xlvoVote->getId(),
+                'free_input' => $xlvoVote->getFreeInput(),
+                'vote_id'    => $xlvoVote->getId(),
             );
         }
 
-        $form->setValuesByArray(array(self::F_VOTE_MULTI_LINE_INPUT => $array));
-        $form->addCommandButton(self::CMD_SUBMIT, $this->txt('send'));
+        $form->setValuesByArray(array('vote_multi_line_input' => $array));
+        $form->addCommandButton('submit', ilLiveVotingPlugin::getInstance()->txt('send'));
 
         return $form;
     }
@@ -206,22 +231,22 @@ class LiveVotingFreeTextPlayerUI
 
     /**
      * @return ilButtonBase[]
-     * @throws \srag\DIC\LiveVoting\Exception\DICException
      */
-    public function getButtonInstances()
+    public function getButtonInstances(): array
     {
-        if (!$this->manager->getPlayer()->isShowResults()) {
+        if (!$this->player->isShowResults()) {
             return array();
         }
 
+        //TODO: Deprecado
         $b = ilLinkButton::getInstance();
-        $b->setId(self::BUTTON_CATEGORIZE);
+        $b->setId('btn_categorize');
         $b->setUrl('#');
 
-        if (array_key_exists(xlvoFreeInputGUI::BUTTON_CATEGORIZE, $this->getButtonsStates()) && $this->getButtonsStates()[self::BUTTON_CATEGORIZE] == 'true') {
-            $b->setCaption(GlyphGUI::get('folder-close') . '&nbsp' . self::plugin()->translate('categorize_done', 'btn'), false);
+        if (array_key_exists('btn_categorize', $this->getButtonsStates()) && $this->getButtonsStates()['btn_categorize'] == 'true') {
+            $b->setCaption(ilGlyphGUI::get('folder-close') . '&nbsp' . ilLiveVotingPlugin::getInstance()->txt('categorize_done', 'btn'), false);
         } else {
-            $b->setCaption(GlyphGUI::get('folder-open') . '&nbsp' . self::plugin()->translate('categorize', 'btn'), false);
+            $b->setCaption(ilGlyphGUI::get('folder-open') . '&nbsp' . ilLiveVotingPlugin::getInstance()->txt('categorize', 'btn'), false);
         }
 
         return array($b);
@@ -231,16 +256,18 @@ class LiveVotingFreeTextPlayerUI
     /**
      * @param $button_id
      * @param $data
+     * @throws LiveVotingException
      */
     public function handleButtonCall($button_id, $data)
     {
-        $data = (array_key_exists(xlvoFreeInputGUI::BUTTON_CATEGORIZE,  $this->getButtonsStates()) && $this->getButtonsStates()[self::BUTTON_CATEGORIZE] == 'true' )? 'false' : 'true';
+        $data = (array_key_exists('btn_categorize',  $this->getButtonsStates()) && $this->getButtonsStates()['btn_categorize'] == 'true' )? 'false' : 'true';
         $this->saveButtonState($button_id, $data);
     }
 
 
     /**
      *
+     * @throws LiveVotingException|ilCtrlException
      */
     protected function render()
     {

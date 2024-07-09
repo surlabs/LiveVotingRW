@@ -28,9 +28,9 @@ use LiveVoting\votings\LiveVotingPlayer;
 abstract class LiveVotingQuestionTypesUI
 {
     /**
-     * @var LiveVoting Object
+     * @var LiveVotingPlayer Object
      */
-    private LiveVoting $live_voting;
+    protected LiveVotingPlayer $player;
 
     /**
      * @var bool $show_question
@@ -95,7 +95,7 @@ abstract class LiveVotingQuestionTypesUI
                 $gui = new xlvoCorrectOrderGUI();
                 break;
             case "FreeText":
-                $gui = new xlvoFreeInputGUI();
+                $gui = new LiveVotingFreeTextPlayerUI();
                 break;
             case xlvoQuestionTypes::FREE_ORDER:
                 $gui = new xlvoFreeOrderGUI();
@@ -116,19 +116,19 @@ abstract class LiveVotingQuestionTypesUI
     }
 
     /**
-     * @return LiveVoting
+     * @return LiveVotingPlayer
      */
-    public function getLiveVoting(): LiveVoting
+    public function getPlayer(): LiveVotingPlayer
     {
-        return $this->live_voting;
+        return $this->player;
     }
 
     /**
-     * @param LiveVoting $live_voting
+     * @param LiveVotingPlayer $player
      */
-    public function setManager(LiveVoting $live_voting): void
+    public function setManager(LiveVotingPlayer $player): void
     {
-        $this->live_voting = $live_voting;
+        $this->player = $player;
     }
 
     /**
@@ -185,6 +185,7 @@ abstract class LiveVotingQuestionTypesUI
     /**
      * @param $button_id
      * @param $data
+     * @throws LiveVotingException
      */
     public function handleButtonCall($button_id, $data)
     {
@@ -197,7 +198,7 @@ abstract class LiveVotingQuestionTypesUI
      */
     protected function getButtonsStates(): array
     {
-        $xlvoPlayer = $this->getLiveVoting()->getPlayer();
+        $xlvoPlayer = $this->getPlayer();
 
         return $xlvoPlayer->getButtonStates();
     }
@@ -228,7 +229,7 @@ abstract class LiveVotingQuestionTypesUI
      */
     protected function saveButtonState($button_id, $state)
     {
-        $xlvoPlayer = $this->getLiveVoting()->getPlayer();
+        $xlvoPlayer = $this->getPlayer();
         $states = $xlvoPlayer->getButtonStates();
         $states[$button_id] = $state;
         $xlvoPlayer->setButtonStates($states);

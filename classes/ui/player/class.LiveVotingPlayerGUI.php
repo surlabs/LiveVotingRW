@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 use LiveVoting\platform\LiveVotingConfig;
 use LiveVoting\platform\LiveVotingException;
+use LiveVoting\UI\QuestionsResults\LiveVotingInputResultsGUI;
 use LiveVoting\Utils\LiveVotingJs;
 use LiveVoting\Utils\ParamManager;
 use LiveVoting\votings\LiveVoting;
@@ -128,6 +129,7 @@ class LiveVotingPlayerGUI
      * @throws ilTemplateException
      * @throws ilSystemStyleException
      * @throws ilCtrlException|LiveVotingException
+     * @throws ilException
      */
     private function prepareVotingTemplate(): void
     {
@@ -170,10 +172,15 @@ class LiveVotingPlayerGUI
 
        // $this->fillVotingTemplate();
 
-        //TODO: Este foreach parece necesario. Pendiente implementar.
-        /*foreach (xlvoQuestionTypes::getActiveTypes() as $type) {
+/*        //TODO: Este foreach parece necesario. Pendiente implementar.
+        foreach (LiveVotingQuestionTypesUI::getActiveTypes() as $type) {
             xlvoQuestionTypesGUI::getInstance($this->manager, $type)->initJS($type == $this->manager->getVoting()->getVotingType());
         }*/
+
+        $player = $this->live_voting->getPlayer();
+        //$question = $player->getActiveVotingObject();
+
+        LiveVotingQuestionTypesUI::getInstance($player)->initJS();
 
 
     }
@@ -204,6 +211,7 @@ class LiveVotingPlayerGUI
      * @throws ilSystemStyleException
      * @throws ilTemplateException
      * @throws LiveVotingException
+     * @throws ilException
      */
     public function getHTML(): void
     {
@@ -236,14 +244,14 @@ class LiveVotingPlayerGUI
                     $this->getVotingTemplate()->setVariable('PIN', $this->getLiveVoting()->getPin());
 
                     //TODO: Implementar esto:
-                    /*
-                    $xlvoQuestionTypesGUI = xlvoQuestionTypesGUI::getInstance($this->manager);
+
+                    $xlvoQuestionTypesGUI = LiveVotingQuestionTypesUI::getInstance($this->getLiveVoting()->getPlayer());
                     if ($xlvoQuestionTypesGUI->isShowQuestion()) {
                         $this->getVotingTemplate()->setCurrentBlock('question_text');
-                        $this->getVotingTemplate()->setVariable('QUESTION_TEXT', $this->manager->getVoting()->getQuestionForPresentation());
+                        $this->getVotingTemplate()->setVariable('QUESTION_TEXT', $this->live_voting->getPlayer()->getActiveVotingObject()->getQuestion());
                         $this->getVotingTemplate()->parseCurrentBlock();
                     }
-                    $this->getVotingTemplate()->setVariable('QUESTION', $xlvoQuestionTypesGUI->getMobileHTML());*/
+                    $this->getVotingTemplate()->setVariable('QUESTION', $xlvoQuestionTypesGUI->getMobileHTML());
                     break;
                 case LiveVotingPlayer::STAT_START_VOTING:
                     $this->getVotingTemplate()->setVariable('TITLE', $this->txt('voter_header_start'));
