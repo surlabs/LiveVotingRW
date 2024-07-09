@@ -720,6 +720,10 @@ class LiveVotingPlayer
      */
     public function input(array $array): void
     {
+        if (array_key_exists("vote_id", $array)) {
+            $array = array($array);
+        }
+
         $liveVotingConfig = new LiveVoting($this->obj_id, false);
 
         foreach ($array as $item) {
