@@ -53,7 +53,7 @@ abstract class LiveVotingBarCollectionUI
      */
     public function __construct()
     {
-        $this->tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory().'/templates/default/Bar/tpl.bar_collection.html', true, false);
+        $this->tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory().'/templates/default/Bar/tpl.bar_collection.html', false, false);
     }
 
     /**

@@ -113,7 +113,6 @@ class LiveVotingInputFreeTextUI extends LiveVotingInputResultsGUI
         //TODO: Implementar Waiter?
         //Waiter::init(Waiter::TYPE_WAITER);
 
-        //TODO: CONTINUAR POR AQUÍ (PARA DANI)
         $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory() . '/node_modules/dragula/dist/dragula.js');
         $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/js/QuestionTypes/FreeInput/xlvoFreeInputCategorize.js');
         $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory() . '/node_modules/dragula/dist/dragula.min.css');
