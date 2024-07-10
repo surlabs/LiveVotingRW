@@ -81,34 +81,72 @@ class ilLiveVotingConfigGUI extends ilPluginConfigGUI
         )->withValue((string) LiveVotingConfig::get("allow_shortlink_link"))->withAdditionalTransformation($this->refinery->custom()->transformation(
             function ($v) {
                 LiveVotingConfig::set('allow_shortlink_link', $v);
+
+                if (isset($v) && $v != null && $v != "") {
+                    LiveVotingConfig::set('allow_shortlink', "1");
+                }
             }
-        ));
+        ))->withRequired(true);
 
         $base_url_vote = $this->factory->input()->field()->text(
             $this->plugin_object->txt('config_base_url'), $this->plugin_object->txt('config_base_url_info')
         )->withValue((string) LiveVotingConfig::get("base_url"))->withAdditionalTransformation($this->refinery->custom()->transformation(
             function ($v) {
-                LiveVotingConfig::set('allow_shortlink_link', $v);
+                LiveVotingConfig::set('base_url', $v);
+
+                if (isset($v) && $v != null && $v != "") {
+                    LiveVotingConfig::set('allow_shortlink', "1");
+                }
+            }
+        ))->withRequired(true);
+
+        $use_shortlink_vote = $this->factory->input()->field()->optionalGroup(array(
+            "shortlink_vote" => $shortlink_vote,
+            "base_url_vote" => $base_url_vote
+        ), $this->plugin_object->txt('config_allow_shortlink'), $this->plugin_object->txt('config_allow_shortlink_info') . '<br><br><span class="label label-default">' . self::REWRITE_RULE_VOTE . '</span><br><br>'
+        )->withAdditionalTransformation($this->refinery->custom()->transformation(
+            function ($v) {
+                if ($v == null) {
+                    LiveVotingConfig::set('allow_shortlink', "0");
+
+                    LiveVotingConfig::set('allow_shortlink_link', "");
+                    LiveVotingConfig::set('base_url', "");
+                }
             }
         ));
 
-        $use_shortlink_vote = $this->factory->input()->field()->optionalGroup(array(
-            $shortlink_vote, $base_url_vote
-        ), $this->plugin_object->txt('config_allow_shortlink'), $this->plugin_object->txt('config_allow_shortlink_info') . '<br><br><span class="label label-default">' . self::REWRITE_RULE_VOTE . '</span><br><br>'
-        );
+        if (LiveVotingConfig::get("allow_shortlink") != "1")  {
+            $use_shortlink_vote = $use_shortlink_vote->withValue(null);
+        }
 
         $shortlink_presenter = $this->factory->input()->field()->text(
             $this->plugin_object->txt('config_allow_shortlink_link_presenter'), $this->plugin_object->txt('config_allow_shortlink_link_presenter_info')
         )->withValue((string) LiveVotingConfig::get("allow_shortlink_link_presenter"))->withAdditionalTransformation($this->refinery->custom()->transformation(
             function ($v) {
                 LiveVotingConfig::set('allow_shortlink_link_presenter', $v);
+
+                if (isset($v) && $v != null && $v != "") {
+                    LiveVotingConfig::set('allow_shortlink_presenter', "1");
+                }
+            }
+        ))->withRequired(true);
+
+        $use_shortlink_presenter = $this->factory->input()->field()->optionalGroup(array(
+            "shortlink_presenter" => $shortlink_presenter
+        ), $this->plugin_object->txt('config_allow_shortlink_presenter'), $this->plugin_object->txt('config_allow_shortlink_presenter_info') . '<br><br><span class="label label-default">' . self::REWRITE_RULE_PRESENTER . '</span><br><br>'
+        )->withAdditionalTransformation($this->refinery->custom()->transformation(
+            function ($v) {
+                if ($v == null) {
+                    LiveVotingConfig::set('allow_shortlink_presenter', "0");
+
+                    LiveVotingConfig::set('allow_shortlink_link_presenter', "");
+                }
             }
         ));
 
-        $use_shortlink_presenter = $this->factory->input()->field()->optionalGroup(array(
-            $shortlink_presenter
-        ), $this->plugin_object->txt('config_allow_shortlink_presenter'), $this->plugin_object->txt('config_allow_shortlink_presenter_info') . '<br><br><span class="label label-default">' . self::REWRITE_RULE_PRESENTER . '</span><br><br>'
-        );
+        if (LiveVotingConfig::get("allow_shortlink_presenter") != "1")  {
+            $use_shortlink_presenter = $use_shortlink_presenter->withValue(null);
+        }
 
         $request_frequency = $this->factory->input()->field()->numeric(
             $this->plugin_object->txt('config_request_frequency'), $this->plugin_object->txt('config_request_frequency_info')
@@ -127,17 +165,33 @@ class ilLiveVotingConfigGUI extends ilPluginConfigGUI
         )->withValue(LiveVotingConfig::get("api_type") != "" ? (int) LiveVotingConfig::get("api_type") : 1)->withAdditionalTransformation($this->refinery->custom()->transformation(
             function ($v) {
                 LiveVotingConfig::set('api_type', $v);
+
+                if (isset($v) && $v != null && $v != "") {
+                    LiveVotingConfig::set('result_api', "1");
+                }
+            }
+        ))->withRequired(true);
+
+        $result_api = $this->factory->input()->field()->optionalGroup(array(
+            "api_type" => $api_type
+        ), $this->plugin_object->txt('config_result_api'), $this->plugin_object->txt('config_result_api_info')
+        )->withAdditionalTransformation($this->refinery->custom()->transformation(
+            function ($v) {
+                if ($v == null) {
+                    LiveVotingConfig::set('result_api', "0");
+
+                    LiveVotingConfig::set('api_type', "1");
+                }
             }
         ));
 
-        $result_api = $this->factory->input()->field()->optionalGroup(array(
-            $api_type
-        ), $this->plugin_object->txt('config_result_api'), $this->plugin_object->txt('config_result_api_info')
-        );
+        if (LiveVotingConfig::get("result_api") != "1")  {
+            $result_api = $result_api->withValue(null);
+        }
 
         $global_cache_enabled = $this->factory->input()->field()->checkbox(
             $this->plugin_object->txt('config_use_global_cache'), $this->plugin_object->txt('config_use_global_cache_info')
-        )->withValue((boolean) LiveVotingConfig::get("use_global_cache"))->withAdditionalTransformation($this->refinery->custom()->transformation(
+        )->withValue((bool) LiveVotingConfig::get("use_global_cache"))->withAdditionalTransformation($this->refinery->custom()->transformation(
             function ($v) {
                 LiveVotingConfig::set('use_global_cache', $v ? "1" : "0");
             }
