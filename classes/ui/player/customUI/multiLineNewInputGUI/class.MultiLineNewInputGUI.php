@@ -355,13 +355,9 @@ class MultiLineNewInputGUI extends ilFormPropertyGUI implements ilTableFilterIte
                 $tpl->setVariable("HIDE_ADD_FIRST_LINE", $tpl_hidden->get());
             }
 
-
-            $tpl->setVariable("ADD_FIRST_LINE", $DIC->ui()->renderer()->render(($DIC->ui()->factory()->symbol()->glyph()->add()->withAdditionalOnLoadCode(function (string $id) use ($counter) : string {
+            $tpl->setVariable("ADD_FIRST_LINE", $DIC->ui()->renderer()->renderAsync(($DIC->ui()->factory()->symbol()->glyph()->add()->withAdditionalOnLoadCode(function (string $id) use ($counter) : string {
                 return 'il.MultiLineNewInputGUI.init(' . $counter . ', $("#' . $id . '").parent().parent().parent(), true)';
             }))));
-
-
-            dump($tpl->get());exit;
 
             $tpl->parseCurrentBlock();
         }
