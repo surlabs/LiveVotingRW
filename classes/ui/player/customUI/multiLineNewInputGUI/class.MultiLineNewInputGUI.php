@@ -31,6 +31,7 @@ use ilTemplateException;
 use ilToolbarItem;
 use ilUtil;
 use LiveVoting\Utils\LiveVotingJs;
+use LiveVotingPlayerGUI;
 
 /**
  * Class MultiLineNewInputGUI
@@ -89,9 +90,14 @@ class MultiLineNewInputGUI extends ilFormPropertyGUI implements ilTableFilterIte
 
     public static function init() : void
     {
+
         global $tpl;
+
+
         if (self::$init === false) {
             self::$init = true;
+            $tpl->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory(). '/templates/js/QuestionTypes/FreeInput/xlvoFreeInput.js');
+
             $tpl->addCss(ilLiveVotingPlugin::getInstance()->getDirectory()."/templates/customUI/MultiLineNewInputGUI/css/multi_line_new_input_gui.css");
             $tpl->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory()."/templates/customUI/MultiLineNewInputGUI/js/multi_line_new_input_gui.min.js");
         }
@@ -349,9 +355,13 @@ class MultiLineNewInputGUI extends ilFormPropertyGUI implements ilTableFilterIte
                 $tpl->setVariable("HIDE_ADD_FIRST_LINE", $tpl_hidden->get());
             }
 
+
             $tpl->setVariable("ADD_FIRST_LINE", $DIC->ui()->renderer()->render(($DIC->ui()->factory()->symbol()->glyph()->add()->withAdditionalOnLoadCode(function (string $id) use ($counter) : string {
                 return 'il.MultiLineNewInputGUI.init(' . $counter . ', $("#' . $id . '").parent().parent().parent(), true)';
             }))));
+
+
+            dump($tpl->get());exit;
 
             $tpl->parseCurrentBlock();
         }
@@ -470,7 +480,7 @@ class MultiLineNewInputGUI extends ilFormPropertyGUI implements ilTableFilterIte
 
         foreach ($inputs as $input) {
             if ($input instanceof ilHiddenInputGUI) {
-                $input_tpl->setVariable("HIDDEN", htmlspecialchars(" hidden"));
+                $input_tpl->setVariable("HIDDEN", htmlspecialchars("hidden"));
             }
 
             $input_tpl->setVariable("TITLE", htmlspecialchars($input->getTitle()));
@@ -479,11 +489,11 @@ class MultiLineNewInputGUI extends ilFormPropertyGUI implements ilTableFilterIte
                 $input_tpl->setVariable("REQUIRED", $required_tpl->get());
             }
 
-            $legacy = $DIC->ui()->factory()->legacy($input);
-            dump($legacy);exit;
 
-            $input_html = $input->render();
-            $input_html = str_replace('<div class="help-block"></div>', "", $input_html);
+
+
+            $input_html =  $input->render();
+            $input_html = str_replace('<div class="control-label"></div>', "", $input_html);
             $input_tpl->setVariable("INPUT", $input_html);
 
             if ($input->getInfo()) {

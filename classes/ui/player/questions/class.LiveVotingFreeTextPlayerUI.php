@@ -19,7 +19,9 @@ declare(strict_types=1);
  */
 
 use LiveVoting\platform\LiveVotingException;
+use LiveVoting\UI\Player\CustomUI\HiddenInputGUI\HiddenInputGUI;
 use LiveVoting\UI\Player\CustomUI\MultiLineNewInputGUI;
+use LiveVoting\UI\Player\CustomUI\TextAreaInputGUI\TextAreaInputGUI;
 use LiveVoting\Utils\LiveVotingJs;
 use LiveVoting\votings\LiveVotingVote;
 
@@ -45,9 +47,9 @@ class LiveVotingFreeTextPlayerUI extends LiveVotingQuestionTypesUI
 
         $liveVotingPlayerGUI = new LiveVotingPlayerGUI();
 
-        MultiLineNewInputGUI::init();
-        //LiveVotingJs::getInstance()->api($liveVotingPlayerGUI)->name('FreeInput')->category('QuestionTypes')->init();
-        $tpl->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory(). '/templates/js/QuestionTypes/FreeInput/xlvoFreeInput.js');
+        //MultiLineNewInputGUI::init();
+        LiveVotingJs::getInstance()->api($liveVotingPlayerGUI)->name('FreeInput')->category('QuestionTypes')->init();
+        //$tpl->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory(). '/templates/js/QuestionTypes/FreeInput/xlvoFreeInput.js');
     }
 
 
@@ -114,15 +116,15 @@ class LiveVotingFreeTextPlayerUI extends LiveVotingQuestionTypesUI
      * @param string $a_title
      * @param string $a_postvar
      *
-     * @return ilTextInputGUI|ilTextAreaInputGUI
+     * @return ilTextInputGUI
      * @throws LiveVotingException
      */
     protected function getTextInputGUI(string $a_title = "", string $a_postvar = "")
     {
         switch (intval($this->player->getActiveVotingObject()->getAnswerField())) {
             case 2:
-                $input_gui = new ilTextAreaInputGUI($a_title, $a_postvar);
-                $input_gui->setMaxNumOfChars(1000);
+                $input_gui = new TextAreaInputGUI($a_title, $a_postvar);
+                $input_gui->setMaxlength(1000);
                 break;
 
             case 1:
@@ -167,7 +169,7 @@ class LiveVotingFreeTextPlayerUI extends LiveVotingQuestionTypesUI
         $vote = array_shift($votes);
 
         $an = $this->getTextInputGUI(ilLiveVotingPlugin::getInstance()->txt('input'), 'free_input');
-        $hi2 = new ilHiddenInputGUI('vote_id');
+        $hi2 = new HiddenInputGUI('vote_id');
 
         if ($vote instanceof LiveVotingVote) {
             if ($vote->isActive()) {
@@ -205,10 +207,10 @@ class LiveVotingFreeTextPlayerUI extends LiveVotingQuestionTypesUI
             //$form->addCommandButton(self::CMD_CLEAR, $this->txt('delete_all'));
         }
 
-        $mli = new MultiLineNewInputGUI(ilLiveVotingPlugin::getInstance()->txt('answers'), 'vote_multi_line_input');
-        $te = $this->getTextInputGUI(ilLiveVotingPlugin::getInstance()->txt('text'), 'free_input');
+        $mli = new MultiLineNewInputGUI(ilLiveVotingPlugin::getInstance()->txt('qtype_2_answers'), 'vote_multi_line_input');
+        $te = $this->getTextInputGUI(ilLiveVotingPlugin::getInstance()->txt('qtype_2_text'), 'free_input');
 
-        $hi2 = new ilHiddenInputGUI('vote_id');
+        $hi2 = new HiddenInputGUI('vote_id');
         $mli->addInput($te);
         $mli->addInput($hi2);
 
