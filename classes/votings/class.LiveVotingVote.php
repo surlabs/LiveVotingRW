@@ -357,7 +357,15 @@ class LiveVotingVote
             $where['user_identifier'] = $participant->getIdentifier();
         }
 
-        return $database->select("rep_robj_xlvo_vote_n", $where);
+        $result = $database->select("rep_robj_xlvo_vote_n", $where, ["id"]);
+
+        $votes = array();
+
+        foreach ($result as $row) {
+            $votes[] = new LiveVotingVote((int) $row["id"]);
+        }
+
+        return $votes;
     }
 
     /**
