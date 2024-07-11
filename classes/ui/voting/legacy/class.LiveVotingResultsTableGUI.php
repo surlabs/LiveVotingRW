@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace LiveVoting\legacy;
 
+use Closure;
 use ilCSVWriter;
 use ilCtrlException;
 use ilException;
@@ -238,8 +239,21 @@ class LiveVotingResultsTableGUI extends ilTable2GUI
      */
     protected function shorten($question, int $length = 40): string
     {
-        $closure = $this->parent_obj->getShortener($length);
+
+        $closure = $this->getShortener($length);
 
         return $closure($question);
+    }
+
+    public function getShortener($length = 40): Closure
+    {
+        return function (&$question) use ($length) {
+            $qs = nl2br($question, false);
+            $qs = strip_tags($qs);
+
+            $question = strlen($qs) > $length ? substr($qs, 0, $length) . "..." : $qs;
+
+            return $question;
+        };
     }
 }
