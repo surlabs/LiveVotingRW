@@ -49,7 +49,7 @@ var xlvoVoter = {
 		$.get(xlvoVoter.config.base_url, {cmd: 'getVotingData'})
 			.done(function (data) {
 				xlvoVoter.log(data);
-				console.log(data, xlvoVoter.config.base_url);
+
 				//kill timer if running
 				if (xlvoVoter.interval) {
 					clearInterval(xlvoVoter.interval);

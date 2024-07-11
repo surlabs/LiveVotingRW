@@ -177,7 +177,7 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
         $votes = array_values($this->player->getVotesOfUser(true));
         $vote = array_shift($votes);
 
-        $an = $this->getTextInputGUI(ilLiveVotingPlugin::getInstance()->txt('input'), 'free_input');
+        $an = $this->getTextInputGUI(ilLiveVotingPlugin::getInstance()->txt('qtype_2_input'), 'free_input');
         $hi2 = new HiddenInputGUI('vote_id');
 
         if ($vote instanceof LiveVotingVote) {
@@ -190,7 +190,7 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
 
         $form->addItem($an);
         $form->addItem($hi2);
-        $form->addCommandButton('submit', ilLiveVotingPlugin::getInstance()->txt('send'));
+        $form->addCommandButton('submit', ilLiveVotingPlugin::getInstance()->txt('qtype_2_send'));
 
         return $form;
     }
@@ -211,7 +211,7 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
         $xlvoVotes = $this->player->getVotesOfUser();
         if (count($xlvoVotes) > 0) {
             $te = new ilNonEditableValueGUI();
-            $te->setValue(ilLiveVotingPlugin::getInstance()->txt('your_input'));
+            $te->setValue(ilLiveVotingPlugin::getInstance()->txt('qtype_2_your_input'));
             $form->addItem($te);
             //$form->addCommandButton(self::CMD_CLEAR, $this->txt('delete_all'));
         }

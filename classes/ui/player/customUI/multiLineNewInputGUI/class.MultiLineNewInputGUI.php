@@ -455,7 +455,7 @@ class MultiLineNewInputGUI extends ilFormPropertyGUI implements ilTableFilterIte
         }
 
         if (method_exists($item, "setValue") && !($item instanceof ilRadioOption)) {
-            $item->setValue($value);
+            $item->setValue((string)$value);
         }
     }
 

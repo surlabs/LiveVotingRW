@@ -235,4 +235,13 @@ abstract class LiveVotingQuestionTypesUI
         $xlvoPlayer->setButtonStates($states);
         $xlvoPlayer->save();
     }
+
+    /**
+     * @throws ilCtrlException
+     */
+    protected function startVoterPlayer()
+    {
+        global $DIC;
+        $DIC->ctrl()->redirectByClass(["ilUIPluginRouterGUI", "LiveVotingPlayerGUI"], 'startVoterPlayer');
+    }
 }
