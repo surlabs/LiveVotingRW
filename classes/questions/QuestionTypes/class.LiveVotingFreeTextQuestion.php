@@ -84,4 +84,19 @@ class LiveVotingFreeTextQuestion extends LiveVotingQuestion
     {
         return 12;
     }
+
+    function getVotesRepresentation(array $answer): string
+    {
+        if (empty($answer)) {
+            return "";
+        }
+
+        $strings = array();
+
+        foreach ($answer as $vote) {
+            $strings[] = str_replace(["\r\n", "\r", "\n"], " ", $vote->getFreeInput());
+        }
+
+        return implode(', ', $strings);
+    }
 }

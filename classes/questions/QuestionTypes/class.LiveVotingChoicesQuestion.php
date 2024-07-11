@@ -89,4 +89,19 @@ class LiveVotingChoicesQuestion extends LiveVotingQuestion
             4,
         )) ? $this->getColumns() : 1));
     }
+
+    function getVotesRepresentation(array $answer): string
+    {
+        if (empty($answer)) {
+            return "";
+        }
+
+        $strings = array();
+
+        foreach ($answer as $vote) {
+            $strings[] = $this->options[$vote->getOptionId()]->getText();
+        }
+
+        return implode(", ", $strings);
+    }
 }

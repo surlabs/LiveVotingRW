@@ -123,4 +123,20 @@ class LiveVotingNumberRangeQuestion extends LiveVotingQuestion
     {
         return 12;
     }
+
+    function getVotesRepresentation(array $answer): string
+    {
+        if (empty($answer)) {
+            return "";
+        }
+
+        $testVotes = [];
+
+        foreach ($answer as $vote) {
+            $percentage = $this->isPercentage() ? ' %' : '';
+            $testVotes[] = "{$vote->getFreeInput()}{$percentage}";
+        }
+
+        return implode(', ', $testVotes);
+    }
 }

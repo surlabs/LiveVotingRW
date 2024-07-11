@@ -375,4 +375,6 @@ abstract class LiveVotingQuestion
     }
 
     abstract function getComputedColums(): float;
+
+    abstract function getVotesRepresentation(array $answer): string;
 }

@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace LiveVoting\questions\QuestionTypes;
 
+use ilLiveVotingPlugin;
 use LiveVoting\platform\LiveVotingDatabase;
 use LiveVoting\questions\LiveVotingQuestion;
 
@@ -103,5 +104,59 @@ class LiveVotingOrderQuestion extends LiveVotingQuestion
                 3,
                 4,
             )) ? $this->getColumns() : 1));
+    }
+
+    function getVotesRepresentation(array $answer): string
+    {
+        if (empty($answer)) {
+            return "";
+        }
+
+        $strings = array();
+
+        $vote = array_shift($answer);
+
+        if ($this->correct_order) {
+            $plugin = ilLiveVotingPlugin::getInstance();
+
+            $correct_order_json = $this->getCorrectOrderJSON();
+
+            $return = ($correct_order_json == $vote->getFreeInput())
+                ? $plugin->txt("common_correct_order")
+                : $plugin->txt("common_incorrect_order");
+
+            $return .= ": ";
+
+            foreach (json_decode($vote->getFreeInput()) as $option_id) {
+                $strings[] = $this->options[$option_id]->getText();
+            }
+
+            return $return . implode(", ", $strings);
+        } else {
+            $json_decode = json_decode($vote->getFreeInput());
+
+            if (!is_array($json_decode)) {
+                return "";
+            }
+
+            foreach ($json_decode as $option_id) {
+                $strings[] = $this->options[$option_id]->getText();
+            }
+
+            return implode(", ", $strings);
+        }
+    }
+
+    protected function getCorrectOrderJSON(): string
+    {
+        $correct_order_ids = array();
+
+        foreach ($this->options as $option) {
+            $correct_order_ids[(int) $option->getCorrectPosition()] = $option->getId();
+        };
+
+        ksort($correct_order_ids);
+
+        return json_encode(array_values($correct_order_ids));
     }
 }

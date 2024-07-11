@@ -449,7 +449,7 @@ class LiveVotingVote
     /**
      * @throws LiveVotingException
      */
-    public static function getVotesForRound(int $round_id, string $filter = null): array
+    public static function getVotesForRound(int $round_id, bool $distinct = false, ?string $filter = null): array
     {
         $votes = array();
 
@@ -458,15 +458,23 @@ class LiveVotingVote
         if ($filter) {
             $result = $database->select("rep_robj_xlvo_vote_n", array(
                 "round_id" => $round_id
-            ), ["id"], "AND (user_identifier LIKE " . $filter . " OR user_id = " . $filter . ")");
+            ), ["id", "user_identifier", "user_id"], "AND (user_identifier LIKE " . $filter . " OR user_id = " . $filter . ")");
         } else {
             $result = $database->select("rep_robj_xlvo_vote_n", array(
                 "round_id" => $round_id
-            ), ["id"]);
+            ), ["id", "user_identifier", "user_id"]);
         }
 
         foreach ($result as $row) {
-            $votes[] = new LiveVotingVote((int) $row["id"]);
+            if (!$distinct) {
+                $votes[] = new LiveVotingVote((int) $row["id"]);
+            } else {
+                $votes[$row["user_identifier"] . "_" . $row["user_id"]] = new LiveVotingVote((int) $row["id"]);
+            }
+        }
+
+        if ($distinct) {
+            $votes = array_values($votes);
         }
 
         return $votes;

@@ -114,25 +114,27 @@ class LiveVotingResultsTableGUI extends ilTable2GUI
         }
 
         $participant = isset($this->filter['participant']) && $this->filter['participant'] != "" ? $this->filter['participant'] : null;
-        $votes = LiveVotingVote::getVotesForRound($round_id, (string) $participant);
+        $votes = LiveVotingVote::getVotesForRound($round_id, true, $participant);
+        $all_votes = LiveVotingVote::getVotesForRound($round_id, false, $participant);
 
-
-        foreach ($votes as $index => $vote) {
-            $question = $questions[$vote->getVotingId()];
-
-            $a_data[] = array(
-                "position"        => $index,
-                "participant"     => $vote->getParticipantName(),
-                "user_id"         => $vote->getUserId(),
-                "user_identifier" => $vote->getUserIdentifier(),
-                "title"           => $question->getTitle(),
-                "question"        => $question->getQuestion(),
-                "answer"          => "TODO", // TODO
-                "answer_ids"      => "TODO", // TODO
-                "voting_id"       => $question->getId(),
-                "round_id"        => $round_id,
-                "id"              => $vote->getId()
-            );
+        foreach ($votes as $vote) {
+            foreach ($questions as $question) {
+                $answers = $this->getVotesForQuestion($all_votes, $question->getId(), $vote);
+                
+                $a_data[] = array(
+                    "position"        => $question->getPosition(),
+                    "participant"     => $vote->getParticipantName(),
+                    "user_id"         => $vote->getUserId(),
+                    "user_identifier" => $vote->getUserIdentifier(),
+                    "title"           => $question->getTitle(),
+                    "question"        => $question->getQuestion(),
+                    "answer"          => $question->getVotesRepresentation($answers),
+                    "answer_ids"      => $this->concatAnswersIds($answers),
+                    "voting_id"       => $question->getId(),
+                    "round_id"        => $round_id,
+                    "id"              => $vote->getId()
+                );
+            }
         }
 
         $this->setData($a_data);
@@ -255,5 +257,29 @@ class LiveVotingResultsTableGUI extends ilTable2GUI
 
             return $question;
         };
+    }
+
+    private function getVotesForQuestion(array $all_votes, int $question_id, LiveVotingVote $vote): array
+    {
+        $votes = array();
+
+        foreach ($all_votes as $v) {
+            if ($v->getVotingId() == $question_id && ($v->getUserId() == $vote->getUserId() && $v->getUserIdentifier() == $vote->getUserIdentifier())) {
+                $votes[] = $v;
+            }
+        }
+
+        return $votes;
+    }
+
+    private function concatAnswersIds(array $answers): string
+    {
+        $answers_ids = array();
+
+        foreach ($answers as $answer) {
+            $answers_ids[] = $answer->getId();
+        }
+
+        return implode(",", $answers_ids);
     }
 }
