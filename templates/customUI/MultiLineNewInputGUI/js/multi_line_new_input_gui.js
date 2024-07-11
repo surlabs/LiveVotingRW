@@ -103,6 +103,7 @@ il.MultiLineNewInputGUI = {
                 this.cacheOptions(counter, el2, "select2", options);
             }.bind(this));
 
+
             if (!this.clone_template[counter]) {
                 this.clone_template[counter] = el.clone();
 
@@ -123,6 +124,7 @@ il.MultiLineNewInputGUI = {
 
                     el2.html("");
                 }.bind(this));
+
 
                 if (el.parent().parent().data("remove_first_line")) {
                     this.remove(counter, el);

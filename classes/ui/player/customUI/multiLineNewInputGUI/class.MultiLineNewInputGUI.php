@@ -116,6 +116,7 @@ class MultiLineNewInputGUI extends ilFormPropertyGUI implements ilTableFilterIte
 
     /**
      * @inheritDoc
+     * @throws ilDateTimeException
      */
     public function checkInput(): bool
     {
@@ -387,7 +388,7 @@ class MultiLineNewInputGUI extends ilFormPropertyGUI implements ilTableFilterIte
                 $tpl->setVariable("SORT", $sort_tpl->get());
             }
 
-            $tpl->setVariable("ADD", $DIC->ui()->renderer()->render($DIC->ui()->factory()->symbol()->glyph()->add()->withAdditionalOnLoadCode(function (string $id) use ($i, $counter) : string {
+            $tpl->setVariable("ADD", $DIC->ui()->renderer()->renderAsync($DIC->ui()->factory()->symbol()->glyph()->add()->withAdditionalOnLoadCode(function (string $id) use ($i, $counter) : string {
                 return 'il.MultiLineNewInputGUI.init(' . $counter . ', $("#' . $id . '").parent().parent().parent())' . ($i === (count($this->getInputs()) - 1) ? ';il.MultiLineNewInputGUI.update('
                         . $counter . ', $("#'
                         . $id

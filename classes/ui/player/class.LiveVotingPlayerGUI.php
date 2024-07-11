@@ -31,7 +31,7 @@ use LiveVoting\votings\LiveVotingVoter;
  * Class LiveVotingPlayerGUI
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
  *
- * @ilCtrl_isCalledBy LiveVotingPlayerGUI: ilUIPluginRouterGUI
+ * @ilCtrl_isCalledBy LiveVotingPlayerGUI: ilUIPluginRouterGUI, LiveVotingFreeTextPlayerGUI
  */
 class LiveVotingPlayerGUI
 {
@@ -104,13 +104,10 @@ class LiveVotingPlayerGUI
      * @throws ilTemplateException
      * @throws ilSystemStyleException
      * @throws LiveVotingException
-     * @throws ilCtrlException
+     * @throws ilCtrlException|ilException
      */
     protected function startVoterPlayer(): void
     {
-        global $DIC;
-
-
         $this->prepareFrameworkTemplate();
         $this->prepareVotingTemplate();
 
@@ -165,6 +162,11 @@ class LiveVotingPlayerGUI
 
         LiveVotingJs::getInstance()->name('Main')->init()->setRunCode();
         LiveVotingJs::getInstance()->api($this, array(IlUIPluginRouterGUI::class))->addSettings($settings)->name('Voter')->addTranslations($t)->init()->setRunCode();
+        LiveVotingJs::getInstance()->api($this)->name('FreeInput')->category('QuestionTypes/FreeInput')->init();
+
+        $DIC->ui()->mainTemplate()->addCss(ilLiveVotingPlugin::getInstance()->getDirectory()."/templates/customUI/MultiLineNewInputGUI/css/multi_line_new_input_gui.css");
+        $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory()."/templates/customUI/MultiLineNewInputGUI/js/multi_line_new_input_gui.js");
+        //LiveVotingJs::getInstance()->api($this)->addLibToHeader(ilLiveVotingPlugin::getInstance()->getDirectory(). '/templates/js/QuestionTypes/FreeInput/xlvoFreeInput.js', true)->setInitCode();
 
 
         //Show voting template

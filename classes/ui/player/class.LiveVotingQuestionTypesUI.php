@@ -95,7 +95,7 @@ abstract class LiveVotingQuestionTypesUI
                 $gui = new xlvoCorrectOrderGUI();
                 break;
             case "FreeText":
-                $gui = new LiveVotingFreeTextPlayerUI();
+                $gui = new LiveVotingFreeTextPlayerGUI();
                 break;
             case xlvoQuestionTypes::FREE_ORDER:
                 $gui = new xlvoFreeOrderGUI();

@@ -18,6 +18,20 @@ declare(strict_types=1);
  *
  */
 
+//namespace LiveVoting\UI\Player\CustomUI\FreeTextPlayerUI;
+
+/*use ilButtonBase;
+use ilCtrlException;
+use ilGlyphGUI;
+use ilLinkButton;
+use ilLiveVotingPlugin;
+use ilNonEditableValueGUI;
+use ilPropertyFormGUI;
+use ilSystemStyleException;
+use ilTemplate;
+use ilTemplateException;
+use ilTextInputGUI;
+use ilUtil;*/
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\UI\Player\CustomUI\HiddenInputGUI\HiddenInputGUI;
 use LiveVoting\UI\Player\CustomUI\MultiLineNewInputGUI;
@@ -25,13 +39,17 @@ use LiveVoting\UI\Player\CustomUI\TextAreaInputGUI\TextAreaInputGUI;
 use LiveVoting\Utils\LiveVotingJs;
 use LiveVoting\Utils\LiveVotingUtils;
 use LiveVoting\votings\LiveVotingVote;
+/*use LiveVotingPlayerGUI;
+use LiveVotingQuestionTypesUI;*/
 
 
 /**
- * Class LiveVotingFreeTextPlayerUI
+ * Class LiveVotingFreeTextPlayerGUI
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
+ * @ilCtrl_isCalledBy LiveVotingFreeTextPlayerGUI: ilUIPluginRouterGUI, LiveVotingPlayerGUI
+ * @ilCtrl_Calls LiveVotingFreeTextPlayerGUI: LiveVotingPlayerGUI, ilUIPluginRouterGUI
  */
-class LiveVotingFreeTextPlayerUI extends LiveVotingQuestionTypesUI
+class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
 {
     /**
      * @var ilTemplate
@@ -196,7 +214,7 @@ class LiveVotingFreeTextPlayerUI extends LiveVotingQuestionTypesUI
         global $DIC;
         $form = new ilPropertyFormGUI();
         $gui = new LiveVotingPlayerGUI();
-        $form->setFormAction($DIC->ctrl()->getFormAction($gui));
+        $form->setFormAction($DIC->ctrl()->getFormAction($this));
 
         $xlvoVotes = $this->player->getVotesOfUser();
         if (count($xlvoVotes) > 0) {
@@ -224,7 +242,7 @@ class LiveVotingFreeTextPlayerUI extends LiveVotingQuestionTypesUI
         }
 
         $form->setValuesByArray(array('vote_multi_line_input' => $array));
-        $form->addCommandButton('submit', ilLiveVotingPlugin::getInstance()->txt('send'));
+        $form->addCommandButton('submit', ilLiveVotingPlugin::getInstance()->txt('qtype_2_send'));
 
         return $form;
     }
