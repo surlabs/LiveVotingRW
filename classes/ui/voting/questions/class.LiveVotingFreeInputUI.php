@@ -227,6 +227,18 @@ class LiveVotingFreeInputUI
 
             $id = ilObject::_lookupObjId((int)$_GET['ref_id']);
             $question->setObjId($id);
+
+            if (empty($question->getOptions())) {
+                $option = new LiveVotingQuestionOption();
+
+                $option->setVotingId($question->getId());
+                $option->setType($question->getQuestionTypeId());
+
+                $question->setOptions(array(
+                    $option
+                ));
+            }
+
             $this->question = $question;
 
             return $question->save();

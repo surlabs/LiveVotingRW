@@ -34,7 +34,7 @@ use LiveVoting\Utils\LiveVotingUtils;
  */
 class LiveVotingVote
 {
-    private int $id;
+    private int $id = 0;
     private int $type;
     private int $status;
     private int $option_id;
@@ -45,10 +45,11 @@ class LiveVotingVote
     private int $last_update;
     private int $round_id = 0;
     private string $free_input;
-    private int $free_input_category;
+    private int $free_input_category = 0;
 
     /**
      * @throws LiveVotingException
+     * @throws Exception
      */
     public function __construct(?int $id = null)
     {
@@ -180,9 +181,12 @@ class LiveVotingVote
 
     /**
      * @throws LiveVotingException
+     * @throws Exception
      */
     public function save(): int {
         $database = new LiveVotingDatabase();
+
+        $this->last_update = LiveVotingUtils::getTime();
 
         if ($this->id != 0) {
             $database->update("rep_robj_xlvo_vote_n", array(

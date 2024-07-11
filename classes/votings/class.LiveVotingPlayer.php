@@ -25,6 +25,7 @@ use ilLiveVotingPlugin;
 use LiveVoting\platform\LiveVotingDatabase;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\questions\LiveVotingQuestion;
+use LiveVoting\questions\LiveVotingQuestionOption;
 use LiveVoting\Utils\LiveVotingUtils;
 use LiveVoting\Utils\ParamManager;
 
@@ -742,6 +743,9 @@ class LiveVotingPlayer
             $options = $this->getActiveVotingObject()->getOptions();
             $var=array_values($options);
             $option = array_shift($var);
+            if (!$option instanceof LiveVotingQuestionOption) {
+                throw new LiveVotingException('No Option given');
+            }
             $vote->setOptionId($option->getId());
             $vote->setType(2);
             $vote->setStatus(1);

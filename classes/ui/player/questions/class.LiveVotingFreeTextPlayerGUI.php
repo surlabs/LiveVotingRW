@@ -25,6 +25,8 @@ use LiveVoting\UI\Player\CustomUI\MultiLineNewInputGUI;
 use LiveVoting\UI\Player\CustomUI\TextAreaInputGUI\TextAreaInputGUI;
 use LiveVoting\Utils\LiveVotingJs;
 use LiveVoting\Utils\LiveVotingUtils;
+use LiveVoting\Utils\ParamManager;
+use LiveVoting\votings\LiveVoting;
 use LiveVoting\votings\LiveVotingVote;
 
 
@@ -64,6 +66,10 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
      */
     protected function submit()
     {
+        $param_manager = ParamManager::getInstance();
+        $liveVoting = LiveVoting::getLiveVotingFromPin($param_manager->getPin());
+        $this->player = $liveVoting->getPlayer();
+
         $input_gui = $this->getTextInputGUI("", 'free_input');
 
         $this->getPlayer()->unvoteAll();
