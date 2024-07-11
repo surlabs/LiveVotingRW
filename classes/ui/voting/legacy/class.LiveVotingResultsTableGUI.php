@@ -80,6 +80,7 @@ class LiveVotingResultsTableGUI extends ilTable2GUI
     {
         $this->addColumn(ilLiveVotingPlugin::getInstance()->txt('common_position'), 'position', '10%');
         $this->addColumn(ilLiveVotingPlugin::getInstance()->txt('common_user'), 'user', '10%');
+        $this->addColumn(ilLiveVotingPlugin::getInstance()->txt('voting_type'), 'question_type', '10%');
         $this->addColumn(ilLiveVotingPlugin::getInstance()->txt('voting_title'), 'title', '15%');
         $this->addColumn(ilLiveVotingPlugin::getInstance()->txt('common_question'), 'question', '20%');
         $this->addColumn(ilLiveVotingPlugin::getInstance()->txt('common_answer'), 'answer', 'auto');
@@ -126,6 +127,7 @@ class LiveVotingResultsTableGUI extends ilTable2GUI
                     "participant"     => $vote->getParticipantName(),
                     "user_id"         => $vote->getUserId(),
                     "user_identifier" => $vote->getUserIdentifier(),
+                    "question_type"   => $question->getQuestionTypeId(),
                     "title"           => $question->getTitle(),
                     "question"        => $question->getQuestion(),
                     "answer"          => $question->getVotesRepresentation($answers),
@@ -151,6 +153,7 @@ class LiveVotingResultsTableGUI extends ilTable2GUI
 
         $this->tpl->setVariable("POSITION", $a_set['position']);
         $this->tpl->setVariable("USER", $a_set['participant']);
+        $this->tpl->setVariable("QUESTION_TYPE", ilLiveVotingPlugin::getInstance()->txt("voting_type_" . $a_set['question_type']));
         $this->tpl->setVariable("QUESTION", $this->shorten($a_set['question']));
         $this->tpl->setVariable("TITLE", $this->shorten($a_set['title']));
         $this->tpl->setVariable("ANSWER", $this->shorten($a_set['answer'], 100));
