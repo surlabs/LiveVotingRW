@@ -482,4 +482,36 @@ class LiveVotingVote
 
         return $votes;
     }
+
+    /**
+     * @throws LiveVotingException
+     */
+    public static function countVotes(int $voting_id, int $round_id): int
+    {
+        $database = new LiveVotingDatabase();
+
+        $result = $database->select("rep_robj_xlvo_vote_n", array(
+            "voting_id" => $voting_id,
+            "status" => 1,
+            "round_id" => $round_id
+        ), ["COUNT(id) AS count"]);
+
+        return (int) $result[0]["count"];
+    }
+
+    /**
+     * @throws LiveVotingException
+     */
+    public static function countVoters(int $voting_id, int $round_id): int
+    {
+        $database = new LiveVotingDatabase();
+
+        $result = $database->select("rep_robj_xlvo_vote_n", array(
+            "voting_id" => $voting_id,
+            "status" => 1,
+            "round_id" => $round_id
+        ), ["user_id_type", "user_identifier", "user_id"], "GROUP BY user_id_type, user_identifier, user_id");
+
+        return count($result);
+    }
 }
