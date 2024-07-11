@@ -18,20 +18,7 @@ declare(strict_types=1);
  *
  */
 
-//namespace LiveVoting\UI\Player\CustomUI\FreeTextPlayerUI;
 
-/*use ilButtonBase;
-use ilCtrlException;
-use ilGlyphGUI;
-use ilLinkButton;
-use ilLiveVotingPlugin;
-use ilNonEditableValueGUI;
-use ilPropertyFormGUI;
-use ilSystemStyleException;
-use ilTemplate;
-use ilTemplateException;
-use ilTextInputGUI;
-use ilUtil;*/
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\UI\Player\CustomUI\HiddenInputGUI\HiddenInputGUI;
 use LiveVoting\UI\Player\CustomUI\MultiLineNewInputGUI;
@@ -39,8 +26,7 @@ use LiveVoting\UI\Player\CustomUI\TextAreaInputGUI\TextAreaInputGUI;
 use LiveVoting\Utils\LiveVotingJs;
 use LiveVoting\Utils\LiveVotingUtils;
 use LiveVoting\votings\LiveVotingVote;
-/*use LiveVotingPlayerGUI;
-use LiveVotingQuestionTypesUI;*/
+
 
 
 /**
