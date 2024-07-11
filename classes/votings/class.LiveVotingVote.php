@@ -344,9 +344,12 @@ class LiveVotingVote
 
         $where = array(
             'voting_id' => $voting_id,
-            'status' => $incl_inactive ? [0, 1] : 1,
             'round_id' => $round_id,
         );
+
+        if (!$incl_inactive) {
+            $where['status'] = 1;
+        }
 
         if ($participant->isILIASUser()) {
             $where['user_id'] = $participant->getIdentifier();
