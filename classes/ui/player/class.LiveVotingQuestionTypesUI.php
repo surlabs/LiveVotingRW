@@ -92,7 +92,7 @@ abstract class LiveVotingQuestionTypesUI
         $gui = null;
         switch ($player->getActiveVotingObject()->getQuestionType()) {
             case "CorrectOrder":
-                $gui = new xlvoCorrectOrderGUI();
+                $gui = new LiveVotingCorrectOrderPlayerGUI();
                 break;
             case "FreeText":
                 $gui = new LiveVotingFreeTextPlayerGUI();

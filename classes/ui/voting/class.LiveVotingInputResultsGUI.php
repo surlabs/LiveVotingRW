@@ -77,7 +77,7 @@ abstract class LiveVotingInputResultsGUI
             case "FreeText":
                 return new LiveVotingInputFreeTextUI($player);
             case "CorrectOrder":
-                //return new LiveVotingCorrectOrderUI($player);
+                return new LiveVotingInputCorrectOrder($player);
             case "Priorities":
                 return new LiveVotingPrioritiesUI($player);
             case "NumberRange":

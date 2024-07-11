@@ -24,7 +24,7 @@ use ilSystemStyleException;
 use ilTemplate;
 use ilTemplateException;
 
-abstract class LiveVotingBarCollectionUI
+class LiveVotingBarCollectionUI
 {
     /**
      * @var ilTemplate
