@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace LiveVoting\votings;
 
+use Exception;
 use ilLiveVotingPlugin;
 use ilObjUser;
 use LiveVoting\platform\LiveVotingDatabase;
@@ -410,10 +411,23 @@ class LiveVotingVote
      * @param int $voting_id
      * @param int $round_id
      * @return void
+     * @throws LiveVotingException
+     * @throws Exception
      */
     public static function createHistoryObject(LiveVotingParticipant $participant, int $voting_id, int $round_id): void
     {
-        // TODO: Implement createHistoryObject() method.
+        $database = new LiveVotingDatabase();
+
+        $database->insert("rep_robj_xlvo_votehist", array(
+            "id" => $database->nextId("rep_robj_xlvo_votehist"),
+            "user_id_type" => $participant->isILIASUser() ? 0 : 1,
+            "user_id" => $participant->isILIASUser() ? $participant->getIdentifier() : null,
+            "user_identifier" => $participant->isILIASUser() ? null : $participant->getIdentifier(),
+            "voting_id" => $voting_id,
+            "timestamp" => LiveVotingUtils::getTime(),
+            "round_id" => $round_id,
+            "answer" => "TODO" // TODO
+        ));
     }
 
 

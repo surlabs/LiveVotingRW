@@ -23,6 +23,7 @@ use LiveVoting\UI\Player\CustomUI\HiddenInputGUI\HiddenInputGUI;
 use LiveVoting\UI\Player\CustomUI\MultiLineNewInputGUI;
 use LiveVoting\UI\Player\CustomUI\TextAreaInputGUI\TextAreaInputGUI;
 use LiveVoting\Utils\LiveVotingJs;
+use LiveVoting\Utils\LiveVotingUtils;
 use LiveVoting\votings\LiveVotingVote;
 
 
@@ -65,8 +66,7 @@ class LiveVotingFreeTextPlayerUI extends LiveVotingQuestionTypesUI
         if ($this->player->getActiveVotingObject()->isMultiFreeInput()) {
             $array = array();
             foreach (filter_input(INPUT_POST, 'vote_multi_line_input', FILTER_DEFAULT, FILTER_FORCE_ARRAY) as $item) {
-                //TODO: Deprecado
-                $input = ilUtil::secureString($item['free_input']);
+                $input = LiveVotingUtils::secureString($item['free_input']);
                 if (!empty($input) && strlen($input) <= $input_gui->getMaxLength()) {
                     $array[] = array(
                         "input"   => $input,
@@ -76,8 +76,7 @@ class LiveVotingFreeTextPlayerUI extends LiveVotingQuestionTypesUI
             }
             $this->player->input($array);
         } else {
-            //TODO: Deprecado
-            $input = ilUtil::secureString(filter_input(INPUT_POST, 'free_input'));
+            $input = LiveVotingUtils::secureString(filter_input(INPUT_POST, 'free_input'));
             if (!empty($input) && strlen($input) <= $input_gui->getMaxLength()) {
                 $this->player->input(array(
                     "input"   => $input,

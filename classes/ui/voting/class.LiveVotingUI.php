@@ -239,11 +239,6 @@ class LiveVotingUI
             'voting_confirm_reset',
         ))->init()->setRunCode();
 
-        //TODO: Revisar si esta línea de abajo es necesaria. Creo que PPT son referencias a PowerPoint que ya no se soportará.
-        //LiveVotingJs::getInstance()->ilias($parent)->name('PPT')->init()->setRunCode();
-
-
-
         $DIC->ui()->mainTemplate()->addCss($this->pl->getDirectory() . '/templates/css/player.css');
         $DIC->ui()->mainTemplate()->addCss($this->pl->getDirectory() . '/templates/css/bar.css');
 

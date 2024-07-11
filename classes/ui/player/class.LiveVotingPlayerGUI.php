@@ -243,8 +243,6 @@ class LiveVotingPlayerGUI
                     $this->getVotingTemplate()->setVariable('POSITION', (string)$this->getLiveVoting()->getQuestionPosition());
                     $this->getVotingTemplate()->setVariable('PIN', $this->getLiveVoting()->getPin());
 
-                    //TODO: Implementar esto:
-
                     $xlvoQuestionTypesGUI = LiveVotingQuestionTypesUI::getInstance($this->getLiveVoting()->getPlayer());
                     if ($xlvoQuestionTypesGUI->isShowQuestion()) {
                         $this->getVotingTemplate()->setCurrentBlock('question_text');

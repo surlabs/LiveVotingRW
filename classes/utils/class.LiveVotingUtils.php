@@ -39,4 +39,43 @@ class LiveVotingUtils
 
         return $time->getTimestamp();
     }
+
+
+
+    /**
+     * This method is a better alternative to ilUtil::secureString because ensure that the tag is really a tag and not a comparator.
+     *
+     * @param string $a_str
+     * @return string
+     */
+    public static function secureString(string $a_str) : string {
+        $sec_tags = ["strong",
+            "em",
+            "u",
+            "strike",
+            "ol",
+            "li",
+            "ul",
+            "p",
+            "div",
+            "i",
+            "b",
+            "code",
+            "sup",
+            "sub",
+            "pre",
+            "gap",
+            "a",
+            "img",
+            "bdo"
+        ];
+
+        return preg_replace_callback('/<[^>]*>/', function ($matches) use ($sec_tags) {
+            if (in_array($matches[0], $sec_tags)) {
+                return $matches[0];
+            } else {
+                return '';
+            }
+        }, $a_str);
+    }
 }
