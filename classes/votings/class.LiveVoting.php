@@ -361,8 +361,8 @@ class LiveVoting
         $this->setPin(LiveVoting::generatePin());
         $this->setOnline(false);
         $this->setAnonymous(false);
-        $this->setFrozenBehaviour(1);
-        $this->setResultsBehaviour(1);
+        $this->setFrozenBehaviour(0);
+        $this->setResultsBehaviour(0);
         $this->setVotingHistory(false);
         $this->setShowAttendees(false);
         $this->setPuk(LiveVoting::generatePuk());
