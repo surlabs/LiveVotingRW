@@ -89,6 +89,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
                 break;
             case 'editProperties':
             case 'startPlayer':
+            case 'startPlayerAnUnfreeze':
             case 'getPlayerData':
             case 'manage':
             case 'results':
@@ -598,6 +599,21 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         $liveVotingUI->initJsAndCss($this);
         $liveVotingUI->showVoting();
 
+    }
+
+    protected function startPlayerAnUnfreeze():void
+    {
+        $this->tabs->activateTab("tab_content");
+
+        $liveVotingUI = new LiveVotingUI($this->object->getLiveVoting());
+        $liveVotingUI->initJsAndCss($this);
+        $liveVotingUI->showVoting();
+
+        $this->object->getLiveVoting()->getPlayer()->setStatus(LiveVotingPlayer::STAT_RUNNING);
+
+        $param_manager = ParamManager::getInstance();
+
+        $this->object->getLiveVoting()->getPlayer()->unfreeze($param_manager->getVoting());
     }
 
     /**
