@@ -104,7 +104,7 @@ abstract class LiveVotingQuestionTypesUI
                 $gui = new LiveVotingSingleVotePlayerGUI();
                 break;
             case "NumberRange":
-                $gui = new xlvoNumberRangeGUI();
+                $gui = new LiveVotingNumberRangePlayerGUI();
                 break;
             default:
                 throw new ilException("Could not find the gui for the current voting.");

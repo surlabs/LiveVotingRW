@@ -79,7 +79,7 @@ abstract class LiveVotingInputResultsGUI
                 return new LiveVotingInputPrioritiesUI($player);
 
             case "NumberRange":
-                //return new LiveVotingNumberRangeUI($player);
+                return new LiveVotingInputNumberRangeUI($player);
             default:
                 throw new LiveVotingException("Could not find the results gui for the given voting");
         }

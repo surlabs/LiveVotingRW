@@ -118,7 +118,7 @@ class LiveVotingPlayerGUI
         global $DIC;
 
         $DIC->ui()->mainTemplate()->addCss($this->getPluginObject()->getDirectory() . '/templates/default/Voter/voter.css', '');
-        $DIC->ui()->mainTemplate()->addCss($this->getPluginObject()->getDirectory() . '/templates/default/libs/bootstrap-slider.min.css', '');
+        $DIC->ui()->mainTemplate()->addCss($this->getPluginObject()->getDirectory() . '/templates/default/QuestionTypes/NumberRange/bootstrap-slider.min.css', '');
         $DIC->ui()->mainTemplate()->addCss($this->getPluginObject()->getDirectory() . '/templates/default/QuestionTypes/NumberRange/number_range.css', '');
     }
 
@@ -168,6 +168,11 @@ class LiveVotingPlayerGUI
         LiveVotingJs::getInstance()->api($this)->name('SingleVote')->category('QuestionTypes/SingleVote')
             ->addLibToHeader('jquery.ui.touch-punch.min.js')->init();
 
+        LiveVotingJs::getInstance()->api($this)->name('NumberRange')->category('QuestionTypes/NumberRange')->addLibToHeader('bootstrap-slider.js')
+            ->addSettings([
+                "step" => LiveVotingNumberRangePlayerGUI::getInstance($this->live_voting->getPlayer())->getStep()
+            ])->init();
+
         $DIC->ui()->mainTemplate()->addCss(ilLiveVotingPlugin::getInstance()->getDirectory()."/templates/customUI/MultiLineNewInputGUI/css/multi_line_new_input_gui.css");
         $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory()."/templates/customUI/MultiLineNewInputGUI/js/multi_line_new_input_gui.js");
 
@@ -178,6 +183,7 @@ class LiveVotingPlayerGUI
         $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory(). '/templates/js/QuestionTypes/FreeInput/xlvoFreeInput.js');
         $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory(). '/templates/js/QuestionTypes/CorrectOrder/xlvoCorrectOrder.js');
         $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory(). '/templates/js/QuestionTypes/FreeOrder/xlvoFreeOrder.js');
+        $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory(). '/templates/js/QuestionTypes/NumberRange/xlvoNumberRange.js');
 
         //LiveVotingJs::getInstance()->api($this)->addLibToHeader(ilLiveVotingPlugin::getInstance()->getDirectory(). '/templates/js/QuestionTypes/FreeInput/xlvoFreeInput.js', true)->setInitCode();
 
