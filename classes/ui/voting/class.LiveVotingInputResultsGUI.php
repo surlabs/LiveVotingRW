@@ -20,11 +20,8 @@ declare(strict_types=1);
  */
 namespace LiveVoting\UI\QuestionsResults;
 
-use ilCtrlException;
-use ilObjLiveVotingGUI;
 use LiveVoting\platform\LiveVotingDatabase;
 use LiveVoting\platform\LiveVotingException;
-use LiveVoting\votings\LiveVoting;
 use LiveVoting\votings\LiveVotingPlayer;
 
 abstract class LiveVotingInputResultsGUI
@@ -77,9 +74,10 @@ abstract class LiveVotingInputResultsGUI
             case "FreeText":
                 return new LiveVotingInputFreeTextUI($player);
             case "CorrectOrder":
-                return new LiveVotingInputCorrectOrder($player);
+                return new LiveVotingInputCorrectOrderUI($player);
             case "Priorities":
-                return new LiveVotingPrioritiesUI($player);
+                return new LiveVotingInputPrioritiesUI($player);
+
             case "NumberRange":
                 //return new LiveVotingNumberRangeUI($player);
             default:

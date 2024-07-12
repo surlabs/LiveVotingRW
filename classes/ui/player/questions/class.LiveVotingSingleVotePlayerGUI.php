@@ -52,7 +52,7 @@ class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
      */
     public function initJS(bool $current = false)
     {
-       
+
     }
 
 

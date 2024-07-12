@@ -28,7 +28,7 @@ use LiveVoting\UI\Voting\Bar\LiveVotingBarCollectionUI;
 use LiveVoting\UI\Voting\Bar\LiveVotingBarPercentageUI;
 use LiveVoting\votings\LiveVotingVote;
 
-class LiveVotingInputCorrectOrder extends LiveVotingSingleVoteResultsUI
+class LiveVotingInputCorrectOrderUI extends LiveVotingSingleVoteResultsUI
 {
     /**
      * @return string
