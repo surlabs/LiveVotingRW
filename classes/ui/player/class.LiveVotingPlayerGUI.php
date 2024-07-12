@@ -31,7 +31,7 @@ use LiveVoting\votings\LiveVotingVoter;
  * Class LiveVotingPlayerGUI
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
  *
- * @ilCtrl_isCalledBy LiveVotingPlayerGUI: ilUIPluginRouterGUI, LiveVotingFreeTextPlayerGUI
+ * @ilCtrl_isCalledBy LiveVotingPlayerGUI: ilUIPluginRouterGUI, LiveVotingFreeTextPlayerGUI, LiveVotingCorrectOrderPlayerGUI, LiveVotingSingleVotePlayerGUI
  */
 class LiveVotingPlayerGUI
 {

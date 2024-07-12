@@ -34,8 +34,8 @@ use LiveVoting\votings\LiveVotingVote;
 /**
  * Class LiveVotingSingleVotePlayerGUI
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
- * @ilCtrl_isCalledBy LiveVotingCorrectOrderPlayerGUI: ilUIPluginRouterGUI, LiveVotingPlayerGUI
- * @ilCtrl_Calls LiveVotingCorrectOrderPlayerGUI: LiveVotingPlayerGUI, ilUIPluginRouterGUI
+ * @ilCtrl_isCalledBy LiveVotingSingleVotePlayerGUI: ilUIPluginRouterGUI, LiveVotingPlayerGUI
+ * @ilCtrl_Calls LiveVotingSingleVotePlayerGUI: LiveVotingPlayerGUI, ilUIPluginRouterGUI
  */
 class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
 {
@@ -103,6 +103,7 @@ class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
      * @throws LiveVotingException
      * @throws ilTemplateException
      * @throws ilCtrlException
+     * @throws ilSystemStyleException
      */
     public function getMobileHTML(): string
     {
@@ -113,19 +114,19 @@ class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
             $answer_count++;
             $DIC->ctrl()->setParameter($this, 'option_id', $xlvoOption->getId());
             $tpl->setCurrentBlock('option');
-            $tpl->setVariable('TITLE', $xlvoOption->getTextForPresentation());
+            $tpl->setVariable('TITLE', $xlvoOption->getText());
             $tpl->setVariable('LINK', $DIC->ctrl()->getLinkTarget($this, 'submit'));
             $tpl->setVariable('OPTION_LETTER', chr($answer_count));
-            if ($this->manager->hasUserVotedForOption($xlvoOption)) {
+            if ($this->player->hasUserVotedForOption($xlvoOption->getId())) {
                 $tpl->setVariable('BUTTON_STATE', 'btn-primary');
-                $tpl->setVariable('ACTION', $this->txt('unvote'));
+                $tpl->setVariable('ACTION', ilLiveVotingPlugin::getInstance()->txt('qtype_1_unvote'));
             } else {
                 $tpl->setVariable('BUTTON_STATE', 'btn-default');
-                $tpl->setVariable('ACTION', $this->txt('vote'));
+                $tpl->setVariable('ACTION', ilLiveVotingPlugin::getInstance()->txt('qtype_1_vote'));
             }
             $tpl->parseCurrentBlock();
         }
 
-        return $tpl->get() . xlvoJs::getInstance()->name(xlvoQuestionTypes::SINGLE_VOTE)->category('QuestionTypes')->getRunCode();
+        return $tpl->get() . LiveVotingJs::getInstance()->name('SingleVote')->category('QuestionTypes/SingleVote')->getRunCode();
     }
 }

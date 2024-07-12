@@ -100,12 +100,9 @@ abstract class LiveVotingQuestionTypesUI
             case "FreeOrder":
                 //$gui = new xlvoFreeOrderGUI();
                 $gui = new LiveVotingFreeTextPlayerGUI();
-
                 break;
-            case "SingleVote":
-                $gui = new LiveVotingFreeTextPlayerGUI();
-
-                //$gui = new xlvoSingleVoteGUI();
+            case "Choices":
+                $gui = new LiveVotingSingleVotePlayerGUI();
                 break;
             case "NumberRange":
                 $gui = new xlvoNumberRangeGUI();
