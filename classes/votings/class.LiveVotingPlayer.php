@@ -719,6 +719,20 @@ class LiveVotingPlayer
     /**
      * @throws LiveVotingException
      */
+    public function hasUserVotedForOption(LiveVotingQuestionOption $option): bool
+    {
+        foreach ($this->getVotesOfUser() as $vote) {
+            if ($vote->getOptionId() == $option->getId()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @throws LiveVotingException
+     */
     public function input(array $array): void
     {
         if (array_key_exists("vote_id", $array) || array_key_exists("input", $array)) {
