@@ -99,7 +99,11 @@ class LiveVotingChoicesQuestion extends LiveVotingQuestion
         $strings = array();
 
         foreach ($answer as $vote) {
-            $strings[] = $this->options[$vote->getOptionId()]->getText();
+            foreach ($this->options as $option) {
+                if ($option->getId() == $vote->getOptionId()) {
+                    $strings[] = $option->getText();
+                }
+            }
         }
 
         return implode(", ", $strings);

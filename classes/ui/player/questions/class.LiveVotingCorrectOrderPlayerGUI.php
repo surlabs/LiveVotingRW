@@ -27,6 +27,8 @@ use LiveVoting\UI\Player\CustomUI\TextAreaInputGUI\TextAreaInputGUI;
 use LiveVoting\UI\Voting\Bar\LiveVotingBarMovableUI;
 use LiveVoting\Utils\LiveVotingJs;
 use LiveVoting\Utils\LiveVotingUtils;
+use LiveVoting\Utils\ParamManager;
+use LiveVoting\votings\LiveVoting;
 use LiveVoting\votings\LiveVotingVote;
 
 
@@ -70,6 +72,10 @@ class LiveVotingCorrectOrderPlayerGUI extends LiveVotingQuestionTypesUI
      */
     protected function submit(): void
     {
+        $param_manager = ParamManager::getInstance();
+        $liveVoting = LiveVoting::getLiveVotingFromPin($param_manager->getPin());
+        $this->player = $liveVoting->getPlayer();
+
         $this->player->input(array(
             "input"   => json_encode($_POST['id']),
             "vote_id" => $_POST['vote_id']

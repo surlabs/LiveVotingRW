@@ -128,7 +128,11 @@ class LiveVotingOrderQuestion extends LiveVotingQuestion
             $return .= ": ";
 
             foreach (json_decode($vote->getFreeInput()) as $option_id) {
-                $strings[] = $this->options[$option_id]->getText();
+                foreach ($this->options as $option) {
+                    if ($option->getId() == $option_id) {
+                        $strings[] = $option->getText();
+                    }
+                }
             }
 
             return $return . implode(", ", $strings);
@@ -140,7 +144,11 @@ class LiveVotingOrderQuestion extends LiveVotingQuestion
             }
 
             foreach ($json_decode as $option_id) {
-                $strings[] = $this->options[$option_id]->getText();
+                foreach ($this->options as $option) {
+                    if ($option->getId() == $option_id) {
+                        $strings[] = $option->getText();
+                    }
+                }
             }
 
             return implode(", ", $strings);
