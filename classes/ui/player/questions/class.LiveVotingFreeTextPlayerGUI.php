@@ -255,9 +255,9 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
         $b->setUrl('#');
 
         if (array_key_exists('btn_categorize', $this->getButtonsStates()) && $this->getButtonsStates()['btn_categorize'] == 'true') {
-            $b->setCaption(ilGlyphGUI::get('folder-close') . '&nbsp' . ilLiveVotingPlugin::getInstance()->txt('categorize_done', 'btn'), false);
+            $b->setCaption(ilGlyphGUI::get('close') . '&nbsp' . ilLiveVotingPlugin::getInstance()->txt('btn_categorize_done', 'btn'), false);
         } else {
-            $b->setCaption(ilGlyphGUI::get('folder-open') . '&nbsp' . ilLiveVotingPlugin::getInstance()->txt('categorize', 'btn'), false);
+            $b->setCaption(ilGlyphGUI::get('close') . '&nbsp' . ilLiveVotingPlugin::getInstance()->txt('btn_categorize', 'btn'), false);
         }
 
         return array($b);

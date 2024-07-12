@@ -24,6 +24,7 @@ use ilLiveVotingPlugin;
 use ilSystemStyleException;
 use ilTemplate;
 use ilTemplateException;
+use LiveVoting\votings\LiveVoting;
 
 final class LiveVotingBarGroupingCollectionUI extends LiveVotingBarCollectionUI
 {
@@ -58,7 +59,7 @@ final class LiveVotingBarGroupingCollectionUI extends LiveVotingBarCollectionUI
     {
         $this->checkCollectionState();
 
-        if ($bar_gui instanceof xlvoBarFreeInputsGUI) {
+        if ($bar_gui instanceof LiveVotingBarFreeTextUI) {
             $bar_gui->setRemovable($this->isRemovable());
             $this->bars[] = $bar_gui;
         } else {
@@ -189,13 +190,13 @@ final class LiveVotingBarGroupingCollectionUI extends LiveVotingBarCollectionUI
     /**
      * This method renders the bars.
      *
-     * @param xlvoBarFreeInputsGUI $bar The bar which should be rendered into the template.
+     * @param LiveVotingBarFreeTextUI $bar The bar which should be rendered into the template.
      * @param int $count The times the bar got grouped.
      *
      * @return void
      * @throws ilTemplateException
      */
-    private function renderBar(xlvoBarFreeInputsGUI $bar, $count)
+    private function renderBar(LiveVotingBarFreeTextUI $bar, $count)
     {
         $bar->setOccurrences($count);
 
@@ -208,12 +209,12 @@ final class LiveVotingBarGroupingCollectionUI extends LiveVotingBarCollectionUI
     /**
      * Count the occurrences of bar within the given collection of bar.
      *
-     * @param xlvoBarFreeInputsGUI[] $bars The collection which should be searched
-     * @param xlvoBarFreeInputsGUI   $bar
+     * @param LiveVotingBarFreeTextUI[] $bars The collection which should be searched
+     * @param LiveVotingBarFreeTextUI   $bar
      *
      * @return int The times bar was found in bars.
      */
-    private function countItemOccurence(array $bars, xlvoBarFreeInputsGUI $bar): int
+    private function countItemOccurence(array $bars, LiveVotingBarFreeTextUI $bar): int
     {
         $count = 0;
         foreach ($bars as $entry) {
@@ -230,14 +231,14 @@ final class LiveVotingBarGroupingCollectionUI extends LiveVotingBarCollectionUI
      * Filter the array by freetext input.
      * The filter is case insensitive.
      *
-     * @param xlvoBarFreeInputsGUI[] $bars The array which should be filtered.
+     * @param LiveVotingBarFreeTextUI[] $bars The array which should be filtered.
      *
-     * @return xlvoBarFreeInputsGUI[] The new array which contains only unique bars.
+     * @return LiveVotingBarFreeTextUI[] The new array which contains only unique bars.
      */
     private function makeUniqueArray(array $bars): array
     {
         /**
-         * @var xlvoBarFreeInputsGUI $filter
+         * @var LiveVotingBarFreeTextUI $filter
          */
         $uniqueBars = [];
 
@@ -273,11 +274,11 @@ final class LiveVotingBarGroupingCollectionUI extends LiveVotingBarCollectionUI
      * Creates a copy with unique elements of the supplied array and sorts the content afterwards.
      * The current sorting is descending.
      *
-     * @param xlvoBarFreeInputsGUI[] $bars The array of bars which should be sorted.
+     * @param LiveVotingBarFreeTextUI[] $bars The array of bars which should be sorted.
      *
-     * @return xlvoBarFreeInputsGUI[] Descending sorted array.
+     * @return LiveVotingBarFreeTextUI[] Descending sorted array.
      */
-    private function sortBarsByFrequency(array $bars)
+    private function sortBarsByFrequency(array $bars): array
     {
         //dirty -> should be optimised in the future.
 

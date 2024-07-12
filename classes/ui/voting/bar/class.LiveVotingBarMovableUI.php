@@ -63,7 +63,7 @@ class LiveVotingBarMovableUI implements LiveVotingGeneralBarUI
         $this->options = $options;
         $this->order = $order;
         $this->vote_id = $vote_id;
-        $this->tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/Bar/tpl.bar_movable.html', false, false);
+        $this->tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/Bar/tpl.bar_movable.html', true, true);
 
 
     }

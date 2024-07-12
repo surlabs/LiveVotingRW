@@ -623,8 +623,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             $results = array(
                 'player' => $this->object->getLiveVoting()->getPlayer()->getPlayerData(),
                 'player_html' => $liveVotingUI->getPlayerHTML(true),
-                //'buttons_html' => $this->getButtonsHTML(),
-                'buttons_html' => ""
+                'buttons_html' => $this->getButtonsHTML()
             );
 
             LiveVotingJs::sendResponse($results);
@@ -634,6 +633,33 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         }
 
         //xlvoJsResponse::getInstance($results)->send();
+    }
+
+    /**
+     * @return string
+     */
+    protected function getButtonsHTML(): string
+    {
+        // Buttons from Questions
+        try {
+            $xlvoQuestionTypesGUI = LiveVotingQuestionTypesUI::getInstance($this->object->getLiveVoting()->getPlayer());
+            if ($xlvoQuestionTypesGUI->hasButtons()) {
+                $toolbar = new ilToolbarGUI();
+
+                foreach ($xlvoQuestionTypesGUI->getButtonInstances() as $buttonInstance) {
+                    if ($buttonInstance instanceof ilButton || $buttonInstance instanceof ilButtonBase) {
+                        $toolbar->addButtonInstance($buttonInstance);
+                    }
+                }
+
+                return $toolbar->getHTML();
+            }
+        } catch (LiveVotingException|ilException $e) {
+            return $this->renderer->render($this->factory->messageBox()->failure($e->getMessage()));
+        }
+
+
+        return '';
     }
 
     public function confirmNewRound(): void

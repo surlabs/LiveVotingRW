@@ -59,7 +59,7 @@ class LiveVotingInputCorrectOrder extends LiveVotingSingleVoteResultsUI
         }
 
         $correct_option = new LiveVotingQuestionOption();
-        $correct_option->setText(ilLiveVotingPlugin::getInstance()->txt('correct'));
+        $correct_option->setText(ilLiveVotingPlugin::getInstance()->txt('qtype_4_correct'));
         $bar = new LiveVotingBarPercentageUI();
         $bar->setTitle($correct_option->getText());
         $bar->setVotes($correct_votes);
@@ -69,7 +69,7 @@ class LiveVotingInputCorrectOrder extends LiveVotingSingleVoteResultsUI
         $bars->addBar($bar);
 
         $wrong_option = new LiveVotingQuestionOption();
-        $wrong_option->setText(ilLiveVotingPlugin::getInstance()->txt('wrong'));
+        $wrong_option->setText(ilLiveVotingPlugin::getInstance()->txt('qtype_4_wrong'));
 
         $bar = new LiveVotingBarPercentageUI();
         $bar->setMaxVotes(LiveVotingVote::countVoters($this->player->getId(), $this->player->getRoundId()));
@@ -82,7 +82,7 @@ class LiveVotingInputCorrectOrder extends LiveVotingSingleVoteResultsUI
         $bars->setShowTotalVotes(true);
         $bars->setTotalVotes(LiveVotingVote::countVotes($this->player->getId(), $this->player->getRoundId()));
         if ($this->isShowCorrectOrder()) {
-            $solution_html = ilLiveVotingPlugin::getInstance()->txt('correct_solution') . '<br>';
+            $solution_html = ilLiveVotingPlugin::getInstance()->txt('qtype_4_correct_solution') . '<br>';
             /**
              * @var LiveVotingQuestionOption $item
              */

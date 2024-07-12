@@ -26,6 +26,7 @@ use ilSystemStyleException;
 use ilTemplate;
 use ilTemplateException;
 use LiveVoting\platform\LiveVotingException;
+use LiveVoting\questions\LiveVotingQuestionOption;
 use LiveVoting\UI\Voting\Bar\LiveVotingBarFreeTextUI;
 use LiveVoting\UI\Voting\Bar\LiveVotingBarGroupingCollectionUI;
 use LiveVoting\votings\LiveVotingPlayer;
@@ -58,6 +59,8 @@ class LiveVotingInputFreeTextUI extends LiveVotingInputResultsGUI
         global $DIC;
         $button_states = $this->player->getButtonStates();
 
+        //dump($this->player->getButtonStates());exit;
+
         $this->edit_mode = (array_key_exists('btn_categorize', $button_states) && $button_states['btn_categorize'] == 'true');
         $tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory().'/templates/default/QuestionTypes/FreeInput/tpl.free_input_results.html', true, true);
 
@@ -67,7 +70,9 @@ class LiveVotingInputFreeTextUI extends LiveVotingInputResultsGUI
         $bars->setRemovable($this->edit_mode);
         $bars->setShowTotalVotes(true);
 
-        $votes = LiveVotingVote::getVotesOfOption($this->player->getActiveVotingObject()->getId(), $this->player->getRoundId());
+
+
+        $votes = LiveVotingVote::getVotesOfOption($this->player->getActiveVotingObject()->getFirstOption()->getId(), $this->player->getRoundId());
 
         foreach ($votes as $vote){
             if ($cat_id = $vote->getFreeInputCategory()) {
@@ -86,6 +91,7 @@ class LiveVotingInputFreeTextUI extends LiveVotingInputResultsGUI
         $bars->setTotalVotes(count($votes));
 
         $tpl->setVariable('ANSWERS', $bars->getHTML());
+        //dump($categories->getHTML());exit;
         $tpl->setVariable('CATEGORIES', $categories->getHTML());
         if ($this->edit_mode) {
             $tpl->setVariable('LABEL_ADD_CATEGORY', ilLiveVotingPlugin::getInstance()->txt('btn_add_category'));

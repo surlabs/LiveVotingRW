@@ -151,9 +151,9 @@ class LiveVotingCorrectOrderPlayerGUI extends LiveVotingQuestionTypesUI
         $b = ilLinkButton::getInstance();
         $b->setId(self::BUTTON_TOTTLE_DISPLAY_CORRECT_ORDER);
         if (array_key_exists(self::BUTTON_TOTTLE_DISPLAY_CORRECT_ORDER,$states) && $states[self::BUTTON_TOTTLE_DISPLAY_CORRECT_ORDER]) {
-            $b->setCaption(ilGlyphGUI::get('eye-close'), false);
+            $b->setCaption(ilGlyphGUI::get('close'), false);
         } else {
-            $b->setCaption(ilGlyphGUI::get('eye-open'), false);
+            $b->setCaption(ilGlyphGUI::get('close'), false);
         }
 
         $t = ilLinkButton::getInstance();
@@ -161,7 +161,7 @@ class LiveVotingCorrectOrderPlayerGUI extends LiveVotingQuestionTypesUI
         if (array_key_exists(self::BUTTON_TOGGLE_PERCENTAGE,$states) && $states[self::BUTTON_TOGGLE_PERCENTAGE]) {
             $t->setCaption(' %', false);
         } else {
-            $t->setCaption(ilGlyphGUI::get('user'), false);
+            $t->setCaption(ilGlyphGUI::get('close'), false);
         }
 
         return array($b, $t);

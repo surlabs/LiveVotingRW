@@ -73,7 +73,7 @@ abstract class LiveVotingInputResultsGUI
     {
         switch($player->getActiveVotingObject()->getQuestionType()){
             case "Choices":
-                //return new LiveVotingInputChoicesUI($player);
+                return new LiveVotingSingleVoteResultsUI($player);
             case "FreeText":
                 return new LiveVotingInputFreeTextUI($player);
             case "CorrectOrder":
