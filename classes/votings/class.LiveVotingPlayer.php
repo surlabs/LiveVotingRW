@@ -719,10 +719,10 @@ class LiveVotingPlayer
     /**
      * @throws LiveVotingException
      */
-    public function hasUserVotedForOption(LiveVotingQuestionOption $option): bool
+    public function hasUserVotedForOption(int $option_id): bool
     {
         foreach ($this->getVotesOfUser() as $vote) {
-            if ($vote->getOptionId() == $option->getId()) {
+            if ($vote->getOptionId() == $option_id) {
                 return true;
             }
         }
