@@ -44,7 +44,7 @@ class LiveVotingVote
     private int $user_id = 0;
     private int $last_update;
     private int $round_id = 0;
-    private string $free_input;
+    private ?string $free_input = null;
     private int $free_input_category = 0;
 
     /**
@@ -159,12 +159,12 @@ class LiveVotingVote
         $this->round_id = $round_id;
     }
 
-    public function getFreeInput(): string
+    public function getFreeInput(): ?string
     {
         return $this->free_input;
     }
 
-    public function setFreeInput(string $free_input): void
+    public function setFreeInput(?string $free_input): void
     {
         $this->free_input = $free_input;
     }
@@ -399,7 +399,7 @@ class LiveVotingVote
         $vote = new LiveVotingVote();
 
         if (isset($result[0])) {
-            $vote->setId($result[0]["id"]);
+            $vote->setId((int) $result[0]["id"]);
             $vote->loadFromDB();
         } else {
             $vote->setType(1);
@@ -407,7 +407,7 @@ class LiveVotingVote
             $vote->setLastUpdate(LiveVotingUtils::getTime());
         }
 
-        $vote->setUserIdType($participant->getType());
+        $vote->setUserIdType($participant->isILIASUser() ? 0 : 1);
 
         if ($participant->isILIASUser()) {
             $vote->setUserId((int) $participant->getIdentifier());
@@ -457,11 +457,13 @@ class LiveVotingVote
 
         if ($filter) {
             $result = $database->select("rep_robj_xlvo_vote_n", array(
-                "round_id" => $round_id
+                "round_id" => $round_id,
+                "status" => 1
             ), ["id", "user_identifier", "user_id"], "AND (user_identifier LIKE " . $filter . " OR user_id = " . $filter . ")");
         } else {
             $result = $database->select("rep_robj_xlvo_vote_n", array(
-                "round_id" => $round_id
+                "round_id" => $round_id,
+                "status" => 1
             ), ["id", "user_identifier", "user_id"]);
         }
 
