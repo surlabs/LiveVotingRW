@@ -721,7 +721,7 @@ class LiveVotingPlayer
      */
     public function input(array $array): void
     {
-        if (array_key_exists("vote_id", $array)) {
+        if (array_key_exists("vote_id", $array) || array_key_exists("input", $array)) {
             $array = array($array);
         }
 

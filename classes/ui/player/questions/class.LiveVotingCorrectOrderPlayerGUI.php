@@ -66,10 +66,11 @@ class LiveVotingCorrectOrderPlayerGUI extends LiveVotingQuestionTypesUI
 
     /**
      *
+     * @throws LiveVotingException
      */
-    protected function submit()
+    protected function submit(): void
     {
-        $this->manager->inputOne(array(
+        $this->player->input(array(
             "input"   => json_encode($_POST['id']),
             "vote_id" => $_POST['vote_id']
         ));
