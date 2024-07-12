@@ -557,4 +557,12 @@ class LiveVotingVote
 
         return count($result);
     }
+
+    /**
+     * @throws LiveVotingException
+     */
+    public static function hasVotes(int $voting_id, int $round_id): bool
+    {
+        return self::countVotes($voting_id, $round_id) > 0;
+    }
 }
