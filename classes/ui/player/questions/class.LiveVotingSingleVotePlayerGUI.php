@@ -27,6 +27,9 @@ use LiveVoting\UI\Player\CustomUI\TextAreaInputGUI\TextAreaInputGUI;
 use LiveVoting\UI\Voting\Bar\LiveVotingBarMovableUI;
 use LiveVoting\Utils\LiveVotingJs;
 use LiveVoting\Utils\LiveVotingUtils;
+use LiveVoting\Utils\ParamManager;
+use LiveVoting\votings\LiveVoting;
+use LiveVoting\votings\LiveVotingParticipant;
 use LiveVoting\votings\LiveVotingVote;
 
 
@@ -55,10 +58,31 @@ class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
 
     /**
      *
+     * @throws LiveVotingException
      */
-    protected function submit()
+    protected function submit(): void
     {
-        $this->manager->vote($_GET['option_id']);
+        $param_manager = ParamManager::getInstance();
+        $liveVoting = LiveVoting::getLiveVotingFromPin($param_manager->getPin());
+        $this->player = $liveVoting->getPlayer();
+
+        $option_id = $_GET['option_id'];
+
+        $vote_id = null;
+        $option = LiveVotingQuestionOption::loadOptionById($option_id);
+
+        $participant = LiveVotingParticipant::getInstance();
+
+        if ($this->player->hasUserVotedForOption($option_id)) {
+            LiveVotingVote::unvote($participant, $this->player->getActiveVoting(), $option);
+        } else {
+            $vote_id = LiveVotingVote::vote($participant, $this->player->getActiveVoting(), $this->player->getRoundId(), $option);
+        }
+        if (!$this->player->getActiveVotingObject()->isMultiSelection()) {
+            $this->player->unvoteAll($vote_id);
+        }
+
+        $this->player->createHistoryObject();
     }
 
 

@@ -713,7 +713,7 @@ class LiveVotingPlayer
      */
     public function getVotesOfUser($incl_inactive = false): array
     {
-        return LiveVotingVote::getVotesOfUser(LiveVotingParticipant::getInstance(), $this->getActiveVotingObject()->getId(), $this->getRoundId(), $incl_inactive);
+        return LiveVotingVote::getVotesOfUser(LiveVotingParticipant::getInstance(), $this->getActiveVoting(), $this->getRoundId(), $incl_inactive);
     }
 
     /**
@@ -772,7 +772,19 @@ class LiveVotingPlayer
         }
 
         if ($liveVotingConfig->isVotingHistory()) {
-            LiveVotingVote::createHistoryObject(LiveVotingParticipant::getInstance(), $this->getActiveVotingObject()->getId(), $this->getRoundId());
+            LiveVotingVote::createHistoryObject(LiveVotingParticipant::getInstance(), $this->getActiveVoting(), $this->getRoundId());
+        }
+    }
+
+    /**
+     * @throws LiveVotingException
+     */
+    public function createHistoryObject(): void
+    {
+        $liveVoting = new LiveVoting($this->obj_id, false);
+
+        if ($liveVoting->isVotingHistory()) {
+            LiveVotingVote::createHistoryObject(LiveVotingParticipant::getInstance(), $this->getActiveVoting(), $this->getRoundId());
         }
     }
 }
