@@ -21,6 +21,8 @@ declare(strict_types=1);
 
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\Utils\LiveVotingJs;
+use LiveVoting\Utils\ParamManager;
+use LiveVoting\votings\LiveVoting;
 use LiveVoting\votings\LiveVotingPlayer;
 use LiveVoting\votings\LiveVotingVote;
 
@@ -83,36 +85,22 @@ class LiveVotingNumberRangePlayerGUI extends LiveVotingQuestionTypesUI
 
     /**
      *
+     * @throws LiveVotingException
      */
-    protected function submit()
+    protected function submit(): void
     {
-        if ($this->manager === null) {
-            throw new ilException('The NumberRange question got no voting manager! Please set one via setManager.');
-        }
+        $param_manager = ParamManager::getInstance();
+        $liveVoting = LiveVoting::getLiveVotingFromPin($param_manager->getPin());
+        $this->player = $liveVoting->getPlayer();
 
-        //get all votes of the currents user
-        // $votes = $this->manager->getVotesOfUser(false); TODO: ???
-
-        //check if we voted or unvoted
-
-        //we voted
-
-        //filter the input and convert to int
         $filteredInput = filter_input(INPUT_POST, self::USER_SELECTED_NUMBER, FILTER_VALIDATE_INT);
 
-        //check if the filter failed
         if ($filteredInput !== false && $filteredInput !== null) {
-            //filter succeeded set value and store vote
-
-            //validate user input
             if ($this->isVoteValid($this->getStart(), $this->getEnd(), $filteredInput)) {
-                //vote
-                $this->manager->inputOne([
+                $this->player->input([
                     'input'   => $filteredInput,
                     'vote_id' => '-1',
                 ]);
-
-                return;
             }
         }
     }
@@ -123,6 +111,7 @@ class LiveVotingNumberRangePlayerGUI extends LiveVotingQuestionTypesUI
      * @throws ilCtrlException
      * @throws LiveVotingException
      * @throws ilTemplateException
+     * @throws ilSystemStyleException
      */
     public function getMobileHTML(): string
     {
