@@ -37,7 +37,6 @@ use LiveVoting\votings\LiveVotingVote;
 class LiveVotingNumberRangePlayerGUI extends LiveVotingQuestionTypesUI
 {
 
-    const USER_SELECTED_NUMBER = 'qtype_6_user_selected_number';
     const SAVE_BUTTON_VOTE = 'qtype_6_voter_start_button_vote';
     const CLEAR_BUTTON = 'qtype_6_voter_clear';
     const SAVE_BUTTON_UNVOTE = 'qtype_6_voter_start_button_unvote';
@@ -93,13 +92,13 @@ class LiveVotingNumberRangePlayerGUI extends LiveVotingQuestionTypesUI
         $liveVoting = LiveVoting::getLiveVotingFromPin($param_manager->getPin());
         $this->player = $liveVoting->getPlayer();
 
-        $filteredInput = filter_input(INPUT_POST, self::USER_SELECTED_NUMBER, FILTER_VALIDATE_INT);
+        $filteredInput = filter_input(INPUT_POST, "user_selected_number", FILTER_VALIDATE_INT);
 
         if ($filteredInput !== false && $filteredInput !== null) {
             if ($this->isVoteValid($this->getStart(), $this->getEnd(), $filteredInput)) {
                 $this->player->input([
-                    'input'   => $filteredInput,
-                    'vote_id' => '-1',
+                    'input'   => (string) $filteredInput,
+                    'vote_id' => filter_input(INPUT_POST, 'vote_id'),
                 ]);
             }
         }
