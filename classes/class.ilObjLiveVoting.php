@@ -38,6 +38,7 @@ class ilObjLiveVoting extends ilObjectPlugin
     {
         $this->liveVoting = new LiveVoting();
         $this->liveVoting->setId($this->getId());
+        $this->liveVoting->loadFromDB();
 
         $this->liveVoting->save();
     }
