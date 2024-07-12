@@ -37,7 +37,7 @@ class LiveVoting
     /**
      * @var int The id of the voting
      */
-    private int $id;
+    private int $id = 0;
 
     /**
      * How the voting is being conducted
@@ -91,7 +91,7 @@ class LiveVoting
             $this->loadFromDB();
         }
 
-        if ($loadPlayer) {
+        if ($loadPlayer && $this->getId() !== 0) {
             $this->player = LiveVotingPlayer::loadFromObjId($this->getId());
         }
     }
