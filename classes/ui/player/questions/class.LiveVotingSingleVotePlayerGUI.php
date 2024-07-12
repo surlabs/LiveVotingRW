@@ -49,10 +49,7 @@ class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
      */
     public function initJS(bool $current = false)
     {
-        $gui = new LiveVotingPlayerGUI();
-
-        LiveVotingJs::getInstance()->api($gui)->name('SingleVote')->category('QuestionTypes/SingleVote')
-            ->addLibToHeader('jquery.ui.touch-punch.min.js')->init();
+       
     }
 
 
@@ -108,7 +105,7 @@ class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
     public function getMobileHTML(): string
     {
         global $DIC;
-        $tpl = new ilTemplate( ilLiveVotingPlugin::getInstance()->getDirectory().'/templates/default/QuestionTypes/SingleVote/tpl.single_vote.html', false, false);
+        $tpl = new ilTemplate( ilLiveVotingPlugin::getInstance()->getDirectory().'/templates/default/QuestionTypes/SingleVote/tpl.single_vote.html', false, true);
         $answer_count = 64;
         foreach ($this->getPlayer()->getActiveVotingObject()->getOptions() as $xlvoOption) {
             $answer_count++;
