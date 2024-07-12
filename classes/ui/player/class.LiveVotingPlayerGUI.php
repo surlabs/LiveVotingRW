@@ -31,7 +31,7 @@ use LiveVoting\votings\LiveVotingVoter;
  * Class LiveVotingPlayerGUI
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
  *
- * @ilCtrl_isCalledBy LiveVotingPlayerGUI: ilUIPluginRouterGUI, LiveVotingFreeTextPlayerGUI, LiveVotingCorrectOrderPlayerGUI, LiveVotingSingleVotePlayerGUI
+ * @ilCtrl_isCalledBy LiveVotingPlayerGUI: ilUIPluginRouterGUI, LiveVotingFreeTextPlayerGUI, LiveVotingCorrectOrderPlayerGUI, LiveVotingSingleVotePlayerGUI, LiveVotingPrioritiesPlayerGUI
  */
 class LiveVotingPlayerGUI
 {
@@ -164,11 +164,21 @@ class LiveVotingPlayerGUI
         LiveVotingJs::getInstance()->api($this, array(IlUIPluginRouterGUI::class))->addSettings($settings)->name('Voter')->addTranslations($t)->init()->setRunCode();
         LiveVotingJs::getInstance()->api($this)->name('FreeInput')->category('QuestionTypes/FreeInput')->init();
         LiveVotingJs::getInstance()->api($this)->name('CorrectOrder')->category('QuestionTypes/CorrectOrder')->init();
+        LiveVotingJs::getInstance()->api($this)->name('FreeOrder')->category('QuestionTypes/FreeOrder')->init();
         LiveVotingJs::getInstance()->api($this)->name('SingleVote')->category('QuestionTypes/SingleVote')
             ->addLibToHeader('jquery.ui.touch-punch.min.js')->init();
 
         $DIC->ui()->mainTemplate()->addCss(ilLiveVotingPlugin::getInstance()->getDirectory()."/templates/customUI/MultiLineNewInputGUI/css/multi_line_new_input_gui.css");
         $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory()."/templates/customUI/MultiLineNewInputGUI/js/multi_line_new_input_gui.js");
+
+        $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/js/xlvoMain.js');
+        $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/js/xlvoVoter.js');
+        $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/js/QuestionTypes/SingleVote/xlvoSingleVote.js');
+
+        $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory(). '/templates/js/QuestionTypes/FreeInput/xlvoFreeInput.js');
+        $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory(). '/templates/js/QuestionTypes/CorrectOrder/xlvoCorrectOrder.js');
+        $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory(). '/templates/js/QuestionTypes/FreeOrder/xlvoFreeOrder.js');
+
         //LiveVotingJs::getInstance()->api($this)->addLibToHeader(ilLiveVotingPlugin::getInstance()->getDirectory(). '/templates/js/QuestionTypes/FreeInput/xlvoFreeInput.js', true)->setInitCode();
 
 

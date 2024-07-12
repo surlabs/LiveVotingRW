@@ -97,8 +97,8 @@ abstract class LiveVotingQuestionTypesUI
             case "FreeText":
                 $gui = new LiveVotingFreeTextPlayerGUI();
                 break;
-            case "FreeOrder":
-                $gui = new LiveVotingFreeTextPlayerGUI();
+            case "Priorities":
+                $gui = new LiveVotingPrioritiesPlayerGUI();
                 break;
             case "Choices":
                 $gui = new LiveVotingSingleVotePlayerGUI();

@@ -25,7 +25,6 @@ use LiveVoting\platform\LiveVotingException;
 use LiveVoting\UI\Voting\Bar\LiveVotingBarCollectionUI;
 use LiveVoting\UI\Voting\Bar\LiveVotingBarPercentageUI;
 use LiveVoting\votings\LiveVotingVote;
-use LiveVotingCorrectOrderPlayerGUI;
 
 class LiveVotingInputPrioritiesUI extends LiveVotingInputCorrectOrderUI
 {
