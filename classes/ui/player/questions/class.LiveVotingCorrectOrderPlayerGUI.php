@@ -140,6 +140,7 @@ class LiveVotingCorrectOrderPlayerGUI extends LiveVotingQuestionTypesUI
      */
     public function getButtonInstances(): array
     {
+        global $DIC;
         if (!$this->getPlayer()->isShowResults()) {
             return array();
         }
@@ -147,9 +148,9 @@ class LiveVotingCorrectOrderPlayerGUI extends LiveVotingQuestionTypesUI
         $b = ilLinkButton::getInstance();
         $b->setId(self::BUTTON_TOTTLE_DISPLAY_CORRECT_ORDER);
         if (array_key_exists(self::BUTTON_TOTTLE_DISPLAY_CORRECT_ORDER,$states) && $states[self::BUTTON_TOTTLE_DISPLAY_CORRECT_ORDER]) {
-            $b->setCaption(ilGlyphGUI::get('close'), false);
+            $b->setCaption('<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>', false);
         } else {
-            $b->setCaption(ilGlyphGUI::get('close'), false);
+            $b->setCaption('<span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>' , false);
         }
 
         $t = ilLinkButton::getInstance();
@@ -157,7 +158,7 @@ class LiveVotingCorrectOrderPlayerGUI extends LiveVotingQuestionTypesUI
         if (array_key_exists(self::BUTTON_TOGGLE_PERCENTAGE,$states) && $states[self::BUTTON_TOGGLE_PERCENTAGE]) {
             $t->setCaption(' %', false);
         } else {
-            $t->setCaption(ilGlyphGUI::get('close'), false);
+            $t->setCaption($DIC->ui()->renderer()->render($DIC->ui()->factory()->symbol()->icon()->standard('usr', '', 'small')), false);
         }
 
         return array($b, $t);

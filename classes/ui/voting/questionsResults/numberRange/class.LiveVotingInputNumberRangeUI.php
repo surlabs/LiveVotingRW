@@ -93,7 +93,6 @@ class LiveVotingInputNumberRangeUI extends LiveVotingInputResultsGUI
      */
     private function renderGroupedTextResultWithInfo(): string
     {
-        dump("LLEGO");exit;
         $votes = LiveVotingVote::getVotesOfQuestion($this->player->getActiveVoting(), $this->player->getRoundId());
         $vote_count = LiveVotingVote::countVotes($this->player->getActiveVoting(), $this->player->getRoundId());
 
@@ -143,24 +142,23 @@ class LiveVotingInputNumberRangeUI extends LiveVotingInputResultsGUI
 
         $info = new LiveVotingBarCollectionUI();
         $value = $vote_count > 0 ? round($vote_sum / $vote_count, 2) : 0;
-        $mean = new LiveVotingBarInfoGUI(ilLiveVotingPlugin::getInstance()->txt("mean"), $value);
+        $mean = new LiveVotingBarInfoGUI(ilLiveVotingPlugin::getInstance()->txt("qtype_6_mean"), (string)$value);
         $mean->setBig(true);
         $mean->setDark(true);
         $mean->setCenter(true);
         $info->addBar($mean);
 
-        $median = new LiveVotingBarInfoGUI(ilLiveVotingPlugin::getInstance()->txt("median"), $calculateMedian($values));
+        $median = new LiveVotingBarInfoGUI(ilLiveVotingPlugin::getInstance()->txt("qtype_6_median"), (string)$calculateMedian($values));
         $median->setBig(true);
         $median->setCenter(true);
         $median->setDark(true);
         $info->addBar($median);
 
-        $mode = new LiveVotingBarInfoGUI(ilLiveVotingPlugin::getInstance()->txt("mode"), count($relevant_modes) === 1 ? $relevant_modes[0] : ilLiveVotingPlugin::getInstance()->txt("mode_not_applicable"));
+        $mode = new LiveVotingBarInfoGUI(ilLiveVotingPlugin::getInstance()->txt("qtype_6_mode"), (string)count($relevant_modes) === 1 ? $relevant_modes[0] : ilLiveVotingPlugin::getInstance()->txt("qtype_6_mode_not_applicable"));
         $mode->setBig(true);
         $mode->setDark(true);
         $mode->setCenter(true);
         $info->addBar($mode);
-        dump($info->getHTML());exit;
         return $info->getHTML() . "<div class='row'><br></div>" . $this->renderGroupedTextResult();
     }
 
@@ -177,7 +175,7 @@ class LiveVotingInputNumberRangeUI extends LiveVotingInputResultsGUI
     {
         $bars = new LiveVotingBarGroupingCollectionUI();
         //$bars->sorted(true);
-        $votes = LiveVotingVote::getVotesOfQuestion($this->player->getId(), $this->player->getRoundId());
+        $votes = LiveVotingVote::getVotesOfQuestion($this->player->getActiveVoting(), $this->player->getRoundId());
         usort($votes, function (LiveVotingVote $v1, LiveVotingVote $v2) {
             return (intval($v1->getFreeInput()) - intval($v2->getFreeInput()));
         });
@@ -224,7 +222,7 @@ class LiveVotingInputNumberRangeUI extends LiveVotingInputResultsGUI
         $count = ($end - $start);
         $values = array_fill($start, ($count + 1), 0);
 
-        $votes = LiveVotingVote::getVotesOfQuestion($this->player->getId(), $this->player->getRoundId());
+        $votes = LiveVotingVote::getVotesOfQuestion($this->player->getActiveVoting(), $this->player->getRoundId());
 
         //count all votes per option
         /**

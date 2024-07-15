@@ -40,7 +40,7 @@ class LiveVotingBarInfoGUI extends LiveVotingAbstractBarUI implements LiveVoting
      * @param string $label
      * @param string $value
      */
-    public function __construct($label, $value)
+    public function __construct(string $label, string $value)
     {
         parent::__construct();
         $this->label = $label;

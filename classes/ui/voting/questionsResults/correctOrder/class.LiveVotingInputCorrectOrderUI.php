@@ -104,6 +104,8 @@ class LiveVotingInputCorrectOrderUI extends LiveVotingSingleVoteResultsUI
     {
         $states = $this->getButtonsStates();
 
+        dump($states);exit;
+
         return ((bool) (array_key_exists('display_correct_order',$states) && $states['display_correct_order']) && $this->player->isShowResults());
     }
 

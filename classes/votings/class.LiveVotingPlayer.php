@@ -361,8 +361,7 @@ class LiveVotingPlayer
      */
     public function startCountDown(int $seconds): void
     {
-        $param_manager = ParamManager::getInstance();
-        $this->unfreeze($param_manager->getVoting());
+        $this->unfreeze();
         $this->setCountdown($seconds);
         $this->setCountdownStart(LiveVotingUtils::getTime());
         $this->save();
