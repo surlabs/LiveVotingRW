@@ -358,9 +358,7 @@ class LiveVotingPlayerGUI
      */
     protected function getVotingData(): void
     {
-        $showAttendees = $this->live_voting->isShowAttendees();
-
-        if($showAttendees) {
+        if($this->live_voting->isShowAttendees()) {
             LiveVotingVoter::register($this->live_voting->getPlayer()->getId());
         }
 

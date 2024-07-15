@@ -151,7 +151,6 @@ class LiveVotingUI
 
                 if ($this->liveVoting->isShowAttendees()) {
                     $js->call('updateAttendees');
-                    $template->touchBlock('attendees');
                 }
 
                 $js->call('handleStartButton');

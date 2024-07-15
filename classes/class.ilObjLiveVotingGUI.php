@@ -40,6 +40,7 @@ use LiveVoting\votings\LiveVotingParticipant;
 use LiveVoting\votings\LiveVotingPlayer;
 use LiveVoting\votings\LiveVotingRound;
 use LiveVoting\votings\LiveVotingVote;
+use LiveVoting\votings\LiveVotingVoter;
 
 /**
  * Class ilObjLiveVotingGUI
@@ -92,6 +93,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             case 'startPlayer':
             case 'startPlayerAnUnfreeze':
             case 'getPlayerData':
+            case 'getAttendees':
             case 'manage':
             case 'results':
             case 'selectType':
@@ -875,5 +877,14 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         }
 
         LiveVotingJs::sendResponse($return_value);
+    }
+
+    /**
+     * @throws LiveVotingException
+     */
+    public function getAttendees(): void
+    {
+        $player = $this->object->getLiveVoting()->getPlayer();
+        LiveVotingJs::sendResponse(vsprintf($this->plugin->txt("start_online"), [LiveVotingVoter::countVoters($player->getActiveVoting(), $player->getRoundId())]));
     }
 }

@@ -99,21 +99,19 @@ class LiveVotingVoter
             $database->update("xlvo_voter", array(
                 "player_id" => $this->player_id,
                 "user_identifier" => $this->user_identifier,
-                "last_access" => $this->last_access
+                "last_access" => date('Y-m-d H:i:s', $this->last_access)
             ), array(
                 "id" => $this->id
             ));
-        } else if (isset($this->obj_id) && $this->obj_id != 0) {
+        } else {
             $this->id = $database->nextId("xlvo_voter");
 
             $database->insert("xlvo_voter", array(
                 "id" => $this->id,
                 "player_id" => $this->player_id,
                 "user_identifier" => $this->user_identifier,
-                "last_access" => $this->last_access
+                "last_access" => date('Y-m-d H:i:s', $this->last_access)
             ));
-        } else {
-            throw new LiveVotingException("Invalid object id");
         }
 
         return $this->id;
