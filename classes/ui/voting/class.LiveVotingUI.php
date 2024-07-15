@@ -448,29 +448,4 @@ class LiveVotingUI
         $liveVotingDisplayPlayerUI = new LiveVotingDisplayPlayerUI($this->liveVoting);
         return $liveVotingDisplayPlayerUI->getHTML($inner);
     }
-
-    /**
-     * @return string
-     */
-    protected function getButtonsHTML(): string
-    {
-        //TODO: Implementar todo esto de alguna manera.
-        // Buttons from Questions
-        $xlvoQuestionTypesGUI = xlvoQuestionTypesGUI::getInstance($this->manager);
-        if ($xlvoQuestionTypesGUI->hasButtons()) {
-            $toolbar = new xlvoToolbarGUI();
-
-            foreach ($xlvoQuestionTypesGUI->getButtonInstances() as $buttonInstance) {
-                if ($buttonInstance instanceof ilButton || $buttonInstance instanceof ilButtonBase) {
-                    $toolbar->addButtonInstance($buttonInstance);
-                }
-            }
-
-            return $toolbar->getHTML();
-        }
-
-        return '';
-    }
-
-
 }

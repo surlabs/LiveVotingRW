@@ -464,7 +464,7 @@ class MultiLineNewInputGUI extends ilFormPropertyGUI implements ilTableFilterIte
     public static function renderInputs(array $inputs) : string
     {
         global $DIC;
-        self::init(); // TODO: Pass $plugin
+        self::init();
 
         $input_tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . "/templates/customUI/Items/templates/input_gui_input.html", true, true);
 

@@ -569,24 +569,6 @@ class LiveVotingInitialisationUI
     }
 
     /**
-     * @return void
-     */
-    private function initPluginAdmin():void
-    {
-        //TODO: Rehacer todo este método o igual ni hace falta.
-/*        Closure::bind(function() : void {
-            $this->il_plugin_by_id = [ilLiveVotingPlugin::PLUGIN_ID => $this->il_plugin_by_id[ilLiveVotingPlugin::PLUGIN_ID]];
-            $this->il_plugin_by_name = [ilLiveVotingPlugin::PLUGIN_NAME => $this->il_plugin_by_name[ilLiveVotingPlugin::PLUGIN_NAME]];
-            if (isset($this->il_plugin_by_slotid)) {
-                $this->il_plugin_by_slotid = ["robj" => array_filter($this->il_plugin_by_slotid["robj"], fn(array $plugin) : bool => $plugin["plugin_id"] === ilLiveVotingPlugin::PLUGIN_ID)];
-            }
-            $this->il_plugin_active = ["robj" => array_filter($this->il_plugin_active["robj"], fn(array $plugin) : bool => $plugin["plugin_id"] === ilLiveVotingPlugin::PLUGIN_ID)];
-        }, ilCachedComponentData::getInstance(), ilCachedComponentData::class)();
-
-        $this->makeGlobal("ilPluginAdmin", new ilPluginAdmin());*/
-    }
-
-    /**
      * Init log instance
      * @return void
      */

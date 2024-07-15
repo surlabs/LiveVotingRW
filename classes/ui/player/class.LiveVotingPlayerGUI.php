@@ -185,25 +185,12 @@ class LiveVotingPlayerGUI
         $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory(). '/templates/js/QuestionTypes/FreeOrder/xlvoFreeOrder.js');
         $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory(). '/templates/js/QuestionTypes/NumberRange/xlvoNumberRange.js');
 
-        //LiveVotingJs::getInstance()->api($this)->addLibToHeader(ilLiveVotingPlugin::getInstance()->getDirectory(). '/templates/js/QuestionTypes/FreeInput/xlvoFreeInput.js', true)->setInitCode();
-
-
         //Show voting template
         $this->showVotingTemplate();
 
-       // $this->fillVotingTemplate();
-
-/*        //TODO: Este foreach parece necesario. Pendiente implementar.
-        foreach (LiveVotingQuestionTypesUI::getActiveTypes() as $type) {
-            xlvoQuestionTypesGUI::getInstance($this->manager, $type)->initJS($type == $this->manager->getVoting()->getVotingType());
-        }*/
-
         $player = $this->live_voting->getPlayer();
-        //$question = $player->getActiveVotingObject();
 
         LiveVotingQuestionTypesUI::getInstance($player)->initJS();
-
-
     }
 
     /**
