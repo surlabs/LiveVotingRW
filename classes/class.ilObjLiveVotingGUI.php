@@ -23,6 +23,7 @@ use ILIAS\UI\Renderer;
 use LiveVoting\legacy\LiveVotingResultsTableGUI;
 use LiveVoting\platform\LiveVotingDatabase;
 use LiveVoting\platform\LiveVotingException;
+use LiveVoting\questions\LiveVotingQuestion;
 use LiveVoting\UI\LiveVotingChoicesUI;
 use LiveVoting\UI\LiveVotingCorrectOrderUI;
 use LiveVoting\UI\LiveVotingFreeInputUI;
@@ -316,26 +317,6 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         }
     }
 
-    protected function initHeaderAndLocator(): void
-    {
-        global $DIC;
-        $this->setTitleAndDescription();
-        if(!$this->getCreationMode()) {
-            $DIC->ui()->mainTemplate()->setTitle($this->object->getTitle());
-            $DIC->ui()->mainTemplate()->setTitleIcon(IlObject::_getIcon($this->object->getId()));
-            //$DIC->ui()->saveParameterByClass("CLASE RESULTS, PARÁMETRO round_id");
-
-            //TODO: Aquí hay un if en el original que comprueba si el parámetro baseClass es igual a la clase GUI de administración.
-            //$this->setTabs();
-
-            //TODO: Comprobación de permisos
-        } else {
-            $DIC->ui()->mainTemplate()->setTitle(ilObject::_lookupTitle(ilObject::_lookupObjId($this->ref_id)));
-            //TODO: Añadir icono?
-        }
-        $this->setLocator();
-    }
-
     /**
      * @throws ilCtrlException
      */
@@ -581,8 +562,36 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
                 }
                 break;
         }
-        //TODO: Traer prev y next question para navegación
 
+        $questions = LiveVotingQuestion::loadAllQuestionsByObjectId($this->obj_id);
+
+        $prev_id = null;
+        $next_id = null;
+
+        foreach ($questions as $qst) {
+            if ($qst->getPosition() < $question->getPosition()) {
+                $prev_id = $qst->getId();
+            } elseif ($qst->getPosition() > $question->getPosition()) {
+                $next_id = $qst->getId();
+                break;
+            }
+        }
+
+        if ($prev_id) {
+            $DIC->ctrl()->setParameter($this, "question_id", $prev_id);
+            $prev = ilLinkButton::getInstance();
+            $prev->setUrl($DIC->ctrl()->getLinkTarget($this, "edit"));
+            $prev->setCaption(ilGlyphGUI::get(ilGlyphGUI::PREVIOUS), false);
+            $DIC->toolbar()->addButtonInstance($prev);
+        }
+
+        if ($next_id) {
+            $DIC->ctrl()->setParameter($this, "question_id", $next_id);
+            $next = ilLinkButton::getInstance();
+            $next->setUrl($DIC->ctrl()->getLinkTarget($this, "edit"));
+            $next->setCaption(ilGlyphGUI::get(ilGlyphGUI::NEXT), false);
+            $DIC->toolbar()->addButtonInstance($next);
+        }
     }
 
 

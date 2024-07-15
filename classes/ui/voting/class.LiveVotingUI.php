@@ -113,7 +113,6 @@ class LiveVotingUI
                     return $this->renderer->render($this->factory->messageBox()->failure($this->pl->txt("player_msg_no_start_2")));
                 }
 
-                // TODO: Refactor this code to remove deprecated button
                 $b = ilLinkButton::getInstance();
                 $b->setCaption($this->pl->txt('player_start_voting'), false);
                 $b->addCSSClass('xlvo-preview');
@@ -125,7 +124,6 @@ class LiveVotingUI
                 $current_selection_list = $this->getQuestionSelectionList(false);
                 $DIC->toolbar()->addText($current_selection_list->getHTML());
 
-                // TODO: Refactor this code to remove deprecated button
                 $b2 = ilLinkButton::getInstance();
                 $b2->setCaption($this->pl->txt('player_start_voting_and_unfreeze'), false);
                 $b2->addCSSClass('xlvo-preview');
@@ -174,7 +172,6 @@ class LiveVotingUI
     {
         global $DIC;
 
-        // TODO: Refactor this code to remove deprecated selection list
         $current_selection_list = new ilAdvancedSelectionListGUI();
         $current_selection_list->setItemLinkClass('xlvo-preview');
         $current_selection_list->setListTitle($this->pl->txt('player_voting_list'));

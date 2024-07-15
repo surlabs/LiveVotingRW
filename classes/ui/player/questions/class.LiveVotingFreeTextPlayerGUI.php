@@ -240,7 +240,6 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
             return array();
         }
 
-        //TODO: Deprecado
         $b = ilLinkButton::getInstance();
         $b->setId('btn_categorize');
         $b->setUrl('#');

@@ -489,11 +489,11 @@ var xlvoPlayer = {
 	},
 	togglePull: function () {
 		if (xlvoPlayer.timeout) {
-			alert('Pull stopped'); // TODO: Translate or xlvoPlayer.log
+			alert('Pull stopped');
 			xlvoPlayer.clearTimeout();
 			xlvoPlayer.timeout = false;
 		} else {
-			alert('Pull started'); // TODO: Translate or xlvoPlayer.log
+			alert('Pull started');
 			xlvoPlayer.getPlayerData();
 		}
 	},
