@@ -132,15 +132,11 @@ class TextAreaInputGUI extends ilTextAreaInputGUI
 
     public function getCanonicalName(): string
     {
-        //TODO: Esto debe parchearse de otra forma?
        return "";
     }
 
     public function getTableFilterHTML(): string
     {
-        //TODO: Esto debe parchearse de otra forma?
-
         return "";
-
     }
 }

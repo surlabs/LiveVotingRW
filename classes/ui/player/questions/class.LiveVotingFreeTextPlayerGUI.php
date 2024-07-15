@@ -96,15 +96,6 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
         }
     }
 
-
-    /* *
-     *
-     * /
-    protected function clear() {
-        $this->manager->clear();
-        $this->afterSubmit();
-    }*/
-
     /**
      * @return string
      * @throws ilTemplateException

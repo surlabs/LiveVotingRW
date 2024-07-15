@@ -82,18 +82,6 @@ class LiveVotingCorrectOrderPlayerGUI extends LiveVotingQuestionTypesUI
         ));
     }
 
-
-    /**
-     *
-     */
-/*    protected function clear()
-    {
-        //TODO: Sin implementar.
-        $this->manager->unvoteAll();
-        $this->afterSubmit();
-    }*/
-
-
     /**
      * @return string
      * @throws ilCtrlException|ilTemplateException

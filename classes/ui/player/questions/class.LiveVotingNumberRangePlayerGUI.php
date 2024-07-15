@@ -73,15 +73,6 @@ class LiveVotingNumberRangePlayerGUI extends LiveVotingQuestionTypesUI
 
     }
 
-
-    protected function clear()
-    {
-
-        /*$this->manager->unvoteAll();
-        $this->afterSubmit();*/
-    }
-
-
     /**
      *
      * @throws LiveVotingException
