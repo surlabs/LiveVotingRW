@@ -108,7 +108,7 @@ class LiveVotingCorrectOrderUI
                 ->withValue(isset($this->question) ? $this->question->getColumns() : 1);
 
 
-            $section_questions = $this->factory->input()->field()->section($form_questions, $this->plugin->txt("player_voting_list"), $this->plugin->txt("voting_type_5"));
+            $section_questions = $this->factory->input()->field()->section($form_questions, $this->plugin->txt("player_voting_list"), $this->plugin->txt("voting_type_4"));
 
 
             //Answers section
@@ -126,7 +126,8 @@ class LiveVotingCorrectOrderUI
                 ->withValue(isset($options) ? htmlspecialchars(str_replace('"', "\'", json_encode(array_map(function($option) {
                     return [
                         "text" => $option->getText(),
-                        "id" => $option->getId()
+                        "id" => $option->getId(),
+                        "order" => $option->getCorrectPosition()
                     ];
                 }, $options), JSON_UNESCAPED_UNICODE))) : "")
                 ->withOnLoadCode(function ($id) {
@@ -261,9 +262,8 @@ class LiveVotingCorrectOrderUI
 
             if (!empty($options_data)) {
                 $question = $question_id ? LiveVotingQuestion::loadQuestionById($question_id) : LiveVotingQuestion::loadNewQuestion("CorrectOrder");
-
                 $question->setTitle($question_data["title"] ?? null);
-                $question->setQuestion($question_data["question"] ?? null);
+                $question->setQuestion($_POST["form_input_3"] ?? null);
                 $question->setColumns((int)($question_data["columns"] ?? 0));
                 $question->setRandomiseOptionSequence($answers_data["shuffle"] ?? false);
 

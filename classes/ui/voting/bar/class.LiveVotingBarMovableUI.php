@@ -80,7 +80,7 @@ class LiveVotingBarMovableUI implements LiveVotingGeneralBarUI
         if (count($this->order) > 0) {
             $this->tpl->setVariable('YOUR_ORDER', ilLiveVotingPlugin::getInstance()->txt('qtype_4_your_order'));
             foreach ($this->order as $value) {
-                $xlvoOption = $this->options[$value];
+                $xlvoOption = LiveVotingQuestionOption::loadOptionById((int)$value);
                 if (!$xlvoOption instanceof LiveVotingQuestionOption) {
                     continue;
                 }

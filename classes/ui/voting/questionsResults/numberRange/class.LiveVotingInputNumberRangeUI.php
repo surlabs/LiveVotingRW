@@ -93,8 +93,9 @@ class LiveVotingInputNumberRangeUI extends LiveVotingInputResultsGUI
      */
     private function renderGroupedTextResultWithInfo(): string
     {
-        $votes = LiveVotingVote::getVotesOfQuestion($this->player->getId(), $this->player->getRoundId());
-        $vote_count = LiveVotingVote::countVotes($this->player->getId(), $this->player->getRoundId());
+        dump("LLEGO");exit;
+        $votes = LiveVotingVote::getVotesOfQuestion($this->player->getActiveVoting(), $this->player->getRoundId());
+        $vote_count = LiveVotingVote::countVotes($this->player->getActiveVoting(), $this->player->getRoundId());
 
         $vote_sum = 0;
         $values = [];
@@ -159,7 +160,7 @@ class LiveVotingInputNumberRangeUI extends LiveVotingInputResultsGUI
         $mode->setDark(true);
         $mode->setCenter(true);
         $info->addBar($mode);
-
+        dump($info->getHTML());exit;
         return $info->getHTML() . "<div class='row'><br></div>" . $this->renderGroupedTextResult();
     }
 

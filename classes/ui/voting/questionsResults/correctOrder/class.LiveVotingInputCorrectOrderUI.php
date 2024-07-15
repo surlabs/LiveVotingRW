@@ -47,7 +47,7 @@ class LiveVotingInputCorrectOrderUI extends LiveVotingSingleVoteResultsUI
         ksort($correct_order_ids);
         $correct_order_json = json_encode(array_values($correct_order_ids));
 
-        $votes = LiveVotingVote::getVotesOfQuestion($this->player->getId(), $this->player->getRoundId());
+        $votes = LiveVotingVote::getVotesOfQuestion($this->player->getActiveVoting(), $this->player->getRoundId());
         $correct_votes = 0;
         $wrong_votes = 0;
         foreach ($votes as $xlvoVote) {
@@ -63,7 +63,7 @@ class LiveVotingInputCorrectOrderUI extends LiveVotingSingleVoteResultsUI
         $bar = new LiveVotingBarPercentageUI();
         $bar->setTitle($correct_option->getText());
         $bar->setVotes($correct_votes);
-        $bar->setMaxVotes(LiveVotingVote::countVoters($this->player->getId(), $this->player->getRoundId()));
+        $bar->setMaxVotes(LiveVotingVote::countVoters($this->player->getActiveVoting(), $this->player->getRoundId()));
         $bar->setShowInPercent(!$this->isShowAbsolute());
 
         $bars->addBar($bar);
@@ -72,7 +72,7 @@ class LiveVotingInputCorrectOrderUI extends LiveVotingSingleVoteResultsUI
         $wrong_option->setText(ilLiveVotingPlugin::getInstance()->txt('qtype_4_wrong'));
 
         $bar = new LiveVotingBarPercentageUI();
-        $bar->setMaxVotes(LiveVotingVote::countVoters($this->player->getId(), $this->player->getRoundId()));
+        $bar->setMaxVotes(LiveVotingVote::countVoters($this->player->getActiveVoting(), $this->player->getRoundId()));
         $bar->setTitle($wrong_option->getText());
         $bar->setVotes($wrong_votes);
         $bar->setShowInPercent(!$this->isShowAbsolute());
@@ -80,7 +80,7 @@ class LiveVotingInputCorrectOrderUI extends LiveVotingSingleVoteResultsUI
         $bars->addBar($bar);
 
         $bars->setShowTotalVotes(true);
-        $bars->setTotalVotes(LiveVotingVote::countVotes($this->player->getId(), $this->player->getRoundId()));
+        $bars->setTotalVotes(LiveVotingVote::countVotes($this->player->getActiveVoting(), $this->player->getRoundId()));
         if ($this->isShowCorrectOrder()) {
             $solution_html = ilLiveVotingPlugin::getInstance()->txt('qtype_4_correct_solution') . '<br>';
             /**

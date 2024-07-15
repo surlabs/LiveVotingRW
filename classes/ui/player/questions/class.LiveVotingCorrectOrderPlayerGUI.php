@@ -80,6 +80,8 @@ class LiveVotingCorrectOrderPlayerGUI extends LiveVotingQuestionTypesUI
             "input"   => json_encode($_POST['id']),
             "vote_id" => $_POST['vote_id']
         ));
+
+        //dump($_POST);exit;
     }
 
     /**
