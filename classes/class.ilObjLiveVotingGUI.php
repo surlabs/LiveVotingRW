@@ -565,8 +565,8 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
         $questions = LiveVotingQuestion::loadAllQuestionsByObjectId($this->obj_id);
 
-        $prev_id = null;
-        $next_id = null;
+        $prev_id = 0;
+        $next_id = 0;
 
         foreach ($questions as $qst) {
             if ($qst->getPosition() < $question->getPosition()) {
@@ -577,7 +577,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             }
         }
 
-        if ($prev_id) {
+        if ($prev_id != 0) {
             $DIC->ctrl()->setParameter($this, "question_id", $prev_id);
             $prev = ilLinkButton::getInstance();
             $prev->setUrl($DIC->ctrl()->getLinkTarget($this, "edit"));
@@ -585,7 +585,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             $DIC->toolbar()->addButtonInstance($prev);
         }
 
-        if ($next_id) {
+        if ($next_id != 0) {
             $DIC->ctrl()->setParameter($this, "question_id", $next_id);
             $next = ilLinkButton::getInstance();
             $next->setUrl($DIC->ctrl()->getLinkTarget($this, "edit"));
