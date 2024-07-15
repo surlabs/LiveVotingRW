@@ -25,6 +25,7 @@ use ilLiveVotingPlugin;
 use ilObjUser;
 use LiveVoting\platform\LiveVotingDatabase;
 use LiveVoting\platform\LiveVotingException;
+use LiveVoting\questions\LiveVotingQuestion;
 use LiveVoting\questions\LiveVotingQuestionOption;
 use LiveVoting\Utils\LiveVotingUtils;
 
@@ -433,6 +434,10 @@ class LiveVotingVote
     {
         $database = new LiveVotingDatabase();
 
+        $question = LiveVotingQuestion::loadQuestionById($voting_id);
+
+        $votes = self::getVotesOfUser($participant, $voting_id, $round_id);
+
         $database->insert("rep_robj_xlvo_votehist", array(
             "id" => $database->nextId("rep_robj_xlvo_votehist"),
             "user_id_type" => $participant->isILIASUser() ? 0 : 1,
@@ -441,7 +446,7 @@ class LiveVotingVote
             "voting_id" => $voting_id,
             "timestamp" => LiveVotingUtils::getTime(),
             "round_id" => $round_id,
-            "answer" => "TODO" // TODO
+            "answer" => $question->getVotesRepresentation($votes)
         ));
     }
 
