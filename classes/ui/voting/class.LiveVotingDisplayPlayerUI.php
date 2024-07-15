@@ -164,7 +164,7 @@ class LiveVotingDisplayPlayerUI
         $this->tpl->setVariable('VOTERS_TEXT', vsprintf(ilLiveVotingPlugin::getInstance()->txt("player_voters_description"), [LiveVotingVoter::countVoters($player->getId())]));
 
         $this->tpl->setVariable('COUNT', $this->liveVoting->countQuestions());
-        $this->tpl->setVariable('POSITION', $this->liveVoting->getQuestionPosition());
+        $this->tpl->setVariable('POSITION', $this->liveVoting->getQuestionPosition() + 1);
     }
 
     /**

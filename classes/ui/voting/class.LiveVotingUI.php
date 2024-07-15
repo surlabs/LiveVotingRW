@@ -265,17 +265,14 @@ class LiveVotingUI
         }
 
         try {
-            $DIC->ui()->mainTemplate()->setContent($this->getPlayerHTML());
+            $modal = LiveVotingQRModalGUI::getInstanceFromLiveVoting($this->liveVoting)->getHTML();
+
+            $DIC->ui()->mainTemplate()->setContent($modal . $this->getPlayerHTML());
 
             $this->initToolbarDuringVoting();
         } catch (JsonException|ilCtrlException|LiveVotingException|ilTemplateException|ilException $e) {
             $DIC->ui()->mainTemplate()->setContent($DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure($e->getMessage())));
         }
-
-        //TODO: Implementar este modal
-         //$modal = xlvoQRModalGUI::getInstanceFromVotingConfig($this->manager->getVotingConfig())->getHTML();
-         //$this->handlePreview();
-
     }
 
     /**
