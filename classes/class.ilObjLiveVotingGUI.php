@@ -613,7 +613,6 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
     public function resetQuestion()
     {
-        $question = $this->object->getLiveVoting()->getQuestionById((int)$_GET['question_id']);
         // TODO: Implement resetQuestion() method.
     }
 
@@ -637,7 +636,6 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
     public function deleteQuestion()
     {
-        $question = $this->object->getLiveVoting()->getQuestionById((int)$_GET['question_id']);
         // TODO: Implement deleteQuestion() method.
     }
 
