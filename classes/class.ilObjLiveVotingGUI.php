@@ -109,6 +109,10 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             case 'applyFilter':
             case 'resetFilter':
             case 'apiCall':
+            case 'resetQuestion':
+            case 'duplicateQuestion':
+            case 'duplicateQuestionToAnotherObjectSelect':
+            case 'confirmDeleteQuestion':
                 $this->{$cmd}();
                 break;
             case 'edit':
@@ -599,6 +603,26 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure(ilLiveVotingPlugin::getInstance()->txt('permission_denied_write')));
             $DIC->ctrl()->redirect($this, "index");
         }
+    }
+
+    public function resetQuestion()
+    {
+        // TODO: Implement resetQuestion() method.
+    }
+
+    public function duplicateQuestion()
+    {
+        // TODO: Implement duplicateQuestion() method.
+    }
+
+    public function duplicateQuestionToAnotherObjectSelect()
+    {
+        // TODO: Implement duplicateQuestionToAnotherObjectSelect() method.
+    }
+
+    public function confirmDeleteQuestion()
+    {
+        // TODO: Implement confirmDeleteQuestion() method.
     }
 
 

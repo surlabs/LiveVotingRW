@@ -220,14 +220,14 @@ class liveVotingTableGUI extends ilTable2GUI
         if ($this->access->hasWriteAccess()) {
             $current_selection_list->addItem($this->txt('voting_edit'), 'edit',$DIC->ctrl()
                 ->getLinkTarget($this->voting_gui, 'edit'));
-            $current_selection_list->addItem($this->txt('voting_reset'), 'confirmDelete', $DIC->ctrl()
-                ->getLinkTarget($this->voting_gui, 'confirmDelete'));
-            $current_selection_list->addItem($this->txt('voting_duplicate'), 'duplicate', $DIC->ctrl()
-                ->getLinkTarget($this->voting_gui, 'duplicate'));
-            $current_selection_list->addItem($this->txt('voting_duplicateToAnotherObject'), 'duplicateToAnotherObjectSelect', $DIC->ctrl()
-                ->getLinkTarget($this->voting_gui, 'duplicateToAnotherObjectSelect'));
-            $current_selection_list->addItem($this->txt('voting_delete'), 'confirmDelete', $DIC->ctrl()
-                ->getLinkTarget($this->voting_gui, 'confirmDelete'));
+            $current_selection_list->addItem($this->txt('voting_reset'), 'resetQuestion', $DIC->ctrl()
+                ->getLinkTarget($this->voting_gui, 'resetQuestion'));
+            $current_selection_list->addItem($this->txt('voting_duplicate'), 'duplicateQuestion', $DIC->ctrl()
+                ->getLinkTarget($this->voting_gui, 'duplicateQuestion'));
+            $current_selection_list->addItem($this->txt('voting_duplicateToAnotherObject'), 'duplicateQuestionToAnotherObjectSelect', $DIC->ctrl()
+                ->getLinkTarget($this->voting_gui, 'duplicateQuestionToAnotherObjectSelect'));
+            $current_selection_list->addItem($this->txt('voting_delete'), 'confirmDeleteQuestion', $DIC->ctrl()
+                ->getLinkTarget($this->voting_gui, 'confirmDeleteQuestion'));
         }
         $current_selection_list->getHTML();
         $this->tpl->setVariable('ACTIONS', $current_selection_list->getHTML());
