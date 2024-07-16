@@ -366,16 +366,16 @@ class LiveVotingUI
         $player = $this->liveVoting->getPlayer();
 
         // Fullscreen
-
-        if ($player->isFullScreen() && !$param_manager->isPpt()) {
+        //dump($player->isFullScreen());exit;
+        if (true) {
             $suspendButton = ilLinkButton::getInstance();
-            $suspendButton->setCaption(ilGlyphGUI::get('fullscreen'), false);
+            $suspendButton->setCaption('<span class="glyphicon glyphicon-fullscreen"></span>', false);
             $suspendButton->setUrl('#');
             $suspendButton->setId('btn-start-fullscreen');
             $DIC->toolbar()->addButtonInstance($suspendButton);
 
             $suspendButton = ilLinkButton::getInstance();
-            $suspendButton->setCaption(ilGlyphGUI::get('resize-small'), false);
+            $suspendButton->setCaption('<span class="glyphicon glyphicon-resize-small"></span>', false);
             $suspendButton->setUrl('#');
             $suspendButton->setId('btn-close-fullscreen');
             $DIC->toolbar()->addButtonInstance($suspendButton);

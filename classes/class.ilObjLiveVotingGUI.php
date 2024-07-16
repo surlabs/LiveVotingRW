@@ -775,6 +775,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
     /**
      * @throws LiveVotingException
+     * @throws ilException
      */
     protected function apiCall(): void
     {
@@ -875,6 +876,12 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
                     $vote->save();
                 }
 
+                break;
+            case 'button':
+                $xlvoQuestionTypesGUI = LiveVotingQuestionTypesUI::getInstance($this->object->getLiveVoting()->getPlayer());
+                $xlvoQuestionTypesGUI->handleButtonCall($_POST['button_id'], $_POST['button_data']);
+                $return_value = new stdClass();
+                $return_value->buttons_html = $this->getButtonsHTML();
                 break;
             default:
                 $return_value = false;

@@ -99,7 +99,7 @@ class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
         if (in_array(self::BUTTON_TOGGLE_PERCENTAGE,$states)) {
             $t->setCaption(' %', false);
         } else {
-            $t->setCaption(ilGlyphGUI::get('close'), false);
+            $t->setCaption('<span class="glyphicon glyphicon-user" aria-hidden="true"></span>', false);
         }
 
         return array($t);
@@ -113,8 +113,9 @@ class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
      */
     public function handleButtonCall($button_id, $data)
     {
+        //var_dump($button_id, $data);exit;
         $states = $this->getButtonsStates();
-        $this->saveButtonState($button_id, !$states[$button_id]);
+        $this->saveButtonState($button_id, !(array_key_exists($button_id,$states) && $states[$button_id]));
     }
 
 

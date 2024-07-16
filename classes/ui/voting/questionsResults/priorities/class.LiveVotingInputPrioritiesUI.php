@@ -35,7 +35,7 @@ class LiveVotingInputPrioritiesUI extends LiveVotingInputCorrectOrderUI
     public function getHTML(): string
     {
         $bars = new LiveVotingBarCollectionUI();
-        $total_voters = LiveVotingVote::countVoters($this->player->getId(), $this->player->getRoundId());
+        $total_voters = LiveVotingVote::countVoters($this->player->getActiveVoting(), $this->player->getRoundId());
         $bars->setTotalVoters($total_voters);
         $bars->setShowTotalVoters(false);
         $bars->setTotalVotes($total_voters);
@@ -44,7 +44,7 @@ class LiveVotingInputPrioritiesUI extends LiveVotingInputCorrectOrderUI
         $option_amount = count($this->player->getActiveVotingObject()->getOptions());
         $option_weight = array();
 
-        foreach (LiveVotingVote::getVotesOfQuestion($this->player->getId(), $this->player->getRoundId()) as $xlvoVote) {
+        foreach (LiveVotingVote::getVotesOfQuestion($this->player->getActiveVoting(), $this->player->getRoundId()) as $xlvoVote) {
             $option_amount2 = $option_amount;
             $json_decode = json_decode($xlvoVote->getFreeInput(), true);
             if (is_array($json_decode)) {
@@ -57,12 +57,17 @@ class LiveVotingInputPrioritiesUI extends LiveVotingInputCorrectOrderUI
 
         $possible_max = $option_amount;
         // Sort button if selected
-        if ($this->isShowCorrectOrder() && LiveVotingVote::hasVotes($this->player->getId(), $this->player->getRoundId())) {
+        if ($this->isShowCorrectOrder() && LiveVotingVote::hasVotes($this->player->getActiveVoting(), $this->player->getRoundId())) {
             $unsorted_options = $this->player->getActiveVotingObject()->getOptions();
             $options = array();
             arsort($option_weight);
             foreach ($option_weight as $option_id => $weight) {
-                $options[] = $unsorted_options[$option_id];
+                foreach ($unsorted_options as $option) {
+                    if ($option->getId() == $option_id) {
+                        $options[] = $option;
+                        break;
+                    }
+                }
             }
         } else {
             $options = $this->player->getActiveVotingObject()->getOptions();

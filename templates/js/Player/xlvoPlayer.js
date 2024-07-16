@@ -265,10 +265,8 @@ var xlvoPlayer = {
 			return;
 		}
 		xlvoPlayer.startRequest();
-		console.log(xlvoPlayer.config.base_url, {cmd: 'getPlayerData'});
 		$.get(xlvoPlayer.config.base_url, {cmd: 'getPlayerData'}).done(function (data) {
 			xlvoPlayer.counter++;
-			console.log(data);
 			if ((xlvoPlayer.counter > xlvoPlayer.forced_update_interval) // Forced update of HTML
 				|| (data.player.last_update !== xlvoPlayer.player.last_update) // Player is out of sync
 				|| (data.player.show_results !== xlvoPlayer.player.show_results) // Show Results has changed
@@ -349,7 +347,6 @@ var xlvoPlayer = {
 		var input_data = input_data ? input_data : {};
 		var post_data = $.extend({call: cmd}, input_data);
 
-		console.log(xlvoPlayer.config.base_url + '&cmd=apiCall', post_data);
 
 		$.post(xlvoPlayer.config.base_url + '&cmd=apiCall', post_data).always(function () {
 			xlvoPlayer.handleSwitch();
@@ -363,20 +360,24 @@ var xlvoPlayer = {
 	 * @param data
 	 */
 	callButton: function (button_id, data) {
+		console.log("Prueba");
 		if (xlvoPlayer.isRequestPending()) {
 			return;
 		}
 		xlvoPlayer.startRequest();
 		xlvoPlayer.toolbar_loader.show();
 		this.log('call Button: ' + button_id);
+		console.log(xlvoPlayer.config.base_url + '&cmd=apiCall');
+		console.log("POST:", button_id);
+
 		$.post(xlvoPlayer.config.base_url + '&cmd=apiCall', {
 			call: 'button',
 			button_id: button_id,
 			button_data: data
 		}).done(function (data) {
-
-		}).fail(function () {
-
+			console.log(data);
+		}).fail(function (e) {
+			console.log(e.responseText);
 		}).always(function () {
 			xlvoPlayer.handleSwitch();
 			xlvoPlayer.getPlayerData();

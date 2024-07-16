@@ -158,7 +158,7 @@ class LiveVotingCorrectOrderPlayerGUI extends LiveVotingQuestionTypesUI
         if (array_key_exists(self::BUTTON_TOGGLE_PERCENTAGE,$states) && $states[self::BUTTON_TOGGLE_PERCENTAGE]) {
             $t->setCaption(' %', false);
         } else {
-            $t->setCaption($DIC->ui()->renderer()->render($DIC->ui()->factory()->symbol()->icon()->standard('usr', '', 'small')), false);
+            $t->setCaption('<span class="glyphicon glyphicon-user" aria-hidden="true"></span>', false);
         }
 
         return array($b, $t);
