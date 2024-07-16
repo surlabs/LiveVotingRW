@@ -29,7 +29,7 @@ use LiveVoting\platform\LiveVotingException;
  */
 class LiveVotingCategory
 {
-    private int $id;
+    private int $id = 0;
     private string $title;
     private int $voting_id;
     private int $round_id;
