@@ -220,8 +220,8 @@ class liveVotingTableGUI extends ilTable2GUI
         if ($this->access->hasWriteAccess()) {
             $current_selection_list->addItem($this->txt('voting_edit'), 'edit',$DIC->ctrl()
                 ->getLinkTarget($this->voting_gui, 'edit'));
-            $current_selection_list->addItem($this->txt('voting_reset'), 'resetQuestion', $DIC->ctrl()
-                ->getLinkTarget($this->voting_gui, 'resetQuestion'));
+            $current_selection_list->addItem($this->txt('voting_reset'), 'confirmResetQuestion', $DIC->ctrl()
+                ->getLinkTarget($this->voting_gui, 'confirmResetQuestion'));
             $current_selection_list->addItem($this->txt('voting_duplicate'), 'duplicateQuestion', $DIC->ctrl()
                 ->getLinkTarget($this->voting_gui, 'duplicateQuestion'));
             $current_selection_list->addItem($this->txt('voting_duplicateToAnotherObject'), 'duplicateQuestionToAnotherObjectSelect', $DIC->ctrl()

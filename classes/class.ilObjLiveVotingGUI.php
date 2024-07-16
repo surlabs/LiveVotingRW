@@ -605,26 +605,41 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         }
     }
 
+    public function confirmResetQuestion()
+    {
+        $question = $this->object->getLiveVoting()->getQuestionById((int)$_GET['question_id']);
+        // TODO: Implement resetQuestion() method.
+    }
+
     public function resetQuestion()
     {
+        $question = $this->object->getLiveVoting()->getQuestionById((int)$_GET['question_id']);
         // TODO: Implement resetQuestion() method.
     }
 
     public function duplicateQuestion()
     {
+        $question = $this->object->getLiveVoting()->getQuestionById((int)$_GET['question_id']);
         // TODO: Implement duplicateQuestion() method.
     }
 
     public function duplicateQuestionToAnotherObjectSelect()
     {
+        $question = $this->object->getLiveVoting()->getQuestionById((int)$_GET['question_id']);
         // TODO: Implement duplicateQuestionToAnotherObjectSelect() method.
     }
 
     public function confirmDeleteQuestion()
     {
+        $question = $this->object->getLiveVoting()->getQuestionById((int)$_GET['question_id']);
         // TODO: Implement confirmDeleteQuestion() method.
     }
 
+    public function deleteQuestion()
+    {
+        $question = $this->object->getLiveVoting()->getQuestionById((int)$_GET['question_id']);
+        // TODO: Implement deleteQuestion() method.
+    }
 
     /**
      * @throws ilCtrlException
