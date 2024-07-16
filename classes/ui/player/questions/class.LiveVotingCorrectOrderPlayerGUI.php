@@ -80,8 +80,21 @@ class LiveVotingCorrectOrderPlayerGUI extends LiveVotingQuestionTypesUI
             "input"   => json_encode($_POST['id']),
             "vote_id" => $_POST['vote_id']
         ));
+    }
 
-        //dump($_POST);exit;
+    /**
+     * @throws LiveVotingException
+     * @throws ilCtrlException
+     */
+    protected function clear(): void
+    {
+        $param_manager = ParamManager::getInstance();
+        $liveVoting = LiveVoting::getLiveVotingFromPin($param_manager->getPin());
+        $this->player = $liveVoting->getPlayer();
+
+        $this->player->unvoteAll();
+
+        $this->afterSubmit();
     }
 
     /**
@@ -99,7 +112,7 @@ class LiveVotingCorrectOrderPlayerGUI extends LiveVotingQuestionTypesUI
         $tpl->setVariable('BTN_RESET', ilLiveVotingPlugin::getInstance()->txt('qtype_4_clear'));
         $tpl->setVariable('BTN_SAVE', ilLiveVotingPlugin::getInstance()->txt('qtype_4_save'));
 
-        $votes = array_values($this->player->getVotesOfUser(true));
+        $votes = array_values($this->player->getVotesOfUser());
         $vote = array_shift($votes);
         $order = array();
         $vote_id = null;

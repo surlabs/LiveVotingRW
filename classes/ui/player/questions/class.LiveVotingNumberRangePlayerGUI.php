@@ -95,6 +95,20 @@ class LiveVotingNumberRangePlayerGUI extends LiveVotingQuestionTypesUI
         }
     }
 
+    /**
+     * @throws LiveVotingException
+     * @throws ilCtrlException
+     */
+    protected function clear(): void
+    {
+        $param_manager = ParamManager::getInstance();
+        $liveVoting = LiveVoting::getLiveVotingFromPin($param_manager->getPin());
+        $this->player = $liveVoting->getPlayer();
+
+        $this->player->unvoteAll();
+
+        $this->afterSubmit();
+    }
 
     /**
      * @return string
@@ -114,7 +128,7 @@ class LiveVotingNumberRangePlayerGUI extends LiveVotingQuestionTypesUI
         /**
          * @var LiveVotingVote[] $userVotes
          */
-        $userVotes = $this->getPlayer()->getVotesOfUser(false);
+        $userVotes = $this->getPlayer()->getVotesOfUser();
         $userVotes = array_values($userVotes);
 
         $template->setVariable('SLIDER_MIN', $this->getStart());
