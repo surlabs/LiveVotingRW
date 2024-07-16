@@ -199,7 +199,7 @@ class liveVotingTableGUI extends ilTable2GUI
         $this->addColumn($this->txt('voting_question'));
         $this->addColumn($this->txt('voting_type'));
         //		$this->addColumn($this->txt('status'));
-        $this->addColumn($this->txt('actions'), '', '150px');
+        $this->addColumn($this->txt('voting_actions'), '', '150px');
     }
 
 
