@@ -847,12 +847,12 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             case 'remove_category':
                 $database = new LiveVotingDatabase();
 
-                $database->update('rep_robj_xlvo_vote_n', array(
+                $database->update('rep_robj_xlvo_vote_n',  array(
+                    "free_input_category" => 0
+                ), array(
                     "voting_id" => $liveVoting->getPlayer()->getActiveVoting(),
                     "round_id" => $liveVoting->getPlayer()->getRoundId(),
                     "free_input_category" => $_POST['category_id']
-                ),  array(
-                    "free_input_category"
                 ));
 
                $database->delete('rep_robj_xlvo_cat', array(
