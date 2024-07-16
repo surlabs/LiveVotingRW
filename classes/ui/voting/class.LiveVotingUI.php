@@ -285,7 +285,7 @@ class LiveVotingUI
         // Freeze
         $suspendButton = ilLinkButton::getInstance();
         $suspendButton->addCSSClass('btn-warning');
-        $suspendButton->setCaption($this->pl->txt('player_freeze'), false);
+        $suspendButton->setCaption('<span class="glyphicon glyphicon-pause"></span> '.$this->pl->txt('player_freeze'), false);
         $suspendButton->setUrl('#');
         $suspendButton->setId('btn-freeze');
         $DIC->toolbar()->addButtonInstance($suspendButton);
@@ -293,7 +293,7 @@ class LiveVotingUI
         // Unfreeze
         $playButton = ilLinkButton::getInstance();
         $playButton->setPrimary(true);
-        $playButton->setCaption($this->pl->txt('player_unfreeze'), false);
+        $playButton->setCaption('<span class="glyphicon glyphicon-play"></span> '.$this->pl->txt('player_unfreeze'), false);
         $playButton->setUrl('#');
         $playButton->setId('btn-unfreeze');
 
@@ -326,7 +326,7 @@ class LiveVotingUI
 
         // Reset
         $suspendButton = ilLinkButton::getInstance();
-        $suspendButton->setCaption(ilGlyphGUI::get('remove') . " " . $this->pl->txt('player_reset'), false);
+        $suspendButton->setCaption('<span class="glyphicon glyphicon-remove"></span> '. $this->pl->txt('player_reset'), false);
         $suspendButton->setUrl('#');
         $suspendButton->setId('btn-reset');
         $DIC->toolbar()->addButtonInstance($suspendButton);

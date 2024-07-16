@@ -55,10 +55,10 @@ class LiveVotingFreeTextCategoriesUI
 
         $database = new LiveVotingDatabase();
 
-        $categories = $database->select("rep_robj_xlvo_cat", array("id"), array(
+        $categories = $database->select("rep_robj_xlvo_cat", array(
             "voting_id" => $player->getActiveVoting(),
             "round_id" => $player->getRoundId()
-        ));
+        ), array("id"));
 
         foreach ($categories as $category) {
             $bar_collection = new LiveVotingBarGroupingCollectionUI();
@@ -82,6 +82,7 @@ class LiveVotingFreeTextCategoriesUI
     public function addBar(LiveVotingBarFreeTextUI $bar_gui, int $cat_id)
     {
         $bar_gui->setRemovable($this->isRemovable());
+
         if (!($this->categories[$cat_id]['votes'] instanceof LiveVotingBarGroupingCollectionUI)) {
             throw new LiveVotingException('category not found', 3);
         }

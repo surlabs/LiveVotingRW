@@ -90,7 +90,6 @@ class LiveVotingCategory
      */
     public function save(): int {
         $database = new LiveVotingDatabase();
-
         if ($this->id != 0) {
             $database->update("rep_robj_xlvo_cat", array(
                 "title" => $this->title,
@@ -109,6 +108,7 @@ class LiveVotingCategory
                 "round_id" => $this->round_id
             ));
         }
+
 
         return $this->id;
     }

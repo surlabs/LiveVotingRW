@@ -109,6 +109,9 @@ class LiveVotingInputFreeTextUI extends LiveVotingInputResultsGUI
     {
         global $DIC;
 
+        $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/js/libs/waiter.min.js');
+        $DIC->ui()->mainTemplate()->addCss(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/Waiter/waiter.css');
+
         $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory() . '/node_modules/dragula/dist/dragula.js');
         $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/js/QuestionTypes/FreeInput/xlvoFreeInputCategorize.js');
         $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory() . '/node_modules/dragula/dist/dragula.min.css');

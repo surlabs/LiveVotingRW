@@ -238,6 +238,7 @@ class LiveVotingPlayerGUI
      */
     public function getHTML(): void
     {
+        global $DIC;
         $tpl_voting = new ilTemplate($this->getPluginObject()->getDirectory() . '/templates/default/Voter/tpl.inner_screen.html', true, true);
         $this->setVotingTemplate($tpl_voting);
         
@@ -247,7 +248,7 @@ class LiveVotingPlayerGUI
             $this->getVotingTemplate()->setVariable('COUNT', (string)$this->getLiveVoting()->countQuestions());
             $this->getVotingTemplate()->setVariable('POSITION', (string)$this->getLiveVoting()->getQuestionPosition());
             $this->getVotingTemplate()->setVariable('PIN', $this->getLiveVoting()->getPin());
-            $this->getVotingTemplate()->setVariable('GLYPH', "pause");
+            $this->getVotingTemplate()->setVariable('GLYPH', '<span class="glyphicon glyphicon-pause"></span>');
             echo $this->getVotingTemplate()->get();
             exit();
         } else {
@@ -276,12 +277,12 @@ class LiveVotingPlayerGUI
                 case LiveVotingPlayer::STAT_START_VOTING:
                     $this->getVotingTemplate()->setVariable('TITLE', $this->txt('voter_header_start'));
                     $this->getVotingTemplate()->setVariable('DESCRIPTION', $this->txt('voter_info_start'));
-                    $this->getVotingTemplate()->setVariable('GLYPH', "Glyph start_voting");
+                    $this->getVotingTemplate()->setVariable('GLYPH', '<span class="glyphicon glyphicon-pause"></span>');
                     break;
                 case LiveVotingPlayer::STAT_END_VOTING:
                     $this->getVotingTemplate()->setVariable('TITLE', $this->txt('voter_header_end'));
                     $this->getVotingTemplate()->setVariable('DESCRIPTION', $this->txt('voter_info_end'));;
-                    $this->getVotingTemplate()->setVariable('GLYPH', "Glyph end_voting");
+                    $this->getVotingTemplate()->setVariable('GLYPH', '<span class="glyphicon glyphicon-stop"></span>');
                     break;
                 case LiveVotingPlayer::STAT_FROZEN:
                     $this->getVotingTemplate()->setVariable('TITLE', $this->txt('voter_header_frozen'));
@@ -289,7 +290,7 @@ class LiveVotingPlayerGUI
                     $this->getVotingTemplate()->setVariable('COUNT', (string)$this->getLiveVoting()->countQuestions());
                     $this->getVotingTemplate()->setVariable('POSITION', (string)$this->getLiveVoting()->getQuestionPosition());
                     $this->getVotingTemplate()->setVariable('PIN', $this->getLiveVoting()->getPin());
-                    $this->getVotingTemplate()->setVariable('GLYPH', "Glyph frozen");
+                    $this->getVotingTemplate()->setVariable('GLYPH', '<span class="glyphicon glyphicon-pause"></span>');
                     break;
             }
             echo $this->getVotingTemplate()->get();

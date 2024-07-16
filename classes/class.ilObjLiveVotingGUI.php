@@ -782,7 +782,6 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         $return_value = true;
 
         $liveVoting = $this->object->getLiveVoting();
-
         switch ($_POST['call']) {
             case 'toggle_freeze':
                 $param_manager = ParamManager::getInstance();
@@ -836,9 +835,12 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
                 break;
             case 'add_category':
                 $category = new LiveVotingCategory();
+
                 $category->setTitle($_POST['title']);
+
                 $category->setVotingId($liveVoting->getPlayer()->getActiveVoting());
                 $category->setRoundId($liveVoting->getPlayer()->getRoundId());
+
                 $category->save();
                 $return_value = ['category_id' => $category->getId()];
                 break;
@@ -846,14 +848,14 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
                 $database = new LiveVotingDatabase();
 
                 $database->update('rep_robj_xlvo_vote_n', array(
-                    "free_input_category" => 0
-                ), array(
                     "voting_id" => $liveVoting->getPlayer()->getActiveVoting(),
                     "round_id" => $liveVoting->getPlayer()->getRoundId(),
                     "free_input_category" => $_POST['category_id']
+                ),  array(
+                    "free_input_category"
                 ));
 
-                $database->delete('rep_robj_xlvo_cat', array(
+               $database->delete('rep_robj_xlvo_cat', array(
                     "id" => $_POST['category_id']
                 ));
 
@@ -863,19 +865,20 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
                 $database = new LiveVotingDatabase();
 
-                $votes = $database->select('rep_robj_xlvo_vote_n', array('id'), array(
+                $votes = $database->select('rep_robj_xlvo_vote_n', array(
                     'voting_id'           => $vote->getVotingId(),
                     'round_id'            => $vote->getRoundId(),
                     'free_input'          => $vote->getFreeInput(),
                     'free_input_category' => $vote->getFreeInputCategory()
-                ));
+                ), array('id'));
+
 
                 foreach ($votes as $vote) {
-                    $vote = new LiveVotingVote($vote['id']);
+                    $vote = new LiveVotingVote((int)$vote['id']);
                     $vote->setFreeInputCategory((int) $_POST['category_id']);
                     $vote->save();
                 }
-
+                exit;
                 break;
             case 'button':
                 $xlvoQuestionTypesGUI = LiveVotingQuestionTypesUI::getInstance($this->object->getLiveVoting()->getPlayer());
