@@ -54,7 +54,7 @@ class LiveVotingPlayer
     private bool $force_reload = false;
     private int $round_id = 0;
     private bool $keyboard_active = false;
-    private bool $full_screen = false;
+    private bool $full_screen = true;
 
     /**
      * @throws LiveVotingException
