@@ -160,7 +160,7 @@ class LiveVotingOrderQuestion extends LiveVotingQuestion
         $correct_order_ids = array();
 
         foreach ($this->options as $option) {
-            $correct_order_ids[(int) $option->getCorrectPosition()] = $option->getId();
+            $correct_order_ids[(int) $option->getCorrectPosition()] = (string) $option->getId();
         };
 
         ksort($correct_order_ids);
