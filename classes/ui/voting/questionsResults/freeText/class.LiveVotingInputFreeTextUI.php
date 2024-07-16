@@ -105,14 +105,6 @@ class LiveVotingInputFreeTextUI extends LiveVotingInputResultsGUI
 
     }
 
-/*    public function reset(): void
-    {
-        parent::reset();
-       //TODO: Puede ser que esto no funcione. El método original hacía otra cosa aparte del reset, pero si no entendí mal era lo mismo que ya hace el parent.
-    }*/
-
-
-
     public static function addJsAndCss(): void
     {
         global $DIC;
