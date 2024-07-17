@@ -374,7 +374,66 @@ abstract class LiveVotingQuestion
         return false;
     }
 
+    /**
+     * @throws LiveVotingException
+     */
+    public function regenerateOptionSorting(): void
+    {
+        $i = 1;
+        foreach ($this->options as $option) {
+            $option->setPosition($i);
+            $option->save();
+            $i++;
+        }
+    }
+
     abstract function getComputedColums(): float;
 
     abstract function getVotesRepresentation(array $answer): string;
+
+    /**
+     * @throws LiveVotingException
+     */
+    public function fullClone(bool $change_name = true, bool $clone_options = true, ?int $new_obj_id = null): LiveVotingQuestion
+    {
+        $newObj = $this->copy();
+
+        if ($new_obj_id) {
+            $newObj->setObjId($new_obj_id);
+        }
+
+        if ($change_name) {
+            $count = 1;
+
+            $questions = LiveVotingQuestion::loadAllQuestionsByObjectId($newObj->getObjId());
+
+            while (in_array($newObj->getTitle() . ' (' . $count . ')', array_column($questions, 'title'))) {
+                $count++;
+            }
+
+            $newObj->setTitle($newObj->getTitle() . ' (' . $count . ')');
+        }
+
+        $newObj->save();
+
+        if ($clone_options) {
+            foreach ($this->getOptions() as $votingOption) {
+                $votingOptionNew = $votingOption->copy();
+                $votingOptionNew->setVotingId($newObj->getId());
+                $votingOptionNew->save();
+            }
+
+            $newObj->regenerateOptionSorting();
+        }
+
+        return $newObj;
+    }
+
+    private function copy(): LiveVotingQuestion
+    {
+        $newObj = clone $this;
+        $newObj->setId(0);
+
+        return $newObj;
+    }
 }

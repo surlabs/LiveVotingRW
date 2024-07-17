@@ -111,10 +111,12 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             case 'resetFilter':
             case 'apiCall':
             case 'confirmResetAll':
+            case 'confirmResetQuestion':
             case 'resetQuestion':
             case 'duplicateQuestion':
             case 'duplicateQuestionToAnotherObjectSelect':
             case 'confirmDeleteQuestion':
+            case 'deleteQuestion':
                 $this->{$cmd}();
                 break;
             case 'edit':
@@ -674,39 +676,176 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         }
     }
 
-
-    public function confirmResetQuestion()
+    public function confirmResetQuestion(): void
     {
+        global $DIC;
+
+        if (!ilObjLiveVotingAccess::hasWriteAccess()) {
+            $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure(ilLiveVotingPlugin::getInstance()->txt('permission_denied_write')));
+            $DIC->ctrl()->redirect($this, "index");
+        } else {
+            $this->tabs->activateTab("tab_manage");
+
+            $question = $this->object->getLiveVoting()->getQuestionById((int)$_GET['question_id']);
+
+            if ($question->getObjId() == $this->getObjId()) {
+                $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->confirmation($this->txt('voting_confirm_reset')));
+
+                $confirm = new ilConfirmationGUI();
+                $confirm->addItem("question_id", (string) $question->getId(), $question->getTitle());
+                $confirm->setHeaderText($this->txt('voting_confirm_reset'));
+                $confirm->setFormAction($DIC->ctrl()->getFormAction($this));
+                $confirm->setCancel($this->txt('voting_cancel'), "manage");
+                $confirm->setConfirm($this->txt('voting_reset'), "resetQuestion");
+
+                $DIC->ui()->mainTemplate()->setContent($confirm->getHTML());
+            } else {
+                $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure(ilLiveVotingPlugin::getInstance()->txt('permission_denied_object')));
+                $DIC->ctrl()->redirect($this, "index");
+            }
+        }
+    }
+
+    /**
+     * @throws ilCtrlException
+     * @throws LiveVotingException
+     */
+    public function resetQuestion(): void
+    {
+        global $DIC;
+
+        if (!ilObjLiveVotingAccess::hasWriteAccess()) {
+            $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure(ilLiveVotingPlugin::getInstance()->txt('permission_denied_write')));
+            $DIC->ctrl()->redirect($this, "index");
+        } else {
+            $question = $this->object->getLiveVoting()->getQuestionById((int) $_POST['question_id']);
+
+            if ($question->getObjId() == $this->getObjId()) {
+                $votes = LiveVotingVote::getVotesOfQuestion($question->getId());
+
+                foreach ($votes as $vote) {
+                    $vote->delete();
+                }
+
+                $_SESSION['onscreen_message'] = array('type' => 'success', 'msg' => $this->txt('voting_msg_duplicated'));
+
+                $DIC->ctrl()->redirect($this, "manage");
+            } else {
+                $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure(ilLiveVotingPlugin::getInstance()->txt('reset_failed')));
+                $DIC->ctrl()->redirect($this, "index");
+            }
+        }
+
+    }
+
+    /**
+     * @throws ilCtrlException
+     */
+    public function duplicateQuestion(): void
+    {
+        global $DIC;
+
         $question = $this->object->getLiveVoting()->getQuestionById((int)$_GET['question_id']);
-        // TODO: Implement resetQuestion() method.
+
+        $question->fullClone(true, true);
+
+        $_SESSION['onscreen_message'] = array('type' => 'success', 'msg' => $this->txt('voting_msg_duplicated'));
+
+        $DIC->ctrl()->redirect($this, "manage");
     }
 
-    public function resetQuestion()
+    public function duplicateQuestionToAnotherObjectSelect(): void
     {
-        // TODO: Implement resetQuestion() method.
-    }
+        global $DIC;
 
-    public function duplicateQuestion()
-    {
+        $this->tabs->activateTab("tab_manage");
+
         $question = $this->object->getLiveVoting()->getQuestionById((int)$_GET['question_id']);
-        // TODO: Implement duplicateQuestion() method.
+
+        $form = $this->getDuplicateToAnotherObjectSelectForm($question);
+
+        $DIC->ui()->mainTemplate()->setContent($form);
     }
 
-    public function duplicateQuestionToAnotherObjectSelect()
-    {
-        $question = $this->object->getLiveVoting()->getQuestionById((int)$_GET['question_id']);
-        // TODO: Implement duplicateQuestionToAnotherObjectSelect() method.
+    private function getDuplicateToAnotherObjectSelectForm(LiveVotingQuestion $question): string {
+        $form = new ilPropertyFormGUI();
+
+        $form->setFormAction($this->ctrl->getFormAction($this));
+        $form->addCommandButton("duplicateQuestionToAnotherObject", $this->txt("voting_duplicate"), $this->ctrl->getFormAction($this));
+        $form->addCommandButton("manage", $this->txt("voting_cancel"), $this->ctrl->getFormAction($this));
+
+        $form->setTitle($this->txt("voting_duplicateToAnotherObject"));
+
+        $repository_selector = new ilRepositorySelector2InputGUI($this->txt("obj_xlvo"), "ref_id", false);
+
+        $repository_selector->setRequired(true);
+
+        $repository_selector->getExplorerGUI()->setSelectableTypes([ilLiveVotingPlugin::PLUGIN_ID]);
+
+        $form->addItem($repository_selector);
+
+        return $form->getHTML();
     }
 
-    public function confirmDeleteQuestion()
+    public function duplicateQuestionToAnotherObject()
     {
-        $question = $this->object->getLiveVoting()->getQuestionById((int)$_GET['question_id']);
-        // TODO: Implement confirmDeleteQuestion() method.
+
     }
 
-    public function deleteQuestion()
+    /**
+     * @throws ilCtrlException
+     */
+    public function confirmDeleteQuestion(): void
     {
-        // TODO: Implement deleteQuestion() method.
+        global $DIC;
+
+        if (!ilObjLiveVotingAccess::hasWriteAccess()) {
+            $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure(ilLiveVotingPlugin::getInstance()->txt('permission_denied_write')));
+            $DIC->ctrl()->redirect($this, "index");
+        } else {
+            $this->tabs->activateTab("tab_manage");
+
+            $question = $this->object->getLiveVoting()->getQuestionById((int)$_GET['question_id']);
+
+            if ($question->getObjId() == $this->getObjId()) {
+                $confirm = new ilConfirmationGUI();
+                $confirm->addItem("question_id", (string) $question->getId(), $question->getTitle());
+                $confirm->setHeaderText($this->txt('voting_delete_confirm'));
+                $confirm->setFormAction($DIC->ctrl()->getFormAction($this));
+                $confirm->setCancel($this->txt('voting_cancel'), "manage");
+                $confirm->setConfirm($this->txt('voting_delete'), "deleteQuestion");
+
+                $DIC->ui()->mainTemplate()->setContent($confirm->getHTML());
+            } else {
+                $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure(ilLiveVotingPlugin::getInstance()->txt('permission_denied_object')));
+                $DIC->ctrl()->redirect($this, "index");
+
+            }
+        }
+    }
+
+    /**
+     * @throws ilCtrlException
+     */
+    public function deleteQuestion(): void
+    {
+        global $DIC;
+
+        if (!ilObjLiveVotingAccess::hasWriteAccess()) {
+            $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure(ilLiveVotingPlugin::getInstance()->txt('permission_denied_write')));
+            $DIC->ctrl()->redirect($this, "index");
+        } else {
+            $question = $this->object->getLiveVoting()->getQuestionById((int) $_POST['question_id']);
+
+            if ($question->getObjId() == $this->getObjId()) {
+                $question->delete();
+
+                $DIC->ctrl()->redirect($this, "manage");
+            } else {
+                $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure(ilLiveVotingPlugin::getInstance()->txt('delete_failed')));
+                $DIC->ctrl()->redirect($this, "index");
+            }
+        }
     }
 
     /**

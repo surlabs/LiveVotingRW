@@ -540,17 +540,4 @@ class LiveVoting
 
         return -1;
     }
-
-    /**
-     * @throws LiveVotingException
-     */
-    public function regenerateOptionSorting(): void
-    {
-        $i = 1;
-        foreach ($this->questions as $question) {
-            $question->setPosition($i);
-            $question->save();
-            $i++;
-        }
-    }
 }

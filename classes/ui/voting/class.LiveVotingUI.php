@@ -253,7 +253,7 @@ class LiveVotingUI
     {
         global $DIC;
         $liveVoting = $this->liveVoting;
-        $liveVoting->regenerateOptionSorting();
+        $liveVoting->getPlayer()->getActiveVotingObject()->regenerateOptionSorting();
         $liveVoting->getPlayer()->setStatus(LiveVotingPlayer::STAT_RUNNING);
         $liveVoting->getPlayer()->freeze();
 

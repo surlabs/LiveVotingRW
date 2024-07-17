@@ -512,15 +512,20 @@ class LiveVotingVote
     /**
      * @throws LiveVotingException
      */
-    public static function getVotesOfQuestion(int $voting_id, int $round_id, bool $order_by_free_input = false): array
+    public static function getVotesOfQuestion(int $voting_id, ?int $round_id = null, bool $order_by_free_input = false): array
     {
         $database = new LiveVotingDatabase();
 
-        $result = $database->select("rep_robj_xlvo_vote_n", array(
+        $where = array(
             "voting_id" => $voting_id,
-            "status" => 1,
-            "round_id" => $round_id
-        ), ["id"], $order_by_free_input ? "ORDER BY free_input ASC" : "");
+            "status" => 1
+        );
+
+        if ($round_id) {
+            $where["round_id"] = $round_id;
+        }
+
+        $result = $database->select("rep_robj_xlvo_vote_n", $where, ["id"], $order_by_free_input ? "ORDER BY free_input ASC" : "");
 
         $votes = array();
 
