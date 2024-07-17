@@ -405,6 +405,7 @@ var xlvoPlayer = {
 		xlvoPlayer.startRequest();
 		$.get(xlvoPlayer.config.base_url, {cmd: "getAttendees"})
 			.done(function (data) {
+				console.log(data);
 				$('#xlvo-attendees').html(data);
 				xlvoPlayer.timeout = setTimeout(xlvoPlayer.updateAttendees, 1000);
 			})

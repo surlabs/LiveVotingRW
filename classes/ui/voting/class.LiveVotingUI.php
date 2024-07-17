@@ -144,13 +144,14 @@ class LiveVotingUI
                 $template->setVariable('SHORTLINK', $this->liveVoting->getShortLink($param_manager->getRefId()));
 
                 $template->setVariable('MODAL', LiveVotingQRModalGUI::getInstanceFromLiveVoting($this->liveVoting)->getHTML());
-                $template->setVariable("ONLINE_TEXT", vsprintf($this->pl->txt("start_online"), [0]));
                 $template->setVariable("ZOOM_TEXT", $this->pl->txt("start_zoom"));
 
                 $js = LiveVotingJs::getInstance()->addSetting("base_url", $DIC->ctrl()->getLinkTargetByClass("ilObjLiveVotingGUI", "", "", true))->name('Player')->init();
 
                 if ($this->liveVoting->isShowAttendees()) {
                     $js->call('updateAttendees');
+                    $template->setVariable("ONLINE_TEXT", vsprintf($this->pl->txt("start_online"), [0]));
+
                 }
 
                 $js->call('handleStartButton');

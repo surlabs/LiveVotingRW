@@ -204,7 +204,7 @@ class LiveVotingCorrectOrderPlayerGUI extends LiveVotingQuestionTypesUI
      */
     protected function isRandomizeOptions(): bool
     {
-        return false;
+        return $this->getPlayer()->getActiveVotingObject()->isRandomiseOptionSequence();
     }
 
 

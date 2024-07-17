@@ -110,6 +110,12 @@ class LiveVotingPlayerGUI
     {
         $this->prepareFrameworkTemplate();
         $this->prepareVotingTemplate();
+        $this->initCssAndJs();
+        $this->showVotingTemplate();
+
+        $player = $this->live_voting->getPlayer();
+
+        LiveVotingQuestionTypesUI::getInstance($player)->initJS();
 
     }
 
@@ -125,7 +131,6 @@ class LiveVotingPlayerGUI
     /**
      * @throws ilTemplateException
      * @throws ilSystemStyleException
-     * @throws ilCtrlException|LiveVotingException
      * @throws ilException
      */
     private function prepareVotingTemplate(): void
@@ -138,6 +143,20 @@ class LiveVotingPlayerGUI
 
         $DIC->ui()->mainTemplate()->addCss($this->getPluginObject()->getDirectory() . '/templates/default/default.css');
 
+        $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/js/xlvoMain.js');
+
+        LiveVotingJs::getInstance()->name('Main')->init()->setRunCode();
+
+
+    }
+
+    /**
+     * @return void
+     * @throws ilCtrlException|LiveVotingException
+     */
+    private function initCssAndJs():void
+    {
+        global $DIC;
         iljQueryUtil::initjQueryUI();
 
         LiveVotingJs::getInstance()->initMathJax();
@@ -159,8 +178,6 @@ class LiveVotingPlayerGUI
             'delay'       => $delay,
         );
 
-
-        LiveVotingJs::getInstance()->name('Main')->init()->setRunCode();
         LiveVotingJs::getInstance()->api($this, array(IlUIPluginRouterGUI::class))->addSettings($settings)->name('Voter')->addTranslations($t)->init()->setRunCode();
 
 
@@ -170,7 +187,6 @@ class LiveVotingPlayerGUI
         $DIC->ui()->mainTemplate()->addCss(ilLiveVotingPlugin::getInstance()->getDirectory()."/templates/customUI/MultiLineNewInputGUI/css/multi_line_new_input_gui.css");
         $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory()."/templates/customUI/MultiLineNewInputGUI/js/multi_line_new_input_gui.js");
 
-        $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/js/xlvoMain.js');
         $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/js/xlvoVoter.js');
 
         $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory(). '/templates/js/QuestionTypes/NumberRange/xlvoNumberRange.js');
@@ -182,30 +198,6 @@ class LiveVotingPlayerGUI
         LiveVotingJs::getInstance()->api($this)->name('CorrectOrder')->category('QuestionTypes/CorrectOrder')->init();
         LiveVotingJs::getInstance()->api($this)->name('FreeInput')->category('QuestionTypes/FreeInput')->init();
         LiveVotingJs::getInstance()->api($this)->name('FreeOrder')->category('QuestionTypes/FreeOrder')->init();
-
-        /*switch ($this->live_voting->getPlayer()->getActiveVotingObject()->getQuestionType()) {
-            case "CorrectOrder":
-
-                break;
-            case "FreeText":
-                break;
-            case "Priorities":
-                break;
-            case "Choices":
-                break;
-            case "NumberRange":
-
-                break;
-            default:
-                throw new ilException("Could not find the gui for the current voting.");
-        }*/
-
-        //Show voting template
-        $this->showVotingTemplate();
-
-        $player = $this->live_voting->getPlayer();
-
-        LiveVotingQuestionTypesUI::getInstance($player)->initJS();
     }
 
     /**
@@ -222,12 +214,6 @@ class LiveVotingPlayerGUI
         $DIC->ui()->mainTemplate()->fillOnLoadCode();
         $DIC->ui()->mainTemplate()->printToStdout('DEFAULT', false, true);
 
-
-
-        //echo $DIC->ui()->mainTemplate()->get();
-        //echo $this->getFrameworkTemplate()->get();
-        //echo $this->getVotingTemplate()->get();
-        //exit;
     }
 
     /**
@@ -298,10 +284,64 @@ class LiveVotingPlayerGUI
         }
     }
 
+    /**
+     * @throws ilCtrlException
+     * @throws ilTemplateException
+     * @throws ilSystemStyleException
+     * @throws LiveVotingException
+     */
     public function requestPin(): void
     {
-        dump("Cargar el input para meter el PIN");
-        exit();
+        global $DIC;
+
+        if(isset($_POST["pin_input"])){
+            $this->checkPin();
+        }
+
+        $tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/Voter/tpl.pin.html', true, false);
+        $DIC->ui()->mainTemplate()->addCss(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/Voter/pin.css');
+        $pin_form = new ilPropertyFormGUI();
+        $pin_form->setFormAction($DIC->ctrl()->getLinkTarget($this, 'checkPin'));
+        $pin_form->addCommandButton('checkPin', $this->txt('voter_send'));
+
+        $te = new ilTextInputGUI($this->txt('voter_pin_input'), 'pin_input');
+        $te->setMaxLength(4);
+        $pin_form->addItem($te);
+
+        $tpl->setVariable('TITLE', $this->txt('player_start_voting'));
+        $tpl->setVariable('FORM', $pin_form->getHTML());
+
+        $this->setVoterPlayerTemplate($tpl);
+
+        $this->prepareFrameworkTemplate();
+        $this->setVoterPlayerTemplate($tpl);
+
+        $this->showVotingTemplate();
+    }
+
+    /**
+     * @return void
+     * @throws LiveVotingException
+     * @throws ilCtrlException
+     */
+    protected function checkPin()
+    {
+        global $DIC;
+
+        $param_manager = ParamManager::getInstance();
+
+        $pin = filter_input(INPUT_POST, 'pin_input');
+        $live_voting = LiveVoting::getLiveVotingFromPin($pin);
+        if(isset($live_voting)){
+            $this->setLiveVoting($live_voting);
+            $param_manager->setPin($_POST['pin_input']);
+
+            $DIC->ctrl()->redirect($this, 'startVoterPlayer');
+        } else {
+            $param_manager->setPin('');
+            $DIC->ctrl()->redirect($this, 'requestPin');
+        }
+
     }
 
     protected function txt(string $key): string
