@@ -21,13 +21,10 @@ declare(strict_types=1);
 namespace LiveVoting\player;
 
 use ilAccess;
-use ilAppEventHandler;
 use ilCtrlException;
 use ilDatabaseException;
 use ilDBWrapperFactory;
 use ilErrorHandling;
-use ilGlobalCache;
-use ilGlobalCacheSettings;
 use ilGlobalTemplate;
 use ilGSProviderFactory;
 use ilHelp;
@@ -116,7 +113,7 @@ class LiveVotingInitialisationUI
      * @throws ilTemplateException
      * @throws \Exception
      */
-    private function bootstrapApp()
+    private function bootstrapApp(): void
     {
         global $DIC;
         //bootstrap ILIAS
@@ -148,7 +145,7 @@ class LiveVotingInitialisationUI
         $this->initAccessHandling();
         $this->initObjectDefinition();
         $this->initAccess();
-        $this->initAppEventHandler();
+        //$this->initAppEventHandler();
         $this->initMail();
         $this->initFilesystem();
         $this->initResourceStorage();
@@ -164,7 +161,7 @@ class LiveVotingInitialisationUI
     /**
      * Remove unsafe characters from GET
      */
-    protected function removeUnsafeCharacters()
+    protected function removeUnsafeCharacters(): void
     {
         // Remove unsafe characters from GET parameters.
         // We do not need this characters in any case, so it is
@@ -349,9 +346,10 @@ class LiveVotingInitialisationUI
             define("IL_DB_TYPE", $val);
         }
 
-        $ilGlobalCacheSettings = new ilGlobalCacheSettings();
+        //TODO: Comentado para ilias 9
+        /*$ilGlobalCacheSettings = new ilGlobalCacheSettings();
         $ilGlobalCacheSettings->readFromIniFile($ilClientIniFile);
-        ilGlobalCache::setup($ilGlobalCacheSettings);
+        ilGlobalCache::setup($ilGlobalCacheSettings);*/
 
     }
 
@@ -458,9 +456,9 @@ class LiveVotingInitialisationUI
 
     /**
      * Build the http path for ILIAS
-     * @return string
+     * @return void
      */
-    private function buildHTTPPath()
+    private function buildHTTPPath(): void
     {
         $https = new ilHTTPS();
         //$this->makeGlobal("https", $https);
@@ -499,7 +497,7 @@ class LiveVotingInitialisationUI
 
         $https->enableSecureCookies();
 
-        return define('ILIAS_HTTP_PATH', self::removeTrailingPathSeparators($protocol . $host . $uri));
+        define('ILIAS_HTTP_PATH', self::removeTrailingPathSeparators($protocol . $host . $uri));
     }
 
     /**
@@ -517,7 +515,7 @@ class LiveVotingInitialisationUI
      */
     private function initErrorHandling()
     {
-        error_reporting(E_ALL&~E_DEPRECATED&~E_STRICT&~E_NOTICE);
+        /*error_reporting(E_ALL&~E_DEPRECATED&~E_STRICT&~E_NOTICE);
 
         $this->requireCommonIncludes();
 
@@ -531,7 +529,8 @@ class LiveVotingInitialisationUI
         require_once "./Services/Init/classes/class.ilErrorHandling.php";
         $ilErr = new ilErrorHandling();
         //$this->makeGlobal("ilErr", $ilErr);
-        $ilErr->setErrorHandling(PEAR_ERROR_CALLBACK, array($ilErr, 'errorHandler'));
+        $ilErr->setErrorHandling(PEAR_ERROR_CALLBACK, array($ilErr, 'errorHandler'));*/
+        //TODO: Descomentar e implementar esto
     }
 
     /**
@@ -780,7 +779,8 @@ class LiveVotingInitialisationUI
      */
     private function initAppEventHandler():void
     {
-        $this->makeGlobal("ilAppEventHandler", new ilAppEventHandler());
+        //TODO: Comentado para ilias 9
+        //$this->makeGlobal("ilAppEventHandler", new ilAppEventHandler());
     }
 
     /**
@@ -789,11 +789,11 @@ class LiveVotingInitialisationUI
      */
     private function initMail()
     {
-        global $DIC;
+       /* global $DIC;
         $this->makeGlobal("mail.mime.transport.factory",
             new ilMailMimeTransportFactory($DIC->settings(), $DIC->event()));
 
-        $this->makeGlobal("mail.mime.sender.factory", new ilMailMimeSenderFactory($DIC->settings(),intval(ANONYMOUS_USER_ID)));
+        $this->makeGlobal("mail.mime.sender.factory", new ilMailMimeSenderFactory($DIC->settings(),intval(ANONYMOUS_USER_ID)));*/
     }
 
     /**
