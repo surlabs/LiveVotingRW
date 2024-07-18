@@ -1180,6 +1180,6 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
     {
         $player = $this->object->getLiveVoting()->getPlayer();
 
-        LiveVotingJs::sendResponse(vsprintf($this->plugin->txt("start_online"), [LiveVotingVoter::countVoters($player->getActiveVoting())]));
+        LiveVotingJs::sendResponse(vsprintf($this->plugin->txt("start_online"), [LiveVotingVoter::countVoters($player->getId())]));
     }
 }

@@ -44,6 +44,7 @@ use LiveVoting\Utils\LiveVotingJs;
 use LiveVoting\Utils\ParamManager;
 use LiveVoting\votings\LiveVoting;
 use LiveVoting\votings\LiveVotingPlayer;
+use LiveVoting\votings\LiveVotingVoter;
 use stdClass;
 
 /**
@@ -150,7 +151,7 @@ class LiveVotingUI
 
                 if ($this->liveVoting->isShowAttendees()) {
                     $js->call('updateAttendees');
-                    $template->setVariable("ONLINE_TEXT", vsprintf($this->pl->txt("start_online"), [0]));
+                    $template->setVariable("ONLINE_TEXT", vsprintf($this->pl->txt("start_online"), [LiveVotingVoter::countVoters($this->liveVoting->getPlayer()->getId())]));
 
                 }
 
