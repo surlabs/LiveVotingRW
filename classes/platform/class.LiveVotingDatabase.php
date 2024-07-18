@@ -29,6 +29,18 @@ use ilDBInterface;
  */
 class LiveVotingDatabase {
     private ilDBInterface $db;
+    private array $allowedTables = array(
+        "rep_robj_xlvo_cat",
+        "rep_robj_xlvo_config_n",
+        "rep_robj_xlvo_option_n",
+        "rep_robj_xlvo_player_n",
+        "rep_robj_xlvo_round_n",
+        "rep_robj_xlvo_votehist",
+        "rep_robj_xlvo_vote_n",
+        "rep_robj_xlvo_voting_n",
+        "xlvo_config",
+        "xlvo_voter"
+    );
 
     public function __construct()
     {
@@ -49,6 +61,10 @@ class LiveVotingDatabase {
      */
     public function insert(string $table, array $data): void
     {
+        if (!$this->isTableAllowed($table)) {
+            throw new LiveVotingException("Table " . $table . " not allowed");
+        }
+
         try {
             $this->db->query("INSERT INTO " . $table . " (" . implode(", ", array_keys($data)) . ") VALUES (" . implode(", ", array_map(function ($value) {
                     return $this->db->quote($value);
@@ -70,6 +86,10 @@ class LiveVotingDatabase {
      */
     public function insertOnDuplicatedKey(string $table, array $data): void
     {
+        if (!$this->isTableAllowed($table)) {
+            throw new LiveVotingException("Table " . $table . " not allowed");
+        }
+
         try {
             $this->db->query("INSERT INTO " . $table . " (" . implode(", ", array_keys($data)) . ") VALUES (" . implode(", ", array_map(function ($value) {
                     return $this->db->quote($value);
@@ -96,6 +116,10 @@ class LiveVotingDatabase {
      */
     public function update(string $table, array $data, array $where): void
     {
+        if (!$this->isTableAllowed($table)) {
+            throw new LiveVotingException("Table " . $table . " not allowed");
+        }
+
         try {
             $this->db->query("UPDATE " . $table . " SET " . implode(", ", array_map(function ($key, $value) {
                     return $key . " = " . $value;
@@ -123,6 +147,10 @@ class LiveVotingDatabase {
      */
     public function delete(string $table, array $where): void
     {
+        if (!$this->isTableAllowed($table)) {
+            throw new LiveVotingException("Table " . $table . " not allowed");
+        }
+
         try {
             $this->db->query("DELETE FROM " . $table . " WHERE " . implode(" AND ", array_map(function ($key, $value) {
                     return $key . " = " . $value;
@@ -148,6 +176,10 @@ class LiveVotingDatabase {
      */
     public function select(string $table, ?array $where = null, ?array $columns = null, ?string $extra = ""): array
     {
+        if (!$this->isTableAllowed($table)) {
+            throw new LiveVotingException("Table " . $table . " not allowed");
+        }
+
         try {
             $query = "SELECT " . (isset($columns) ? implode(", ", $columns) : "*") . " FROM " . $table;
 
@@ -186,10 +218,19 @@ class LiveVotingDatabase {
      */
     public function nextId(string $table): int
     {
+        if (!$this->isTableAllowed($table)) {
+            throw new LiveVotingException("Table " . $table . " not allowed");
+        }
+
         try {
             return $this->db->nextId($table);
         } catch (Exception $e) {
             throw new LiveVotingException($e->getMessage());
         }
+    }
+
+    public function isTableAllowed(string $table): bool
+    {
+        return in_array($table, $this->allowedTables);
     }
 }
