@@ -109,7 +109,7 @@ class LiveVotingManageUI
 
         $dd = $f->menu()->drilldown('Manage Votings (NO TRANSLATED)', $items);
 
-        $liveVotingTableGUI = new LiveVotingTableGUI($parent, 'showManage');
+        $liveVotingTableGUI = new LiveVotingTableGUI($parent, 'manage');
 
         return $renderer->render($dd).$liveVotingTableGUI->getHTML();
 

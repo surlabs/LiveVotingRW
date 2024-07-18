@@ -121,6 +121,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             case 'duplicateQuestionToAnotherObjectSelect':
             case 'confirmDeleteQuestion':
             case 'deleteQuestion':
+            case 'saveSorting':
                 $this->{$cmd}();
                 break;
             case 'edit':
@@ -1173,5 +1174,32 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         $player = $this->object->getLiveVoting()->getPlayer();
 
         LiveVotingJs::sendResponse(vsprintf($this->plugin->txt("start_online"), [LiveVotingVoter::countVoters($player->getId())]));
+    }
+
+    /**
+     * @throws ilCtrlException
+     * @throws LiveVotingException
+     */
+    public function saveSorting()
+    {
+        global $DIC;
+
+        if (!ilObjLiveVotingAccess::hasWriteAccess()) {
+            $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure(ilLiveVotingPlugin::getInstance()->txt('permission_denied_write')));
+            $DIC->ctrl()->redirect($this, "index");
+        } else {
+            $positions = $_POST["position"];
+
+            $questions = LiveVotingQuestion::loadAllQuestionsByObjectId($this->obj_id);
+
+            foreach ($questions as $question) {
+                $question->setPosition(array_search($question->getId(), $positions));
+                $question->save();
+            }
+//
+            $_SESSION['onscreen_message'] = array('type' => 'success', 'msg' => $this->plugin->txt('msg_success_sorting'));
+
+            $DIC->ctrl()->redirect($this, "manage");
+        }
     }
 }

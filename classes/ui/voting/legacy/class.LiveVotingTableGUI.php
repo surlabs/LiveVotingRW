@@ -194,7 +194,7 @@ class liveVotingTableGUI extends ilTable2GUI
         $voting_status = $this->getVotingStatus("STATUS");
         //		$this->tpl->setVariable('STATUS', $voting_status); // deactivated at the moment
 
-        $this->tpl->setVariable('ID', "ID");
+        $this->tpl->setVariable('ID', $question->getId());
 
         $this->addActionMenu($question);
     }
