@@ -518,10 +518,13 @@ class LiveVotingPlayer
             'voting_id' => $this->getActiveVoting(),
             'status'    => 1,
             'round_id'  => $this->getRoundId()
-        ), ["last_update"], "ORDER BY last_update DESC");
+        ), ["last_update"], "ORDER BY last_update ASC");
 
-        $array = array_values($votes);
-        $last_update = array_shift($array);
+        $last_update = 0;
+
+        if (count($votes) > 0) {
+            $last_update = $votes[0]["last_update"];
+        }
 
         return array(
             "is_first" => $this->getActiveVotingObject()->isFirst(),
