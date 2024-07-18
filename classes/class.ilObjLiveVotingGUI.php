@@ -21,6 +21,7 @@ declare(strict_types=1);
 use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
 use LiveVoting\legacy\LiveVotingResultsTableGUI;
+use LiveVoting\legacy\liveVotingTableGUI;
 use LiveVoting\platform\LiveVotingDatabase;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\questions\LiveVotingQuestion;
@@ -109,6 +110,8 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             case 'changeRound':
             case 'applyFilter':
             case 'resetFilter':
+            case 'applyFilterQuestions':
+            case 'resetFilterQuestions':
             case 'apiCall':
             case 'confirmResetAll':
             case 'confirmResetQuestion':
@@ -1016,6 +1019,36 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         $table->initFilter();
         $table->resetFilter();
         $DIC->ctrl()->redirect($this, "results");
+    }
+
+    /**
+     * @throws ilException
+     * @throws ilCtrlException
+     * @throws LiveVotingException
+     */
+    public function applyFilterQuestions(): void
+    {
+        global $DIC;
+
+        $table = new LiveVotingTableGUI($this, "manage");
+        $table->initFilter();
+        $table->writeFilterToSession();
+        $DIC->ctrl()->redirect($this, "manage");
+    }
+
+    /**
+     * @throws ilException
+     * @throws ilCtrlException
+     * @throws LiveVotingException
+     */
+    public function resetFilterQuestions(): void
+    {
+        global $DIC;
+
+        $table = new LiveVotingTableGUI($this, "manage");
+        $table->initFilter();
+        $table->resetFilter();
+        $DIC->ctrl()->redirect($this, "manage");
     }
 
 

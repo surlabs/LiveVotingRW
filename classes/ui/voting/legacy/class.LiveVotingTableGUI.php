@@ -31,6 +31,7 @@ use ilObjLiveVotingAccess;
 use ilObjLiveVotingGUI;
 use ilSelectInputGUI;
 use ilTable2GUI;
+use ilTextInputGUI;
 use ilUtil;
 use JsonException;
 use LiveVoting\Js\xlvoJs;
@@ -78,6 +79,7 @@ class liveVotingTableGUI extends ilTable2GUI
     /**
      * @throws ilException
      * @throws LiveVotingException
+     * @throws Exception
      */
     public function __construct(ilObjLiveVotingGUI $a_parent_obj, $a_parent_cmd)
     {
@@ -100,11 +102,14 @@ class liveVotingTableGUI extends ilTable2GUI
         $this->setExternalSorting(true);
         $this->setExternalSegmentation(true);
         $this->initColums();
-        //$this->addFilterItems();
+        $this->addFilterItems();
         $this->parseData();
 
         $this->setFormAction($DIC->ctrl()->getFormAction($a_parent_obj));
         $this->addCommandButton('saveSorting', $this->txt('voting_save_sorting'));
+
+        $this->setFilterCommand('applyFilterQuestions');
+        $this->setResetCommand('resetFilterQuestions');
     }
 
 
@@ -119,43 +124,46 @@ class liveVotingTableGUI extends ilTable2GUI
     }
 
 
-/*    protected function addFilterItems()
+    /**
+     * @throws Exception
+     */
+    protected function addFilterItems(): void
     {
-        $title = new TextInputGUI($this->txt('title'), 'title');
+        $title = new ilTextInputGUI($this->txt('voting_title'), 'title');
         $this->addAndReadFilterItem($title);
 
-        $question = new TextInputGUI($this->txt('question'), 'question');
+        $question = new ilTextInputGUI($this->txt('voting_question'), 'question');
         $this->addAndReadFilterItem($question);
 
-        $status = new ilSelectInputGUI($this->txt('status'), 'voting_status');
+        $status = new ilSelectInputGUI($this->txt('voting_status'), 'voting_status');
         $status_options = array(
-            -1                          => '',
-            xlvoVoting::STAT_INACTIVE   => $this->txt('status_' . xlvoVoting::STAT_INACTIVE),
-            xlvoVoting::STAT_ACTIVE     => $this->txt('status_' . xlvoVoting::STAT_ACTIVE),
-            xlvoVoting::STAT_INCOMPLETE => $this->txt('status_' . xlvoVoting::STAT_INCOMPLETE),
+            -1 => $this->txt('common_all'),
+            1 => $this->txt('voting_status_1'),
+            5 => $this->txt('voting_status_5'),
+            2 => $this->txt('voting_status_2'),
         );
         $status->setOptions($status_options);
-        //		$this->addAndReadFilterItem($status); deativated at the moment
+        $this->addAndReadFilterItem($status);
 
-        $type = new ilSelectInputGUI($this->txt('type'), 'voting_type');
+        $type = new ilSelectInputGUI($this->txt('voting_type'), 'voting_type');
         $type_options = array(
-            -1 => '',
+            -1 => $this->txt('common_all'),
         );
 
-        foreach (xlvoQuestionTypes::getActiveTypes() as $qtype) {
-            $type_options[$qtype] = $this->txt('type_' . $qtype);
+        foreach (LiveVotingQuestion::QUESTION_TYPES_IDS as $qtype) {
+            $type_options[$qtype] = $this->txt('voting_type_' . $qtype);
         }
 
         $type->setOptions($type_options);
         $this->addAndReadFilterItem($type);
-    }*/
+    }
 
 
     /**
      * @param ilFormPropertyGUI $item
      * @throws Exception
      */
-    protected function addAndReadFilterItem(ilFormPropertyGUI $item)
+    protected function addAndReadFilterItem(ilFormPropertyGUI $item): void
     {
         $this->addFilterItem($item);
         $item->readFromSession();
@@ -250,28 +258,41 @@ class liveVotingTableGUI extends ilTable2GUI
         $sorting_direction = $this->getOrderDirection();
         $num = $this->getLimit();
 
-        $collection = $database->select("rep_robj_xlvo_voting_n", array(
+
+        $where = array(
             "obj_id" => $this->voting_gui->getObjId(),
-        ), null, "ORDER BY ".$sorting_column." ".$sorting_direction." LIMIT ".$offset.", ".$num);
+        );
 
+        if (isset($this->filter['voting_status']) && $this->filter['voting_status'] != -1 && $this->filter['voting_status'] != "") {
+            $where['voting_status'] = $this->filter['voting_status'];
+        }
 
+        if (isset($this->filter['voting_type']) && $this->filter['voting_type'] != -1 && $this->filter['voting_type'] != "") {
+            $where['voting_type'] = $this->filter['voting_type'];
+        }
 
-        foreach ($this->filter as $filter_key => $filter_value) {
-            switch ($filter_key) {
-                case 'title':
-                case 'question':
-                    if ($filter_value) {
-                        $collection = $collection->where(array($filter_key => '%' . $filter_value . '%'), 'LIKE');
+        $collection = $database->select("rep_robj_xlvo_voting_n", $where, null, "ORDER BY ".$sorting_column." ".$sorting_direction." LIMIT ".$offset.", ".$num);
+
+        if (isset($this->filter['question']) && isset($this->filter['title']) && $this->filter['title'] != "" || (isset($this->filter['question']) && $this->filter['question'] != "")) {
+            $filtered = array();
+
+            if (isset($this->filter['title']) && $this->filter['title'] != "") {
+                foreach ($collection as $item) {
+                    if (str_contains($item['title'], $this->filter['title'])) {
+                        $filtered[] = $item;
                     }
-                    break;
-                case 'voting_status':
-
-                case 'voting_type':
-                    if ($filter_value != "") {
-                        $collection = $collection->where(array($filter_key => $filter_value));
-                    }
-                    break;
+                }
             }
+
+            if (isset($this->filter['question']) && $this->filter['question'] != "") {
+                foreach ($collection as $item) {
+                    if (str_contains($item['question'], $this->filter['question'])) {
+                        $filtered[] = $item;
+                    }
+                }
+            }
+
+            $collection = $filtered;
         }
 
         $this->setData($collection);
