@@ -114,6 +114,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             case 'resetFilterQuestions':
             case 'apiCall':
             case 'confirmResetAll':
+            case 'resetAll':
             case 'confirmResetQuestion':
             case 'resetQuestion':
             case 'duplicateQuestion':
@@ -613,33 +614,32 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
     /**
      * @throws ilCtrlException
+     * @throws LiveVotingException
      */
-    protected function confirmResetAll()
+    protected function confirmResetAll(): void
     {
         global $DIC;
-        $this->tabs->activateTab("tab_manage");
 
         if (!ilObjLiveVotingAccess::hasWriteAccess()) {
-            //self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
-            $this->tpl->setContent($this->renderer->render($this->factory->messageBox()->failure(ilLiveVotingPlugin::getInstance()->txt('permission_denied'))));
-
+            $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure(ilLiveVotingPlugin::getInstance()->txt('permission_denied_write')));
+            $DIC->ctrl()->redirect($this, "index");
         } else {
-            $confirm = new ilConfirmationGUI();
+            $this->tabs->activateTab("tab_manage");
 
-            //TODO: Implementa esto Saaweel pls
-            /**
-             * @var LiveVoting[] $votings
-             */
-            $votings = xlvoVoting::where(array('obj_id' => $this->getObjId()))->get();
+            $questions = LiveVotingQuestion::loadAllQuestionsByObjectId($this->obj_id);
+
             $num_votes = 0;
-            foreach ($votings as $voting) {
-                $num_votes += xlvoVote::where(array('voting_id' => $voting->getId()))->count();
+
+            foreach ($questions as $question) {
+                $num_votes += count(LiveVotingVote::getVotesOfQuestion($question->getId()));
             }
-            $confirm->addItem('xlvoVot', "0", $this->txt('voting_confirm_number_of_votes') . " " . $num_votes);
+
+            $confirm = new ilConfirmationGUI();
+            $confirm->addItem("question_id", "", $this->txt('voting_confirm_number_of_votes') . " " . $num_votes);
             $confirm->setHeaderText($this->txt('voting_confirm_reset_all'));
             $confirm->setFormAction($DIC->ctrl()->getFormAction($this));
-            $confirm->setCancel($this->txt('voting_cancel'), 'cancel');
-            $confirm->setConfirm($this->txt('voting_reset_all'), 'resetAll');
+            $confirm->setCancel($this->txt('voting_cancel'), "cancel");
+            $confirm->setConfirm($this->txt('voting_reset_all'), "resetAll");
 
             $DIC->ui()->mainTemplate()->setContent($confirm->getHTML());
         }
@@ -648,37 +648,33 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
     /**
      *
+     * @throws ilCtrlException
+     * @throws LiveVotingException
      */
-    protected function reset()
+    protected function resetAll(): void
     {
+        global $DIC;
+
         if (!ilObjLiveVotingAccess::hasWriteAccess()) {
-            $this->tpl->setContent($this->renderer->render($this->factory->messageBox()->failure(ilLiveVotingPlugin::getInstance()->txt('permission_denied_write'))));
-
+            $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure(ilLiveVotingPlugin::getInstance()->txt('permission_denied_write')));
+            $DIC->ctrl()->redirect($this, "index");
         } else {
-            /**
-             * @var xlvoVoting $xlvoVoting
-             */
+            $questions = LiveVotingQuestion::loadAllQuestionsByObjectId($this->obj_id);
 
-            //TODO: Saaweel implementa esto pls
-            $xlvoVoting = xlvoVoting::find($_POST[self::IDENTIFIER]);
-
-            if ($xlvoVoting->getObjId() == $this->getObjId()) {
-
-                /**
-                 * @var xlvoVote[] $votes
-                 */
-                $votes = xlvoVote::where(array('voting_id' => $xlvoVoting->getId()))->get();
-                foreach ($votes as $vote) {
-                    $vote->delete();
-                }
-                $this->cancel();
-            } else {
-                ilLiveVotingPlugin::sendFailure(self::plugin()->translate('reset_failed'), true);
-                self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
+            foreach ($questions as $question) {
+                $question->reset();
             }
+
+            $_SESSION['onscreen_message'] = array('type' => 'success', 'msg' => $this->txt('voting_msg_duplicated'));
+
+            $DIC->ctrl()->redirect($this, "manage");
         }
+
     }
 
+    /**
+     * @throws ilCtrlException
+     */
     public function confirmResetQuestion(): void
     {
         global $DIC;
@@ -724,11 +720,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             $question = $this->object->getLiveVoting()->getQuestionById((int) $_POST['question_id']);
 
             if ($question->getObjId() == $this->getObjId()) {
-                $votes = LiveVotingVote::getVotesOfQuestion($question->getId());
-
-                foreach ($votes as $vote) {
-                    $vote->delete();
-                }
+                $question->reset();
 
                 $_SESSION['onscreen_message'] = array('type' => 'success', 'msg' => $this->txt('voting_msg_duplicated'));
 
