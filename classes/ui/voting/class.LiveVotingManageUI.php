@@ -38,6 +38,7 @@ use ilTemplate;
 use ilTemplateException;
 use ilTextAreaInputGUI;
 use LiveVoting\legacy\liveVotingTableGUI;
+use LiveVoting\platform\LiveVotingException;
 use LiveVoting\questions\LiveVotingQuestion;
 use LiveVoting\questions\LiveVotingQuestionOption;
 
@@ -78,6 +79,7 @@ class LiveVotingManageUI
     /**
      * @throws ilCtrlException
      * @throws ilException
+     * @throws LiveVotingException
      */
     public function showManage($parent): string{
         global $DIC;
