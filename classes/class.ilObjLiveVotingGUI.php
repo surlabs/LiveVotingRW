@@ -996,7 +996,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         global $DIC;
 
         $table = new LiveVotingResultsTableGUI($this, "results");
-        LiveVOtingResultsUI::buildFilters($table, (int) $_GET['round_id'], $this->object->getLiveVoting()->getQuestions());
+        LiveVotingResultsUI::buildFilters($table, (int) $_GET['round_id'], $this->object->getLiveVoting()->getQuestions());
         $table->initFilter();
         $table->writeFilterToSession();
         $DIC->ctrl()->redirect($this, "results");
@@ -1012,7 +1012,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         global $DIC;
 
         $table = new LiveVotingResultsTableGUI($this, "results");
-        LiveVOtingResultsUI::buildFilters($table, (int) $_GET['round_id'], $this->object->getLiveVoting()->getQuestions());
+        LiveVotingResultsUI::buildFilters($table, (int) $_GET['round_id'], $this->object->getLiveVoting()->getQuestions());
         $table->initFilter();
         $table->resetFilter();
         $DIC->ctrl()->redirect($this, "results");
