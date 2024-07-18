@@ -244,7 +244,7 @@ class LiveVotingChoicesUI
                 $question = $question_id ? LiveVotingQuestion::loadQuestionById($question_id) : LiveVotingQuestion::loadNewQuestion("Choices");
 
                 $question->setTitle($question_data["title"] ?? null);
-                $question->setQuestion($question_data["question"] ?? null);
+                $question->setQuestion($_POST["form_input_3"] ?? null);
                 $question->setColumns((int)($question_data["columns"] ?? 0));
                 $question->setMultiSelection($answers_data["selection"] ?? false);
 

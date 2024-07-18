@@ -106,7 +106,7 @@ class LiveVotingManageUI
             $f->button()->bulky($glyph_reset,'&nbsp;'. $this->plugin->txt('voting_reset_all'), $this->control->getLinkTargetByClass(ilObjLiveVotingGUI::class, 'confirmResetAll')),
         ];
 
-        $dd = $f->menu()->drilldown('Manage Votings (NO TRANSLATED)', $items);
+        $dd = $f->menu()->drilldown(ilLiveVotingPlugin::getInstance()->txt('voting_actions'), $items);
 
         $liveVotingTableGUI = new LiveVotingTableGUI($parent, 'manage');
 
