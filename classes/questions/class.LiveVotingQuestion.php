@@ -45,7 +45,7 @@ abstract class LiveVotingQuestion
     protected int $obj_id = 0;
     protected string $title = "";
     protected string $question = "";
-    protected int $position = 99;
+    protected ?int $position = null;
     protected int $voting_status = 5;
     protected array $options = array();
     private LiveVotingQuestionOption $first_option;
@@ -224,6 +224,10 @@ abstract class LiveVotingQuestion
             ));
         } else if ($this->obj_id != 0) {
             $this->id = $database->nextId("rep_robj_xlvo_voting_n");
+
+            if ($this->position == null || $this->position == 0) {
+                $this->position = $this->generateNewPosition();
+            }
 
             $database->insert("rep_robj_xlvo_voting_n", array(
                 "id" => $this->id,
@@ -435,5 +439,27 @@ abstract class LiveVotingQuestion
         $newObj->setId(0);
 
         return $newObj;
+    }
+
+    /**
+     * @throws LiveVotingException
+     */
+    private function generateNewPosition(): int
+    {
+        $questions = LiveVotingQuestion::loadAllQuestionsByObjectId($this->obj_id);
+
+        if (empty($questions)) {
+            return 1;
+        }
+
+        $max = 0;
+
+        foreach ($questions as $question) {
+            if ($question->getPosition() > $max) {
+                $max = $question->getPosition();
+            }
+        }
+
+        return $max + 1;
     }
 }
