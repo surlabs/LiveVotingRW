@@ -279,6 +279,7 @@ class LiveVotingUI
     /**
      * @throws ilCtrlException
      * @throws JsonException
+     * @throws LiveVotingException
      */
     protected function initToolbarDuringVoting()
     {
@@ -340,23 +341,41 @@ class LiveVotingUI
         //
         $param_manager = ParamManager::getInstance();
         if (!$param_manager->isPpt()) {
+            $question = $this->liveVoting->getPlayer()->getActiveVotingObject();
+            $questions = $this->liveVoting->getQuestions();
 
-            // PREV
-            $suspendButton = ilLinkButton::getInstance();
-            $suspendButton->setDisabled(true);
-            $suspendButton->setUrl($DIC->ctrl()->getLinkTargetByClass(ilObjLiveVotingGUI::class, 'previous'));
-            $suspendButton->setCaption(ilGlyphGUI::get(ilGlyphGUI::PREVIOUS), false);
+            $prev = false;
+            $next = false;
 
-            $suspendButton->setId('btn-previous');
-            $DIC->toolbar()->addButtonInstance($suspendButton);
+            foreach ($questions as $qst) {
+                if ($qst->getPosition() < $question->getPosition()) {
+                    $prev = true;
+                } elseif ($qst->getPosition() > $question->getPosition()) {
+                    $next = true;
+                    break;
+                }
+            }
 
-            // NEXT
-            $suspendButton = ilLinkButton::getInstance();
-            $suspendButton->setDisabled(true);
-            $suspendButton->setCaption(ilGlyphGUI::get(ilGlyphGUI::NEXT), false);
-            $suspendButton->setUrl($DIC->ctrl()->getLinkTargetByClass(ilObjLiveVotingGUI::class, 'next'));
-            $suspendButton->setId('btn-next');
-            $DIC->toolbar()->addButtonInstance($suspendButton);
+            $prevBtn = ilLinkButton::getInstance();
+            $prevBtn->setCaption(ilGlyphGUI::get(ilGlyphGUI::PREVIOUS), false);
+
+            if ($prev) {
+                $prevBtn->setId('btn-previous');
+            } else {
+                $prevBtn->setDisabled(true);
+            }
+
+            $nextBtn = ilLinkButton::getInstance();
+            $nextBtn->setCaption(ilGlyphGUI::get(ilGlyphGUI::NEXT), false);
+
+            if ($next) {
+                $nextBtn->setId('btn-next');
+            } else {
+                $nextBtn->setDisabled(true);
+            }
+
+            $DIC->toolbar()->addButtonInstance($prevBtn);
+            $DIC->toolbar()->addButtonInstance($nextBtn);
 
             $current_selection_list = $this->getVotingSelectionList();
             $DIC->toolbar()->addText($current_selection_list->getHTML());
