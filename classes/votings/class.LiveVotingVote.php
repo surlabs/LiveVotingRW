@@ -281,7 +281,7 @@ class LiveVotingVote
      * @return int
      * @throws LiveVotingException
      */
-    public static function vote(LiveVotingParticipant $participant, int $voting_id, int $round_id, ?int $option_id = null): int
+    public static function vote(LiveVotingParticipant $participant, int $voting_id, int $round_id, int $option_id): int
     {
         $obj = self::getUserInstance($participant, $voting_id, $option_id);
 
@@ -375,19 +375,16 @@ class LiveVotingVote
      * @param int|null $option_id
      * @return LiveVotingVote
      * @throws LiveVotingException
-     * @throws \Exception
+     * @throws Exception
      */
-    protected static function getUserInstance(LiveVotingParticipant $participant, int $voting_id, ?int $option_id = null): LiveVotingVote
+    protected static function getUserInstance(LiveVotingParticipant $participant, int $voting_id, $option_id): LiveVotingVote
     {
         $database = new LiveVotingDatabase();
 
         $where = array(
-            'voting_id' => $voting_id
+            'voting_id' => $voting_id,
+            'option_id' => $option_id
         );
-
-        if ($option_id) {
-            $where = array('option_id' => $option_id);
-        }
 
         if ($participant->isILIASUser()) {
             $where['user_id'] = $participant->getIdentifier();
