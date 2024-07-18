@@ -345,7 +345,7 @@ abstract class LiveVotingQuestion
     /**
      * @throws LiveVotingException
      */
-    public function isFirst(): mixed
+    public function isFirst(): bool
     {
         $database = new LiveVotingDatabase();
 

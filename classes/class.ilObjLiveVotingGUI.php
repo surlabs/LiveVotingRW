@@ -1180,7 +1180,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
      * @throws ilCtrlException
      * @throws LiveVotingException
      */
-    public function saveSorting()
+    public function saveSorting(): void
     {
         global $DIC;
 
@@ -1193,10 +1193,10 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             $questions = LiveVotingQuestion::loadAllQuestionsByObjectId($this->obj_id);
 
             foreach ($questions as $question) {
-                $question->setPosition(array_search($question->getId(), $positions));
+                $question->setPosition(array_search($question->getId(), $positions) + 1);
                 $question->save();
             }
-//
+
             $_SESSION['onscreen_message'] = array('type' => 'success', 'msg' => $this->plugin->txt('msg_success_sorting'));
 
             $DIC->ctrl()->redirect($this, "manage");

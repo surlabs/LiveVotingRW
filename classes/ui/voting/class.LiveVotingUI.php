@@ -341,40 +341,16 @@ class LiveVotingUI
         //
         $param_manager = ParamManager::getInstance();
         if (!$param_manager->isPpt()) {
-            $question = $this->liveVoting->getPlayer()->getActiveVotingObject();
-            $questions = $this->liveVoting->getQuestions();
-
-            $prev = false;
-            $next = false;
-
-            foreach ($questions as $qst) {
-                if ($qst->getPosition() < $question->getPosition()) {
-                    $prev = true;
-                } elseif ($qst->getPosition() > $question->getPosition()) {
-                    $next = true;
-                    break;
-                }
-            }
-
             $prevBtn = ilLinkButton::getInstance();
             $prevBtn->setCaption(ilGlyphGUI::get(ilGlyphGUI::PREVIOUS), false);
-
-            if ($prev) {
-                $prevBtn->setId('btn-previous');
-            } else {
-                $prevBtn->setDisabled(true);
-            }
+            $prevBtn->setId('btn-previous');
+            $prevBtn->setDisabled(true);
+            $DIC->toolbar()->addButtonInstance($prevBtn);
 
             $nextBtn = ilLinkButton::getInstance();
             $nextBtn->setCaption(ilGlyphGUI::get(ilGlyphGUI::NEXT), false);
-
-            if ($next) {
-                $nextBtn->setId('btn-next');
-            } else {
-                $nextBtn->setDisabled(true);
-            }
-
-            $DIC->toolbar()->addButtonInstance($prevBtn);
+            $nextBtn->setId('btn-next');
+            $nextBtn->setDisabled(true);
             $DIC->toolbar()->addButtonInstance($nextBtn);
 
             $current_selection_list = $this->getVotingSelectionList();
