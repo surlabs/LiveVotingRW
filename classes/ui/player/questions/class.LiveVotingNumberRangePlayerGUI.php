@@ -23,6 +23,7 @@ use LiveVoting\platform\LiveVotingException;
 use LiveVoting\Utils\LiveVotingJs;
 use LiveVoting\Utils\ParamManager;
 use LiveVoting\votings\LiveVoting;
+use LiveVoting\votings\LiveVotingParticipant;
 use LiveVoting\votings\LiveVotingPlayer;
 use LiveVoting\votings\LiveVotingVote;
 
@@ -87,9 +88,16 @@ class LiveVotingNumberRangePlayerGUI extends LiveVotingQuestionTypesUI
 
         if ($filteredInput !== false && $filteredInput !== null) {
             if ($this->isVoteValid($this->getStart(), $this->getEnd(), $filteredInput)) {
+                $vote = 0;
+                $votes = LiveVotingVote::getVotesOfUser(LiveVotingParticipant::getInstance(), $this->player->getActiveVoting(), $this->player->getRoundId());
+
+                if (!empty($votes)) {
+                    $vote = $votes[0]->getId();
+                }
+
                 $this->player->input([
                     'input'   => (string) $filteredInput,
-                    'vote_id' => filter_input(INPUT_POST, 'vote_id'),
+                    'vote_id' => $vote,
                 ]);
             }
         }
