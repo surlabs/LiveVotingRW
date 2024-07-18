@@ -39,13 +39,18 @@ class LiveVotingInputCorrectOrderUI extends LiveVotingSingleVoteResultsUI
         $bars = new LiveVotingBarCollectionUI();
 
         $correct_order = array();
-        foreach ($this->player->getActiveVotingObject()->getOptions() as $xlvoOption) {
-            $correct_order[(int) $xlvoOption->getCorrectPosition()] = $xlvoOption;
-            $correct_order_ids[(int) $xlvoOption->getCorrectPosition()] = $xlvoOption->getId();
-        };
-        ksort($correct_order);
-        ksort($correct_order_ids);
-        $correct_order_json = json_encode(array_values($correct_order_ids));
+        $correct_order_json = $this->player->getActiveVotingObject()->getCorrectOrderJSON();
+
+        $options = $this->player->getActiveVotingObject()->getOptions();
+
+        foreach (json_decode($correct_order_json) as $value) {
+            foreach ($options as $option) {
+                if ($option->getId() == (int) $value) {
+                    $correct_order[] = $option;
+                    break;
+                }
+            }
+        }
 
         $votes = LiveVotingVote::getVotesOfQuestion($this->player->getActiveVoting(), $this->player->getRoundId());
         $correct_votes = 0;

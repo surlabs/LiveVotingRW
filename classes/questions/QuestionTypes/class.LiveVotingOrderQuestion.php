@@ -155,7 +155,7 @@ class LiveVotingOrderQuestion extends LiveVotingQuestion
         }
     }
 
-    protected function getCorrectOrderJSON(): string
+    public function getCorrectOrderJSON(): string
     {
         $correct_order_ids = array();
 
