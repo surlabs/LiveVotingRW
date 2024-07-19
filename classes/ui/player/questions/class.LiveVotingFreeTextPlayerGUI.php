@@ -75,15 +75,21 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
         $this->getPlayer()->unvoteAll();
         if ($this->player->getActiveVotingObject()->isMultiFreeInput()) {
             $array = array();
-            foreach (filter_input(INPUT_POST, 'vote_multi_line_input', FILTER_DEFAULT, FILTER_FORCE_ARRAY) as $item) {
-                $input = LiveVotingUtils::secureString($item['free_input']);
-                if (!empty($input) && strlen($input) <= $input_gui->getMaxLength()) {
-                    $array[] = array(
-                        "input"   => $input,
-                        "vote_id" => $item['vote_id'],
-                    );
+
+            $inputs = filter_input(INPUT_POST, 'vote_multi_line_input', FILTER_DEFAULT, FILTER_FORCE_ARRAY);
+
+            if (!empty($inputs)) {
+                foreach ($inputs as $item) {
+                    $input = LiveVotingUtils::secureString($item['free_input']);
+                    if (!empty($input) && strlen($input) <= $input_gui->getMaxLength()) {
+                        $array[] = array(
+                            "input"   => $input,
+                            "vote_id" => $item['vote_id'],
+                        );
+                    }
                 }
             }
+
             $this->player->input($array);
         } else {
             $input = LiveVotingUtils::secureString(filter_input(INPUT_POST, 'free_input'));
