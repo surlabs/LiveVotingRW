@@ -20,18 +20,14 @@ declare(strict_types=1);
 namespace LiveVoting\UI\Voting\Bar;
 
 use ilException;
-use ilLiveVotingPlugin;
-use ilSystemStyleException;
-use ilTemplate;
 use ilTemplateException;
-use LiveVoting\votings\LiveVoting;
 
 final class LiveVotingBarGroupingCollectionUI extends LiveVotingBarCollectionUI
 {
     /**
-     * @var LiveVotingBarFreeInputsGUI[] $bars
+     * @var LiveVotingBarFreeTextUI[] $bars
      */
-    private $bars = [];
+    private array $bars = [];
     /**
      * @var bool
      */

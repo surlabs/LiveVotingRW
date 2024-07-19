@@ -126,14 +126,14 @@ class LiveVotingPrioritiesUI
                     ];
                 }, $options), JSON_UNESCAPED_UNICODE))) : "")
                 ->withOnLoadCode(function ($id) {
-                    return "xlvo.initHiddenInput('".$id."')";
+                    return "xlvoForms.initHiddenInput('".$id."')";
                 })
                 ->withLabel('options');
 
             $form_answers["input"] = $this->factory->input()->field()->text(
                 $this->plugin->txt('qtype_1_options'))
                 ->withOnLoadCode(function ($id) {
-                    return "xlvo.initMultipleInputs('".$id."')";
+                    return "xlvoForms.initMultipleInputs('".$id."')";
                 })
                 ->withMaxLength(255)
                 ->withRequired(true);
@@ -154,7 +154,7 @@ class LiveVotingPrioritiesUI
                 $form_action = $this->control->getFormActionByClass(ilObjLiveVotingGUI::class, "selectedPriorities");
             }
 
-            $DIC->ui()->mainTemplate()->addJavaScript($this->plugin->getDirectory() . "/templates/js/xlvo.js");
+            $DIC->ui()->mainTemplate()->addJavaScript($this->plugin->getDirectory() . "/templates/js/xlvoForms.js");
 
             $DIC->ui()->mainTemplate()->addCss($this->plugin->getDirectory() . "/templates/css/livevoting.css");
 
@@ -240,7 +240,7 @@ class LiveVotingPrioritiesUI
                 $question = $question_id ? LiveVotingQuestion::loadQuestionById($question_id) : LiveVotingQuestion::loadNewQuestion("Priorities");
 
                 $question->setTitle($question_data["title"] ?? null);
-                $question->setQuestion($question_data["question"] ?? null);
+                $question->setQuestion($_POST["form_input_3"] ?? null);
                 $question->setColumns((int)($question_data["columns"] ?? 0));
 
                 $old_options = $question->getOptions();

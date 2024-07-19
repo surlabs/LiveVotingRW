@@ -34,11 +34,7 @@ use LiveVoting\votings\LiveVotingVote;
 
 /**
  * Class LiveVotingResultsTableGUI
- *
- * @package LiveVoting\Voting
- * @author  Daniel Aemmer <daniel.aemmer@phbern.ch>
- * @author  Fabian Schmid <fs@studer-raimann.ch>
- * @version 1.0.0
+ * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
  */
 class LiveVotingResultsTableGUI extends ilTable2GUI
 {

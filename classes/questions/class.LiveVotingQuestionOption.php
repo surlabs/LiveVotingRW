@@ -220,4 +220,13 @@ class LiveVotingQuestionOption
     {
         return chr($this->getPosition() + 64);
     }
+
+    public function copy(): LiveVotingQuestionOption
+    {
+        $option = clone $this;
+
+        $option->setId(0);
+
+        return $option;
+    }
 }

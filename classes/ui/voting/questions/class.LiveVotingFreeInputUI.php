@@ -136,7 +136,7 @@ class LiveVotingFreeInputUI
                 $form_action = $this->control->getFormActionByClass(ilObjLiveVotingGUI::class, "selectedFreeInput");
             }
 
-            $DIC->ui()->mainTemplate()->addJavaScript($this->plugin->getDirectory() . "/templates/js/xlvo.js");
+            $DIC->ui()->mainTemplate()->addJavaScript($this->plugin->getDirectory() . "/templates/js/xlvoForms.js");
 
             $DIC->ui()->mainTemplate()->addCss($this->plugin->getDirectory() . "/templates/css/livevoting.css");
 
@@ -221,7 +221,7 @@ class LiveVotingFreeInputUI
             $question = $question_id ? LiveVotingQuestion::loadQuestionById($question_id) : LiveVotingQuestion::loadNewQuestion("FreeText");
 
             $question->setTitle($question_data["title"] ?? null);
-            $question->setQuestion($question_data["question"] ?? null);
+            $question->setQuestion($_POST["form_input_3"] ?? null);
             $question->setMultiFreeInput($answers_data["multi_input"] ? (bool) $answers_data["multi_input"] : false);
             $question->setAnswerField($answers_data["answer_field"] ? (int) $answers_data["answer_field"] : 1);
 

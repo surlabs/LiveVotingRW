@@ -44,6 +44,7 @@ use LiveVoting\Utils\LiveVotingJs;
 use LiveVoting\Utils\ParamManager;
 use LiveVoting\votings\LiveVoting;
 use LiveVoting\votings\LiveVotingPlayer;
+use LiveVoting\votings\LiveVotingVoter;
 use stdClass;
 
 /**
@@ -144,13 +145,14 @@ class LiveVotingUI
                 $template->setVariable('SHORTLINK', $this->liveVoting->getShortLink($param_manager->getRefId()));
 
                 $template->setVariable('MODAL', LiveVotingQRModalGUI::getInstanceFromLiveVoting($this->liveVoting)->getHTML());
-                $template->setVariable("ONLINE_TEXT", vsprintf($this->pl->txt("start_online"), [0]));
                 $template->setVariable("ZOOM_TEXT", $this->pl->txt("start_zoom"));
 
                 $js = LiveVotingJs::getInstance()->addSetting("base_url", $DIC->ctrl()->getLinkTargetByClass("ilObjLiveVotingGUI", "", "", true))->name('Player')->init();
 
                 if ($this->liveVoting->isShowAttendees()) {
                     $js->call('updateAttendees');
+                    $template->setVariable("ONLINE_TEXT", vsprintf($this->pl->txt("start_online"), [LiveVotingVoter::countVoters($this->liveVoting->getPlayer()->getId())]));
+
                 }
 
                 $js->call('handleStartButton');
@@ -252,7 +254,7 @@ class LiveVotingUI
     {
         global $DIC;
         $liveVoting = $this->liveVoting;
-        $liveVoting->regenerateOptionSorting();
+        $liveVoting->getPlayer()->getActiveVotingObject()->regenerateOptionSorting();
         $liveVoting->getPlayer()->setStatus(LiveVotingPlayer::STAT_RUNNING);
         $liveVoting->getPlayer()->freeze();
 
@@ -277,6 +279,7 @@ class LiveVotingUI
     /**
      * @throws ilCtrlException
      * @throws JsonException
+     * @throws LiveVotingException
      */
     protected function initToolbarDuringVoting()
     {
@@ -338,23 +341,17 @@ class LiveVotingUI
         //
         $param_manager = ParamManager::getInstance();
         if (!$param_manager->isPpt()) {
+            $prevBtn = ilLinkButton::getInstance();
+            $prevBtn->setCaption(ilGlyphGUI::get(ilGlyphGUI::PREVIOUS), false);
+            $prevBtn->setId('btn-previous');
+            $prevBtn->setDisabled(true);
+            $DIC->toolbar()->addButtonInstance($prevBtn);
 
-            // PREV
-            $suspendButton = ilLinkButton::getInstance();
-            $suspendButton->setDisabled(true);
-            $suspendButton->setUrl($DIC->ctrl()->getLinkTargetByClass(ilObjLiveVotingGUI::class, 'previous'));
-            $suspendButton->setCaption(ilGlyphGUI::get(ilGlyphGUI::PREVIOUS), false);
-
-            $suspendButton->setId('btn-previous');
-            $DIC->toolbar()->addButtonInstance($suspendButton);
-
-            // NEXT
-            $suspendButton = ilLinkButton::getInstance();
-            $suspendButton->setDisabled(true);
-            $suspendButton->setCaption(ilGlyphGUI::get(ilGlyphGUI::NEXT), false);
-            $suspendButton->setUrl($DIC->ctrl()->getLinkTargetByClass(ilObjLiveVotingGUI::class, 'next'));
-            $suspendButton->setId('btn-next');
-            $DIC->toolbar()->addButtonInstance($suspendButton);
+            $nextBtn = ilLinkButton::getInstance();
+            $nextBtn->setCaption(ilGlyphGUI::get(ilGlyphGUI::NEXT), false);
+            $nextBtn->setId('btn-next');
+            $nextBtn->setDisabled(true);
+            $DIC->toolbar()->addButtonInstance($nextBtn);
 
             $current_selection_list = $this->getVotingSelectionList();
             $DIC->toolbar()->addText($current_selection_list->getHTML());

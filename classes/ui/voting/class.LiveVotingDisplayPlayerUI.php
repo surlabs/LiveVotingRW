@@ -20,7 +20,6 @@ declare(strict_types=1);
 
 namespace LiveVoting\UI;
 
-use ilAdvancedSelectionListGUI;
 use ilException;
 use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
@@ -34,6 +33,7 @@ use LiveVoting\questions\LiveVotingQuestionOption;
 use LiveVoting\UI\QuestionsResults\LiveVotingInputResultsGUI;
 use LiveVoting\Utils\ParamManager;
 use LiveVoting\votings\LiveVoting;
+use LiveVoting\votings\LiveVotingVote;
 use LiveVoting\votings\LiveVotingVoter;
 
 /**
@@ -159,6 +159,8 @@ class LiveVotingDisplayPlayerUI
             $this->tpl->setVariable('COUNTDOWN_CSS', $player->getCountdownClassname());
             $this->tpl->parseCurrentBlock();
         }
+
+        $this->tpl->setVariable('VOTERS_TEXT', vsprintf(ilLiveVotingPlugin::getInstance()->txt("player_voters_description"), [LiveVotingVote::countVoters($player->getActiveVoting(), $player->getRoundId())]));
 
         $this->tpl->setVariable('COUNT', $this->liveVoting->countQuestions());
         $this->tpl->setVariable('POSITION', $this->liveVoting->getQuestionPosition() + 1);

@@ -151,7 +151,7 @@ class LiveVotingRangeUI
                 $form_action = $this->control->getFormActionByClass(ilObjLiveVotingGUI::class, "selectedRange");
             }
 
-            $DIC->ui()->mainTemplate()->addJavaScript($this->plugin->getDirectory() . "/templates/js/xlvo.js");
+            $DIC->ui()->mainTemplate()->addJavaScript($this->plugin->getDirectory() . "/templates/js/xlvoForms.js");
 
             $DIC->ui()->mainTemplate()->addCss($this->plugin->getDirectory() . "/templates/css/livevoting.css");
 
@@ -235,7 +235,7 @@ class LiveVotingRangeUI
             $question = $question_id ? LiveVotingQuestion::loadQuestionById($question_id) : LiveVotingQuestion::loadNewQuestion("NumberRange");
 
             $question->setTitle($question_data["title"] ?? null);
-            $question->setQuestion($question_data["question"] ?? null);
+            $question->setQuestion($_POST["form_input_3"] ?? null);
             $question->setPercentage($answers_data["percentages"] ? (bool) $answers_data["percentages"] : false);
             $question->setAltResultDisplayMode($answers_data["display_mode"] ? (int) $answers_data["display_mode"] : 0);
             $question->setStartRange($answers_data["minimum"] ? (int) $answers_data["minimum"] : 0);

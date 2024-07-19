@@ -27,7 +27,6 @@ use LiveVoting\platform\LiveVotingException;
 use LiveVoting\questions\LiveVotingQuestion;
 use LiveVoting\questions\LiveVotingQuestionOption;
 use LiveVoting\Utils\LiveVotingUtils;
-use LiveVoting\Utils\ParamManager;
 
 /**
  * Class LiveVotingPlayer
@@ -520,8 +519,11 @@ class LiveVotingPlayer
             'round_id'  => $this->getRoundId()
         ), ["last_update"], "ORDER BY last_update DESC");
 
-        $array = array_values($votes);
-        $last_update = array_shift($array);
+        $last_update = 0;
+
+        if (count($votes) > 0) {
+            $last_update = $votes[0]["last_update"];
+        }
 
         return array(
             "is_first" => $this->getActiveVotingObject()->isFirst(),

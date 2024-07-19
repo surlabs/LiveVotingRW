@@ -20,10 +20,8 @@ declare(strict_types=1);
 namespace LiveVoting\UI\Voting\Bar;
 
 use ilLiveVotingPlugin;
-use ilSystemStyleException;
 use ilTemplate;
 use ilTemplateException;
-use LiveVoting\votings\LiveVoting;
 use LiveVoting\votings\LiveVotingVote;
 
 class LiveVotingBarFreeTextUI extends LiveVotingAbstractBarUI implements LiveVotingGeneralBarUI

@@ -30,10 +30,7 @@ use LiveVoting\votings\LiveVoting;
 
 /**
  * Class ParamManager
- *
- * @package LiveVoting\Context\Param
- *
- * @author  Martin Studer <ms@studer-raimann.ch>
+ * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
  */
 final class ParamManager
 {

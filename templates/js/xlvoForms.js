@@ -1,76 +1,74 @@
-const xlvo = {
+const xlvoForms = {
     inputs:  [],
     hiddenId: "",
     parent,
     initMultipleInputs: function (id) {
-        xlvo.parent = $("#" + id).parent();
+        xlvoForms.parent = $("#" + id).parent();
         const input = $("#"+id);
-        xlvo.parent.html("");  // Limpia el contenedor
+        xlvoForms.parent.html("");  // Limpia el contenedor
 
-        if(xlvo.inputs.length>0){
-            for(let i = 0; i < xlvo.inputs.length; i++){
-                console.log(xlvo.inputs);
-                const data =  xlvo.inputs[i];
+        if(xlvoForms.inputs.length>0){
+            for(let i = 0; i < xlvoForms.inputs.length; i++){
+                const data =  xlvoForms.inputs[i];
 
-                const newInput = xlvo.addMultipleInput(input, i+1, parseInt(data.id) ?? 0);
+                const newInput = xlvoForms.addMultipleInput(input, i+1, parseInt(data.id) ?? 0);
 
-                xlvo.parent.append(newInput);
+                xlvoForms.parent.append(newInput);
 
                 $(".option-input").last().val(data.text ?? data);
             }
         } else {
-            const newInput = xlvo.addMultipleInput(input, $(".option-input").length + 1, 0);
-            xlvo.parent.append(newInput);
+            const newInput = xlvoForms.addMultipleInput(input, $(".option-input").length + 1, 0);
+            xlvoForms.parent.append(newInput);
         }
 
         $(document).on("keyup" ,".option-input", function(){
-            xlvo.updateMultipleInputs();
+            xlvoForms.updateMultipleInputs();
         });
 
     },
 
     initCorrectOrder: function (id) {
-        xlvo.parent = $("#" + id).parent();
+        xlvoForms.parent = $("#" + id).parent();
         const input = $("#"+id);
 
-        xlvo.parent.html("");
+        xlvoForms.parent.html("");
 
-        if(xlvo.inputs.length>0){
-            for(let i = 0; i < xlvo.inputs.length; i++){
-                console.log(xlvo.inputs);
-                const data =  xlvo.inputs[i];
+        if(xlvoForms.inputs.length>0){
+            for(let i = 0; i < xlvoForms.inputs.length; i++){
+                const data =  xlvoForms.inputs[i];
 
-                const newInput = xlvo.addCorrectOrderInput(input, i+1, parseInt(data.order) ?? 1);
+                const newInput = xlvoForms.addCorrectOrderInput(input, i+1, parseInt(data.order) ?? 1);
 
-                xlvo.parent.append(newInput);
+                xlvoForms.parent.append(newInput);
 
                 $(".option-input").last().val(data.text ?? data);
                 $(".order-input").last().val(data.order ?? 1);
             }
         } else {
-            const newInput = xlvo.addCorrectOrderInput(input, $(".option-input").length + 1, 1);
+            const newInput = xlvoForms.addCorrectOrderInput(input, $(".option-input").length + 1, 1);
 
-            xlvo.parent.append(newInput);
+            xlvoForms.parent.append(newInput);
         }
 
         $(document).on("keyup" ,".order-input", function(){
-            xlvo.updateOrderInputs();
+            xlvoForms.updateOrderInputs();
         });
 
         $(document).on("keyup" ,".option-input", function(){
-            xlvo.updateOrderInputs();
+            xlvoForms.updateOrderInputs();
         });
 
 
     },
 
     initHiddenInput: function (id) {
-        xlvo.hiddenId = "#" + id;
+        xlvoForms.hiddenId = "#" + id;
 
         let hiddenInput = $(this.hiddenId).val();
         if(hiddenInput.length!==0){
             try{
-                xlvo.inputs = JSON.parse(hiddenInput.replace(/\\'/g, "\""));
+                xlvoForms.inputs = JSON.parse(hiddenInput.replace(/\\'/g, "\""));
             }catch (e){
                 console.log("Parsing input error");
             }
@@ -78,29 +76,28 @@ const xlvo = {
     },
 
     updateMultipleInputs: function(){
-        xlvo.inputs = [];
+        xlvoForms.inputs = [];
         $(".option-input").each(function(i, element){
             if($(element).val() != ""){
-                xlvo.inputs.push({
+                xlvoForms.inputs.push({
                     'id': $(element).attr("option-id") ?? 0,
                     'text': $(element).val(),
                 });
             }
         });
 
-        let jsonString = JSON.stringify(xlvo.inputs).replace(/"/g, "\\'");
+        let jsonString = JSON.stringify(xlvoForms.inputs).replace(/"/g, "\\'");
 
         $(this.hiddenId).val(jsonString);
 
-        return xlvo.inputs;
+        return xlvoForms.inputs;
     },
 
     updateOrderInputs: function(){
-        xlvo.inputs = [];
+        xlvoForms.inputs = [];
         $(".option-input").each(function(i, element){
-            console.log($(element).parent().parent().find(".order-input").val());
             if($(element).val() != "" || $(element).parent().parent().find(".order-input").val() != ""){
-                xlvo.inputs.push({
+                xlvoForms.inputs.push({
                     'id': $(element).attr("option-id") ?? 0,
                     'order': parseInt($(element).parent().parent().find(".order-input").val()) ?? 0,
                     'text': $(element).val(),
@@ -108,11 +105,11 @@ const xlvo = {
             }
         });
 
-        let jsonString = JSON.stringify(xlvo.inputs).replace(/"/g, "\\'");
+        let jsonString = JSON.stringify(xlvoForms.inputs).replace(/"/g, "\\'");
 
         $(this.hiddenId).val(jsonString);
 
-        return xlvo.inputs;
+        return xlvoForms.inputs;
     },
 
     addMultipleInput: function (input, index, option_id) {
@@ -133,10 +130,10 @@ const xlvo = {
                     ${newInputHtml.prop("outerHTML")}  
                 </div>
                 <div class="action-buttons shrink-0">
-                    <button type="button" name="Add" class="btn btn-link" onclick="xlvo.manageMultipleInputs('add', $(this).parent().parent().parent())"><span class="sr-only">Add</span><span class="glyphicon glyphicon-plus"></span></button>
-                    <button type="button" name="Remove" class="btn btn-link" onclick="xlvo.manageMultipleInputs('remove', $(this).parent().parent())"><span class="sr-only">Remove</span><span class="glyphicon glyphicon-minus"></span></button>
-                    <button type="button" name="Down" class="btn btn-link" onclick="xlvo.manageMultipleInputs('down', $(this).parent().parent())"><span class="sr-only">Down</span><span class="glyphicon glyphicon-chevron-down"></span></button>
-                    <button type="button" name="Up" class="btn btn-link" onclick="xlvo.manageMultipleInputs('up', $(this).parent().parent())"><span class="sr-only">Up</span><span class="glyphicon glyphicon-chevron-up"></span></button>
+                    <button type="button" name="Add" class="btn btn-link" onclick="xlvoForms.manageMultipleInputs('add', $(this).parent().parent().parent())"><span class="sr-only">Add</span><span class="glyphicon glyphicon-plus"></span></button>
+                    <button type="button" name="Remove" class="btn btn-link" onclick="xlvoForms.manageMultipleInputs('remove', $(this).parent().parent())"><span class="sr-only">Remove</span><span class="glyphicon glyphicon-minus"></span></button>
+                    <button type="button" name="Down" class="btn btn-link" onclick="xlvoForms.manageMultipleInputs('down', $(this).parent().parent())"><span class="sr-only">Down</span><span class="glyphicon glyphicon-chevron-down"></span></button>
+                    <button type="button" name="Up" class="btn btn-link" onclick="xlvoForms.manageMultipleInputs('up', $(this).parent().parent())"><span class="sr-only">Up</span><span class="glyphicon glyphicon-chevron-up"></span></button>
                 </div>
             </div>
         `;
@@ -169,8 +166,8 @@ const xlvo = {
                     </div>
                 </div>
                 <div class="action-buttons shrink-0">
-                    <button type="button" name="Add" class="btn btn-link" onclick="xlvo.manageCorrectOrder('add', $(this).parent().parent().parent())"><span class="sr-only">Add</span><span class="glyphicon glyphicon-plus"></span></button>
-                    <button type="button" name="Remove" class="btn btn-link" onclick="xlvo.manageCorrectOrder('remove', $(this).parent().parent())"><span class="sr-only">Remove</span><span class="glyphicon glyphicon-minus"></span></button>
+                    <button type="button" name="Add" class="btn btn-link" onclick="xlvoForms.manageCorrectOrder('add', $(this).parent().parent().parent())"><span class="sr-only">Add</span><span class="glyphicon glyphicon-plus"></span></button>
+                    <button type="button" name="Remove" class="btn btn-link" onclick="xlvoForms.manageCorrectOrder('remove', $(this).parent().parent())"><span class="sr-only">Remove</span><span class="glyphicon glyphicon-minus"></span></button>
                 </div>
             </div>
         `;
@@ -183,15 +180,15 @@ const xlvo = {
                 const newIndex = $(".multiple-input").length + 1;
                 const newInputHTML = firstInput.clone();
                 newInputHTML.attr('value', "");
-                const newInput = xlvo.addMultipleInput(newInputHTML, newIndex);
+                const newInput = xlvoForms.addMultipleInput(newInputHTML, newIndex);
                 parent.append(newInput);
-                $(this.hiddenId).val(JSON.stringify(xlvo.updateMultipleInputs()));
+                $(this.hiddenId).val(JSON.stringify(xlvoForms.updateMultipleInputs()));
                 break;
             case 'remove':
                 if ($(".multiple-input").length > 1) {
                     parent.remove();
-                    xlvo.updateMultipleInputs();
-                    $(this.hiddenId).val(JSON.stringify(xlvo.updateMultipleInputs()));
+                    xlvoForms.updateMultipleInputs();
+                    $(this.hiddenId).val(JSON.stringify(xlvoForms.updateMultipleInputs()));
 
 
                 }
@@ -199,18 +196,18 @@ const xlvo = {
             case 'up':
                 if ($(".multiple-input").length > 1) {
                     parent.prev().before(parent);
-                    xlvo.updateMultipleInputs();
-                    $(this.hiddenId).val(JSON.stringify(xlvo.updateMultipleInputs()));
-                    xlvo.updateMultipleInputs();
+                    xlvoForms.updateMultipleInputs();
+                    $(this.hiddenId).val(JSON.stringify(xlvoForms.updateMultipleInputs()));
+                    xlvoForms.updateMultipleInputs();
 
                 }
                 break;
             case 'down':
                 if ($(".multiple-input").length > 1) {
                     parent.next().after(parent);
-                    xlvo.updateMultipleInputs();
-                    $(this.hiddenId).val(JSON.stringify(xlvo.updateMultipleInputs()));
-                    xlvo.updateMultipleInputs();
+                    xlvoForms.updateMultipleInputs();
+                    $(this.hiddenId).val(JSON.stringify(xlvoForms.updateMultipleInputs()));
+                    xlvoForms.updateMultipleInputs();
 
                 }
                 break;
@@ -223,14 +220,14 @@ const xlvo = {
                 const newIndex = $(".order-input").length + 1;
                 const newInputHTML = firstInput.clone();
                 newInputHTML.attr('value', "");
-                const newInput = xlvo.addCorrectOrderInput(newInputHTML, newIndex, newIndex);
+                const newInput = xlvoForms.addCorrectOrderInput(newInputHTML, newIndex, newIndex);
                 parent.append(newInput);
-                xlvo.updateOrderInputs();
+                xlvoForms.updateOrderInputs();
                 break;
             case 'remove':
                 if ($(".order-input").length > 1) {
                     parent.remove();
-                    xlvo.updateOrderInputs();
+                    xlvoForms.updateOrderInputs();
                 }
                 break;
         }

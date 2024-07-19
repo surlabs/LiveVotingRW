@@ -25,15 +25,11 @@ use ilLiveVotingPlugin;
 use ilMathJax;
 use ilObjLiveVotingGUI;
 use ilSetting;
-use LiveVoting\Utils\ParamManager;
 use LiveVotingPlayerGUI;
 
 /**
  * Class LiveVotingJs
- *
- * @package LiveVoting\Context\Param
- *
- * @author  Martin Studer <ms@studer-raimann.ch>
+ * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
  */
 final class LiveVotingJs
 {

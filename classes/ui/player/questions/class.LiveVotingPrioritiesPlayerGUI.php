@@ -18,6 +18,7 @@ declare(strict_types=1);
  *
  */
 
+use LiveVoting\platform\LiveVotingException;
 use LiveVoting\Utils\LiveVotingJs;
 
 
@@ -31,10 +32,11 @@ class LiveVotingPrioritiesPlayerGUI extends LiveVotingCorrectOrderPlayerGUI
 {
     /**
      * @return bool
+     * @throws LiveVotingException
      */
     protected function isRandomizeOptions(): bool
     {
-        return false;
+        return $this->getPlayer()->getActiveVotingObject()->isRandomiseOptionSequence();
     }
 
 
@@ -68,9 +70,9 @@ class LiveVotingPrioritiesPlayerGUI extends LiveVotingCorrectOrderPlayerGUI
         $b = ilLinkButton::getInstance();
         $b->setId(self::BUTTON_TOTTLE_DISPLAY_CORRECT_ORDER);
         if ( array_key_exists(self::BUTTON_TOTTLE_DISPLAY_CORRECT_ORDER,$states) && $states[self::BUTTON_TOTTLE_DISPLAY_CORRECT_ORDER]) {
-            $b->setCaption(ilGlyphGUI::get('close'), false);
+            $b->setCaption('<span class="glyphicon glyphicon-align-left"></span>', false);
         } else {
-            $b->setCaption(ilGlyphGUI::get('close'), false);
+            $b->setCaption('<span class="glyphicon glyphicon-sort-by-attributes-alt"></span>', false);
         }
 
 

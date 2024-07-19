@@ -91,6 +91,11 @@ class LiveVotingOrderQuestion extends LiveVotingQuestion
         $this->randomise_option_sequence = $randomise_option_sequence;
     }
 
+    public function isCorrectOrder(): bool
+    {
+        return $this->correct_order;
+    }
+
     public function setCorrectOrder(bool $correct_order): void
     {
         $this->correct_order = $correct_order;
@@ -155,7 +160,7 @@ class LiveVotingOrderQuestion extends LiveVotingQuestion
         }
     }
 
-    protected function getCorrectOrderJSON(): string
+    public function getCorrectOrderJSON(): string
     {
         $correct_order_ids = array();
 

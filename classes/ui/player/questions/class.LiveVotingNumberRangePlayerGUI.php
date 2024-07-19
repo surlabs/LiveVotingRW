@@ -87,9 +87,11 @@ class LiveVotingNumberRangePlayerGUI extends LiveVotingQuestionTypesUI
 
         if ($filteredInput !== false && $filteredInput !== null) {
             if ($this->isVoteValid($this->getStart(), $this->getEnd(), $filteredInput)) {
+                $this->player->unvoteAll();
+
                 $this->player->input([
                     'input'   => (string) $filteredInput,
-                    'vote_id' => filter_input(INPUT_POST, 'vote_id'),
+                    'vote_id' => "0",
                 ]);
             }
         }

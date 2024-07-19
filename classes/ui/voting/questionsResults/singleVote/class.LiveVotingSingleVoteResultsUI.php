@@ -20,22 +20,16 @@ declare(strict_types=1);
  */
 namespace LiveVoting\UI\QuestionsResults;
 
-use ilException;
-use ilLiveVotingPlugin;
-use ilSystemStyleException;
-use ilTemplate;
 use ilTemplateException;
-use LiveVoting\Display\Bar\xlvoBarCollectionGUI;
-use LiveVoting\Display\Bar\xlvoBarPercentageGUI;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\UI\Voting\Bar\LiveVotingBarCollectionUI;
-use LiveVoting\UI\Voting\Bar\LiveVotingBarFreeTextUI;
-use LiveVoting\UI\Voting\Bar\LiveVotingBarGroupingCollectionUI;
 use LiveVoting\UI\Voting\Bar\LiveVotingBarPercentageUI;
-use LiveVoting\votings\LiveVotingPlayer;
 use LiveVoting\votings\LiveVotingVote;
-use LiveVoting\votings\LiveVotingVoter;
 
+/**
+ * Class LiveVotingSingleVoteResultsUI
+ * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
+ */
 class LiveVotingSingleVoteResultsUI extends LiveVotingInputResultsGUI
 {
     /**
@@ -104,7 +98,7 @@ class LiveVotingSingleVoteResultsUI extends LiveVotingInputResultsGUI
             $xlvoBarPercentageGUI->setOptionLetter($xlvoOption->getCipher());
             $xlvoBarPercentageGUI->setTitle($xlvoOption->getText());
             $xlvoBarPercentageGUI->setVotes(count(LiveVotingVote::getVotesOfOption($xlvoOption->getId(), $this->player->getRoundId())));
-            $xlvoBarPercentageGUI->setMaxVotes($voters);
+            $xlvoBarPercentageGUI->setMaxVotes($total_votes);
             $xlvoBarPercentageGUI->setShowInPercent(!$this->isShowAbsolute());
             $bars->addBar($xlvoBarPercentageGUI);
         }

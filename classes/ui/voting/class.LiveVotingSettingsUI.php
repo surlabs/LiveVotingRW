@@ -21,27 +21,12 @@ declare(strict_types=1);
 namespace LiveVoting\UI;
 
 use Exception;
-use ilCtrlException;
 use ilCtrlInterface;
-use ilException;
-use ilHtmlPurifierFactory;
-use ilHtmlPurifierNotFoundException;
 use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
 use ilLiveVotingPlugin;
-use ilObject;
 use ilObjLiveVoting;
-use ilObjLiveVotingGUI;
 use ilPlugin;
-use ilPropertyFormGUI;
-use ilSystemStyleException;
-use ilTemplate;
-use ilTemplateException;
-use ilTextAreaInputGUI;
-use LiveVoting\legacy\liveVotingTableGUI;
-use LiveVoting\questions\LiveVotingQuestion;
-use LiveVoting\questions\LiveVotingQuestionOption;
-
 /**
  * Class LiveVotingSettingsUI
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>

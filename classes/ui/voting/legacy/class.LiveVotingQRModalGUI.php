@@ -28,10 +28,8 @@ use LiveVoting\Utils\ParamManager;
 use LiveVoting\votings\LiveVoting;
 
 /**
- * Class xlvoQRModalGUI
- *
- * @package LiveVoting\Player\QR
- * @author  Fabian Schmid <fs@studer-raimann.ch>
+ * Class LiveVotingQRModalGUI
+ * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
  */
 class LiveVotingQRModalGUI extends ilModalGUI
 {

@@ -26,6 +26,10 @@ use LiveVoting\UI\Voting\Bar\LiveVotingBarCollectionUI;
 use LiveVoting\UI\Voting\Bar\LiveVotingBarPercentageUI;
 use LiveVoting\votings\LiveVotingVote;
 
+/**
+ * Class LiveVotingInputPrioritiesUI
+ * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
+ */
 class LiveVotingInputPrioritiesUI extends LiveVotingInputCorrectOrderUI
 {
     /**
@@ -49,7 +53,7 @@ class LiveVotingInputPrioritiesUI extends LiveVotingInputCorrectOrderUI
             $json_decode = json_decode($xlvoVote->getFreeInput(), true);
             if (is_array($json_decode)) {
                 foreach ($json_decode as $option_id) {
-                    $option_weight[$option_id] = (array_key_exists($option_id, $option_weight) ? [$option_id] : 0) + $option_amount2;
+                    $option_weight[$option_id] = (array_key_exists($option_id, $option_weight) ? $option_weight[$option_id] : 0) + $option_amount2;
                     $option_amount2--;
                 }
             }
@@ -83,7 +87,7 @@ class LiveVotingInputPrioritiesUI extends LiveVotingInputCorrectOrderUI
             if ($total_voters == 0) {
                 $xlvoBarPercentageGUI->setVotes($total_voters);
             } else {
-                $xlvoBarPercentageGUI->setVotes($option_weight[$xlvoOption->getId()] / $total_voters);
+                $xlvoBarPercentageGUI->setVotes((int)($option_weight[$xlvoOption->getId()] / $total_voters));
             }
             $xlvoBarPercentageGUI->setOptionLetter($xlvoOption->getCipher());
 

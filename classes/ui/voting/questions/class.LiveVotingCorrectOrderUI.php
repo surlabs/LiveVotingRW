@@ -131,14 +131,14 @@ class LiveVotingCorrectOrderUI
                     ];
                 }, $options), JSON_UNESCAPED_UNICODE))) : "")
                 ->withOnLoadCode(function ($id) {
-                    return "xlvo.initHiddenInput('".$id."')";
+                    return "xlvoForms.initHiddenInput('".$id."')";
                 })
                 ->withLabel('options');
 
             $form_answers["input"] = $this->factory->input()->field()->text(
                 $this->plugin->txt('qtype_1_options'))
                 ->withOnLoadCode(function ($id) {
-                    return "xlvo.initCorrectOrder('".$id."')";
+                    return "xlvoForms.initCorrectOrder('".$id."')";
                 })
                 ->withMaxLength(255)
                 ->withRequired(true);
@@ -159,7 +159,7 @@ class LiveVotingCorrectOrderUI
                 $form_action = $this->control->getFormActionByClass(ilObjLiveVotingGUI::class, "selectedCorrectOrder");
             }
 
-            $DIC->ui()->mainTemplate()->addJavaScript($this->plugin->getDirectory() . "/templates/js/xlvo.js");
+            $DIC->ui()->mainTemplate()->addJavaScript($this->plugin->getDirectory() . "/templates/js/xlvoForms.js");
 
             $DIC->ui()->mainTemplate()->addCss($this->plugin->getDirectory() . "/templates/css/livevoting.css");
 
