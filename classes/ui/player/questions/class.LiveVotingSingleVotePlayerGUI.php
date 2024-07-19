@@ -69,7 +69,9 @@ class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
         if ($this->player->hasUserVotedForOption($option_id)) {
             LiveVotingVote::unvote($participant, $this->player->getActiveVoting(), $option_id);
         } else {
-            $vote_id = LiveVotingVote::vote($participant, $this->player->getActiveVoting(), $this->player->getRoundId(), $option_id);
+            if ($this->player->getActiveVotingObject()->isValidOption($option_id)) {
+                $vote_id = LiveVotingVote::vote($participant, $this->player->getActiveVoting(), $this->player->getRoundId(), $option_id);
+            }
         }
         if (!$this->player->getActiveVotingObject()->isMultiSelection()) {
             $this->player->unvoteAll($vote_id);

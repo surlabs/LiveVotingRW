@@ -474,4 +474,15 @@ abstract class LiveVotingQuestion
 
         return ilLegacyFormElementsUtil::prepareTextareaOutput($question, true);
     }
+
+    public function isValidOption(int $option_id): bool
+    {
+        foreach ($this->options as $option) {
+            if ($option->getId() == $option_id) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
