@@ -277,7 +277,7 @@ class LiveVotingVote
      * @param LiveVotingParticipant $participant
      * @param int $voting_id
      * @param int $round_id
-     * @param int|null $option_id
+     * @param int $option_id
      * @return int
      * @throws LiveVotingException
      */
