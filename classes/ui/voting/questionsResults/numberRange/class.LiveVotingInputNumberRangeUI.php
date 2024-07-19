@@ -100,22 +100,26 @@ class LiveVotingInputNumberRangeUI extends LiveVotingInputResultsGUI
         $values = [];
         $modes = [];
 
-        array_walk($votes, function (LiveVotingVote $vote) use (&$vote_sum, &$values, &$modes) {
+        foreach ($votes as $vote) {
             $value = (int) $vote->getFreeInput();
 
             $values[] = $value;
+
             if (!isset($modes[$value])) {
                 $modes[$value] = 0;
             }
+
             $modes[$value]++;
-            $modes[$value]++;
+
             $vote_sum = $vote_sum + $value;
-        });
-        $relevant_modes = [];
-        foreach ($modes as $given_value => $counter) {
-            if ($counter == max($modes)) {
-                $relevant_modes[] = $given_value;
-            }
+        }
+
+        $mode = array_keys($modes, max($modes));
+
+        if (!empty($mode)) {
+            $mode = $mode[0];
+        } else {
+            $mode = ilLiveVotingPlugin::getInstance()->txt("qtype_6_mode_not_applicable");
         }
 
         $calculateMedian = function ($aValues) {
@@ -154,7 +158,7 @@ class LiveVotingInputNumberRangeUI extends LiveVotingInputResultsGUI
         $median->setDark(true);
         $info->addBar($median);
 
-        $mode = new LiveVotingBarInfoGUI(ilLiveVotingPlugin::getInstance()->txt("qtype_6_mode"), (string)count($relevant_modes) === 1 ? $relevant_modes[0] : ilLiveVotingPlugin::getInstance()->txt("qtype_6_mode_not_applicable"));
+        $mode = new LiveVotingBarInfoGUI(ilLiveVotingPlugin::getInstance()->txt("qtype_6_mode"), (string) $mode);
         $mode->setBig(true);
         $mode->setDark(true);
         $mode->setCenter(true);
