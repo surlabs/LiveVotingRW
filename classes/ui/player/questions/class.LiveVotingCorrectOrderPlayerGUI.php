@@ -149,7 +149,6 @@ class LiveVotingCorrectOrderPlayerGUI extends LiveVotingQuestionTypesUI
      */
     public function getButtonInstances(): array
     {
-        global $DIC;
         if (!$this->getPlayer()->isShowResults()) {
             return array();
         }
