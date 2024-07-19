@@ -49,6 +49,7 @@ var xlvoVoter = {
 		$.get(xlvoVoter.config.base_url, {cmd: 'getVotingData'})
 			.done(function (data) {
 				xlvoVoter.log(data);
+				console.log(data);
 
 				//kill timer if running
 				if (xlvoVoter.interval) {
@@ -64,9 +65,8 @@ var xlvoVoter = {
 					show_results_changed = (xlvoVoter.player.show_results !== data.show_results), // Show Results has changed
 					show_correct_order_changed = (xlvoVoter.player.show_correct_order !== data.show_correct_order); // Show Correct Order has changed
 
-
 				xlvoVoter.player = data;
-				if (status_has_changed || voting_has_changed || forced_update || frozen_changed || show_results_changed || show_correct_order_changed) {
+				if (status_has_changed || voting_has_changed || forced_update || frozen_changed || show_correct_order_changed) {
 					xlvoVoter.log("Replace HTML & Handle Countdown");
 
 					xlvoVoter.log("status_has_changed:" + status_has_changed);

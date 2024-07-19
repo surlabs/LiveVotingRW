@@ -131,14 +131,14 @@ class LiveVotingCorrectOrderUI
                     ];
                 }, $options), JSON_UNESCAPED_UNICODE))) : "")
                 ->withOnLoadCode(function ($id) {
-                    return "xlvo.initHiddenInput('".$id."')";
+                    return "xlvoForms.initHiddenInput('".$id."')";
                 })
                 ->withLabel('options');
 
             $form_answers["input"] = $this->factory->input()->field()->text(
                 $this->plugin->txt('qtype_1_options'))
                 ->withOnLoadCode(function ($id) {
-                    return "xlvo.initCorrectOrder('".$id."')";
+                    return "xlvoForms.initCorrectOrder('".$id."')";
                 })
                 ->withMaxLength(255)
                 ->withRequired(true);

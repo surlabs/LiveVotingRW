@@ -126,14 +126,14 @@ class LiveVotingPrioritiesUI
                     ];
                 }, $options), JSON_UNESCAPED_UNICODE))) : "")
                 ->withOnLoadCode(function ($id) {
-                    return "xlvo.initHiddenInput('".$id."')";
+                    return "xlvoForms.initHiddenInput('".$id."')";
                 })
                 ->withLabel('options');
 
             $form_answers["input"] = $this->factory->input()->field()->text(
                 $this->plugin->txt('qtype_1_options'))
                 ->withOnLoadCode(function ($id) {
-                    return "xlvo.initMultipleInputs('".$id."')";
+                    return "xlvoForms.initMultipleInputs('".$id."')";
                 })
                 ->withMaxLength(255)
                 ->withRequired(true);

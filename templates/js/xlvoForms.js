@@ -9,7 +9,6 @@ const xlvoForms = {
 
         if(xlvoForms.inputs.length>0){
             for(let i = 0; i < xlvoForms.inputs.length; i++){
-                console.log(xlvoForms.inputs);
                 const data =  xlvoForms.inputs[i];
 
                 const newInput = xlvoForms.addMultipleInput(input, i+1, parseInt(data.id) ?? 0);
@@ -37,7 +36,6 @@ const xlvoForms = {
 
         if(xlvoForms.inputs.length>0){
             for(let i = 0; i < xlvoForms.inputs.length; i++){
-                console.log(xlvoForms.inputs);
                 const data =  xlvoForms.inputs[i];
 
                 const newInput = xlvoForms.addCorrectOrderInput(input, i+1, parseInt(data.order) ?? 1);
@@ -98,7 +96,6 @@ const xlvoForms = {
     updateOrderInputs: function(){
         xlvoForms.inputs = [];
         $(".option-input").each(function(i, element){
-            console.log($(element).parent().parent().find(".order-input").val());
             if($(element).val() != "" || $(element).parent().parent().find(".order-input").val() != ""){
                 xlvoForms.inputs.push({
                     'id': $(element).attr("option-id") ?? 0,
