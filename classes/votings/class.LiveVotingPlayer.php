@@ -518,7 +518,7 @@ class LiveVotingPlayer
             'voting_id' => $this->getActiveVoting(),
             'status'    => 1,
             'round_id'  => $this->getRoundId()
-        ), ["last_update"], "ORDER BY last_update ASC");
+        ), ["last_update"], "ORDER BY last_update DESC");
 
         $last_update = 0;
 
