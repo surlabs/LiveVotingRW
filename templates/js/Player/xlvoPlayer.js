@@ -267,13 +267,7 @@ var xlvoPlayer = {
 		xlvoPlayer.startRequest();
 		$.get(xlvoPlayer.config.base_url, {cmd: 'getPlayerData'}).done(function (data) {
 			xlvoPlayer.counter++;
-			console.log(data.player);
-			console.log((xlvoPlayer.counter > xlvoPlayer.forced_update_interval) // Forced update of HTML
-				, (data.player.last_update !== xlvoPlayer.player.last_update) // Player is out of sync
-				, (data.player.show_results !== xlvoPlayer.player.show_results) // Show Results has changed
-				, (data.player.status !== xlvoPlayer.player.status) // player status has changed
-				, (data.player.active_voting_id !== xlvoPlayer.player.active_voting_id) //Voting has changed
-				, xlvoPlayer.player.has_countdown);
+
 			if ((xlvoPlayer.counter > xlvoPlayer.forced_update_interval) // Forced update of HTML
 				|| (data.player.last_update !== xlvoPlayer.player.last_update) // Player is out of sync
 				|| (data.player.show_results !== xlvoPlayer.player.show_results) // Show Results has changed
@@ -367,22 +361,19 @@ var xlvoPlayer = {
 	 * @param data
 	 */
 	callButton: function (button_id, data) {
-		console.log("Prueba");
 		if (xlvoPlayer.isRequestPending()) {
 			return;
 		}
 		xlvoPlayer.startRequest();
 		xlvoPlayer.toolbar_loader.show();
 		this.log('call Button: ' + button_id);
-		console.log(xlvoPlayer.config.base_url + '&cmd=apiCall');
-		console.log("POST:", button_id);
 
 		$.post(xlvoPlayer.config.base_url + '&cmd=apiCall', {
 			call: 'button',
 			button_id: button_id,
 			button_data: data
 		}).done(function (data) {
-			console.log(data);
+
 		}).fail(function (e) {
 			console.log(e.responseText);
 		}).always(function () {
@@ -398,7 +389,6 @@ var xlvoPlayer = {
 	 * @param id
 	 */
 	open: function (id) {
-		console.log("Tengo que cambiar a", id);
 		this.callPlayer('open', {xvi: id});
 		return false;
 	},

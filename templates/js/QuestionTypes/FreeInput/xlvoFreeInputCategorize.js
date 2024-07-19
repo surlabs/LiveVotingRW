@@ -112,7 +112,6 @@ var xlvoFreeInputCategorize = {
 			);
 
 			// add new container to dragula
-			console.log($('#bars_' + data.category_id)[0]);
 			xlvoFreeInputCategorize.drake.containers.push($('#bars_' + data.category_id)[0]);
 
 			// flush input
@@ -147,7 +146,6 @@ var xlvoFreeInputCategorize = {
 			// 	console.log(element);
 			// 	$('div.bars:last')[0].append(element);
 			// });
-			console.log(data);
 			category.remove();
 			// recalculate height of player
 			xlvoFreeInputCategorize.recalculatePlayerHeight();
@@ -167,7 +165,6 @@ var xlvoFreeInputCategorize = {
 		}
 
 		xlvoFreeInputCategorize.startRequest();
-		console.log("add_vote");
 		$.post(xlvoPlayer.config.base_url + '&cmd=apiCall', {
 			call: 'add_vote',
 			input: $('#answer_input').val()
@@ -233,14 +230,12 @@ var xlvoFreeInputCategorize = {
 		}
 
 		xlvoFreeInputCategorize.startRequest();
-		console.log("change_category");
 
 		$.post(xlvoPlayer.config.base_url + '&cmd=apiCall', {
 			call: 'change_category',
 			vote_id: vote_id,
 			category_id: (category_id === 'undefined') ? 0 : category_id
 		}).done(function (data) {
-			console.log(data);
 
 		}).always(function(){
 			xlvoFreeInputCategorize.endRequest();
