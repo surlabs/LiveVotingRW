@@ -25,15 +25,17 @@ div.xlvo_pin {
   height: 250px;
   line-height: 250px;
   padding: 0;
+  position:relative;
 }
 div.xlvo_shortlink {
-  height: 115px;
+  min-height: 115px;
   line-height: 115px;
   text-align: center;
   vertical-align: middle;
   /* Fix no wrap if the URL is too long */
   white-space: pre-wrap;
   word-wrap: break-word;
+  margin-bottom:10px;
 }
 div.xlvo_pin * {
   margin: 0;
@@ -161,4 +163,21 @@ html,
 body {
   overflow: initial;
 }
+
 /*# sourceMappingURL=default.css.map */
+
+.panel-title .label {
+  display: inline;
+  padding: 0.2em 0.6em 0.3em;
+  font-size: .8rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #fff;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 0.25em;
+}
+.panel-title .label-default{
+  background-color: #777777;
+}

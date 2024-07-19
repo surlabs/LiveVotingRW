@@ -918,6 +918,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         try {
             $xlvoQuestionTypesGUI = LiveVotingQuestionTypesUI::getInstance($this->object->getLiveVoting()->getPlayer());
             if ($xlvoQuestionTypesGUI->hasButtons()) {
+
                 $toolbar = new ilToolbarGUI();
 
                 foreach ($xlvoQuestionTypesGUI->getButtonInstances() as $buttonInstance) {

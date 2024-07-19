@@ -149,7 +149,6 @@ class LiveVotingCorrectOrderPlayerGUI extends LiveVotingQuestionTypesUI
      */
     public function getButtonInstances(): array
     {
-        global $DIC;
         if (!$this->getPlayer()->isShowResults()) {
             return array();
         }
@@ -161,6 +160,7 @@ class LiveVotingCorrectOrderPlayerGUI extends LiveVotingQuestionTypesUI
         } else {
             $b->setCaption('<span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>' , false);
         }
+
 
         $t = ilLinkButton::getInstance();
         $t->setId(self::BUTTON_TOGGLE_PERCENTAGE);

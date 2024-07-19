@@ -217,6 +217,7 @@ abstract class LiveVotingQuestionTypesUI
      */
     public function hasButtons(): bool
     {
+
         return (count($this->getButtonInstances()) > 0);
     }
 
