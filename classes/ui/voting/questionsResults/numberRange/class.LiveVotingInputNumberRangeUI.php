@@ -114,12 +114,10 @@ class LiveVotingInputNumberRangeUI extends LiveVotingInputResultsGUI
             $vote_sum = $vote_sum + $value;
         }
 
-        $mode = array_keys($modes, max($modes));
+        $mode = ilLiveVotingPlugin::getInstance()->txt("qtype_6_mode_not_applicable");
 
-        if (!empty($mode)) {
-            $mode = $mode[0];
-        } else {
-            $mode = ilLiveVotingPlugin::getInstance()->txt("qtype_6_mode_not_applicable");
+        if (!empty($modes)) {
+            $mode = array_keys($modes, max($modes))[0];
         }
 
         $calculateMedian = function ($aValues) {
