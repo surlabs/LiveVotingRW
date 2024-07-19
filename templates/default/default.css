@@ -181,3 +181,9 @@ body {
 .panel-title .label-default{
   background-color: #777777;
 }
+
+.btn-primary {
+  background-color: #557b2e !important;
+  color: white !important;
+}
+

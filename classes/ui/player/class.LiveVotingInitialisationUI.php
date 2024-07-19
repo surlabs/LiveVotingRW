@@ -21,6 +21,7 @@ declare(strict_types=1);
 namespace LiveVoting\player;
 
 use ilAccess;
+use ilAppEventHandler;
 use ilCtrlException;
 use ilDatabaseException;
 use ilDBWrapperFactory;
@@ -31,6 +32,16 @@ use ilHelp;
 use ilHTTPS;
 use ILIAS\DI\Container;
 use ILIAS\DI\Exceptions\Exception;
+use ILIAS\FileDelivery\Delivery\LegacyDelivery;
+use ILIAS\FileDelivery\Delivery\ResponseBuilder\PHPResponseBuilder;
+use ILIAS\FileDelivery\Delivery\ResponseBuilder\ResponseBuilder;
+use ILIAS\FileDelivery\Delivery\ResponseBuilder\XSendFileResponseBuilder;
+use ILIAS\FileDelivery\Init;
+use ILIAS\FileDelivery\Setup\DeliveryMethodObjective;
+use ILIAS\FileDelivery\Setup\KeyRotationObjective;
+use ILIAS\FileDelivery\Token\DataSigner;
+use ILIAS\FileDelivery\Token\Signer\Key\Secret\SecretKey;
+use ILIAS\FileDelivery\Token\Signer\Key\Secret\SecretKeyRotation;
 use ILIAS\GlobalScreen\Services;
 use ILIAS\HTTP\Cookies\CookieJarFactoryImpl;
 use ILIAS\HTTP\Request\RequestFactoryImpl;
@@ -144,11 +155,12 @@ class LiveVotingInitialisationUI
         $this->initControllFlow();
         $this->initAccessHandling();
         $this->initObjectDefinition();
+        $this->initAppEventHandler();
         $this->initAccess();
-        //$this->initAppEventHandler();
         $this->initMail();
         $this->initFilesystem();
         $this->initResourceStorage();
+        $this->initFileDelivery();
         $this->initGlobalScreen($GLOBALS["DIC"]);
         $this->initTemplate();
         $this->initTabs();
@@ -191,7 +203,7 @@ class LiveVotingInitialisationUI
      * @throws ilTemplateException
      * @throws LiveVotingException
      */
-    private function initTemplate()
+    private function initTemplate(): void
     {
         $styleDefinition = new LiveVotingStyleDefinition();
         $this->makeGlobal('styleDefinition', $styleDefinition);
@@ -207,7 +219,7 @@ class LiveVotingInitialisationUI
             $tpl->touchBlock("navbar");
         }
 
-        $tpl->addCss('./templates/default/delos.css');
+        $tpl->addCss(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/css/old_delos.css');
         $tpl->addCss(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/default.css');
 
         $tpl->addBlockFile("CONTENT", "content", "tpl.main_voter.html", "Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting");
@@ -779,8 +791,7 @@ class LiveVotingInitialisationUI
      */
     private function initAppEventHandler():void
     {
-        //TODO: Comentado para ilias 9
-        //$this->makeGlobal("ilAppEventHandler", new ilAppEventHandler());
+        $this->makeGlobal("ilAppEventHandler", new ilAppEventHandler());
     }
 
     /**
@@ -854,6 +865,12 @@ class LiveVotingInitialisationUI
     protected static function initCore(): void
     {
         $GLOBALS["DIC"]["ilias.version"] = (new \ILIAS\Data\Factory())->version(ILIAS_VERSION_NUMERIC);
+    }
+
+    private function initFileDelivery(): void
+    {
+      global $DIC;
+      Init::init($DIC);
     }
 
 }
