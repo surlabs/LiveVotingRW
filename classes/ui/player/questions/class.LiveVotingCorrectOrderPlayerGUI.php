@@ -129,9 +129,9 @@ class LiveVotingCorrectOrderPlayerGUI extends LiveVotingQuestionTypesUI
         $bars->setShowOptionLetter(true);
         $tpl->setVariable('CONTENT', $bars->getHTML());
 
-        if ($this->isShowCorrectOrder()) {
+        if ($this->isShowCorrectOrder() && $this->getPlayer()->getActiveVotingObject()->getQuestionType() == "CorrectOrder"){
             $correct_order = $this->getCorrectOrder();
-            $solution_html = '<p>' . ilLiveVotingPlugin::getInstance()->txt('correct_solution');
+            $solution_html = '<p>' . ilLiveVotingPlugin::getInstance()->txt('qtype_4_correct_solution');
 
             foreach ($correct_order as $item) {
                 $solution_html .= ' <span class="label label-primary">' . $item->getCipher() . '</span>';
