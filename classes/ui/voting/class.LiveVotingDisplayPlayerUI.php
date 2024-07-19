@@ -142,7 +142,7 @@ class LiveVotingDisplayPlayerUI
         }
 
         $this->tpl->setVariable('TITLE', $question->getTitle());
-        $this->tpl->setVariable('QUESTION', $question->getQuestion());
+        $this->tpl->setVariable('QUESTION', $question->getQuestionForPresentation());
         $this->tpl->setVariable('VOTING_ID', $this->liveVoting->getId());
         $this->tpl->setVariable('OBJ_ID', $this->liveVoting->getId());
         $this->tpl->setVariable('FROZEN', $player->isFrozen());
