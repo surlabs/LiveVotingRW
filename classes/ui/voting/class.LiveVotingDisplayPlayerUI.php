@@ -20,7 +20,6 @@ declare(strict_types=1);
 
 namespace LiveVoting\UI;
 
-use ilAdvancedSelectionListGUI;
 use ilException;
 use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;

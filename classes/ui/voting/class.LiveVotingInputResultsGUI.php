@@ -24,6 +24,10 @@ use LiveVoting\platform\LiveVotingDatabase;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\votings\LiveVotingPlayer;
 
+/**
+ * Class LiveVotingInputResultsGUI
+ * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
+ */
 abstract class LiveVotingInputResultsGUI
 {
 

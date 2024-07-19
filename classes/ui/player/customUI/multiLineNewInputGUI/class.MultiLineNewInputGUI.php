@@ -30,8 +30,6 @@ use ilTemplate;
 use ilTemplateException;
 use ilToolbarItem;
 use ilUtil;
-use LiveVoting\Utils\LiveVotingJs;
-use LiveVotingPlayerGUI;
 
 /**
  * Class MultiLineNewInputGUI

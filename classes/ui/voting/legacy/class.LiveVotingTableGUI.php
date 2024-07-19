@@ -32,24 +32,14 @@ use ilObjLiveVotingGUI;
 use ilSelectInputGUI;
 use ilTable2GUI;
 use ilTextInputGUI;
-use ilUtil;
-use JsonException;
-use LiveVoting\Js\xlvoJs;
-use LiveVoting\QuestionTypes\xlvoQuestionTypes;
-use LiveVoting\Utils\LiveVotingTrait;
 use LiveVoting\platform\LiveVotingDatabase;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\questions\LiveVotingQuestion;
-use srag\CustomInputGUIs\LiveVoting\TextInputGUI\TextInputGUI;
 use ilLegacyFormElementsUtil;
 
 /**
- * Class liveVotingTableGUI
- *
- * @package LiveVoting\Voting
- * @author  Daniel Aemmer <daniel.aemmer@phbern.ch>
- * @author  Fabian Schmid <fs@studer-raimann.ch>
- * @version 1.0.0
+ * Class LiveVotingTableGUI
+ * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
  */
 class liveVotingTableGUI extends ilTable2GUI
 {

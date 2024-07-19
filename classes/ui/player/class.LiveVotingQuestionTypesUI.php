@@ -19,7 +19,6 @@ declare(strict_types=1);
  */
 
 use LiveVoting\platform\LiveVotingException;
-use LiveVoting\votings\LiveVoting;
 use LiveVoting\votings\LiveVotingPlayer;
 /**
  * Class LiveVotingQuestionTypesUI

@@ -23,7 +23,6 @@ use LiveVoting\platform\LiveVotingException;
 use LiveVoting\Utils\LiveVotingJs;
 use LiveVoting\Utils\ParamManager;
 use LiveVoting\votings\LiveVoting;
-use LiveVoting\votings\LiveVotingParticipant;
 use LiveVoting\votings\LiveVotingPlayer;
 use LiveVoting\votings\LiveVotingVote;
 

@@ -26,6 +26,10 @@ use LiveVoting\UI\Voting\Bar\LiveVotingBarCollectionUI;
 use LiveVoting\UI\Voting\Bar\LiveVotingBarPercentageUI;
 use LiveVoting\votings\LiveVotingVote;
 
+/**
+ * Class LiveVotingInputPrioritiesUI
+ * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
+ */
 class LiveVotingInputPrioritiesUI extends LiveVotingInputCorrectOrderUI
 {
     /**

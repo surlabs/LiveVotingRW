@@ -20,7 +20,6 @@ declare(strict_types=1);
 
 use LiveVoting\platform\LiveVotingConfig;
 use LiveVoting\platform\LiveVotingException;
-use LiveVoting\UI\QuestionsResults\LiveVotingInputResultsGUI;
 use LiveVoting\Utils\LiveVotingJs;
 use LiveVoting\Utils\ParamManager;
 use LiveVoting\votings\LiveVoting;

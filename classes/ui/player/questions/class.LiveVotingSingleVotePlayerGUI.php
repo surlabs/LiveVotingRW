@@ -20,13 +20,7 @@ declare(strict_types=1);
 
 
 use LiveVoting\platform\LiveVotingException;
-use LiveVoting\questions\LiveVotingQuestionOption;
-use LiveVoting\UI\Player\CustomUI\HiddenInputGUI\HiddenInputGUI;
-use LiveVoting\UI\Player\CustomUI\MultiLineNewInputGUI;
-use LiveVoting\UI\Player\CustomUI\TextAreaInputGUI\TextAreaInputGUI;
-use LiveVoting\UI\Voting\Bar\LiveVotingBarMovableUI;
 use LiveVoting\Utils\LiveVotingJs;
-use LiveVoting\Utils\LiveVotingUtils;
 use LiveVoting\Utils\ParamManager;
 use LiveVoting\votings\LiveVoting;
 use LiveVoting\votings\LiveVotingParticipant;

@@ -32,6 +32,10 @@ use LiveVoting\UI\Voting\Bar\LiveVotingBarInfoGUI;
 use LiveVoting\UI\Voting\Bar\LiveVotingBarPercentageUI;
 use LiveVoting\votings\LiveVotingVote;
 
+/**
+ * Class LiveVotingInputNumberRangeUI
+ * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
+ */
 class LiveVotingInputNumberRangeUI extends LiveVotingInputResultsGUI
 {
 

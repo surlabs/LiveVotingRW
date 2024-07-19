@@ -26,12 +26,15 @@ use ilSystemStyleException;
 use ilTemplate;
 use ilTemplateException;
 use LiveVoting\platform\LiveVotingException;
-use LiveVoting\questions\LiveVotingQuestionOption;
 use LiveVoting\UI\Voting\Bar\LiveVotingBarFreeTextUI;
 use LiveVoting\UI\Voting\Bar\LiveVotingBarGroupingCollectionUI;
 use LiveVoting\votings\LiveVotingPlayer;
 use LiveVoting\votings\LiveVotingVote;
 
+/**
+ * Class LiveVotingInputFreeTextUI
+ * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
+ */
 class LiveVotingInputFreeTextUI extends LiveVotingInputResultsGUI
 {
     /**
@@ -64,7 +67,7 @@ class LiveVotingInputFreeTextUI extends LiveVotingInputResultsGUI
         $this->edit_mode = (array_key_exists('btn_categorize', $button_states) && $button_states['btn_categorize'] == 'true');
         $tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory().'/templates/default/QuestionTypes/FreeInput/tpl.free_input_results.html', true, true);
 
-        $categories = new LiveVotingFreeTextCategoriesUI($this->player, $this->edit_mode);
+        $categories = new LiveVotingInputFreeTextCategoriesUI($this->player, $this->edit_mode);
 
         $bars = new LiveVotingBarGroupingCollectionUI();
         $bars->setRemovable($this->edit_mode);

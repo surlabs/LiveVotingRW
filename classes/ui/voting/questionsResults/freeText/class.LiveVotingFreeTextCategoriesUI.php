@@ -31,7 +31,11 @@ use LiveVoting\UI\Voting\Bar\LiveVotingBarGroupingCollectionUI;
 use LiveVoting\votings\LiveVotingCategory;
 use LiveVoting\votings\LiveVotingPlayer;
 
-class LiveVotingFreeTextCategoriesUI
+/**
+ * Class LiveVotingInputFreeTextCategoriesUI
+ * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
+ */
+class LiveVotingInputFreeTextCategoriesUI
 {
     /**
      * @var bool $removable
