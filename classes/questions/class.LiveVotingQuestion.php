@@ -20,6 +20,9 @@ declare(strict_types=1);
 
 namespace LiveVoting\questions;
 
+use ilLegacyFormElementsUtil;
+use ilObjectTypeMismatchException;
+use ilRTE;
 use LiveVoting\platform\LiveVotingDatabase;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\questions\QuestionTypes\LiveVotingChoicesQuestion;
@@ -461,5 +464,14 @@ abstract class LiveVotingQuestion
         }
 
         return $max + 1;
+    }
+
+    public function getQuestionForPresentation(): string
+    {
+        $question = $this->question;
+
+        $question = ilRTE::_replaceMediaObjectImageSrc($question, 1);
+
+        return ilLegacyFormElementsUtil::prepareTextareaOutput($question, true);
     }
 }

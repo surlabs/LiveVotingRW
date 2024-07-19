@@ -254,7 +254,7 @@ class LiveVotingPlayerGUI
                     $xlvoQuestionTypesGUI = LiveVotingQuestionTypesUI::getInstance($this->getLiveVoting()->getPlayer());
                     if ($xlvoQuestionTypesGUI->isShowQuestion()) {
                         $this->getVotingTemplate()->setCurrentBlock('question_text');
-                        $this->getVotingTemplate()->setVariable('QUESTION_TEXT', $this->live_voting->getPlayer()->getActiveVotingObject()->getQuestion());
+                        $this->getVotingTemplate()->setVariable('QUESTION_TEXT', $this->live_voting->getPlayer()->getActiveVotingObject()->getQuestionForPresentation());
                         $this->getVotingTemplate()->parseCurrentBlock();
                     }
                     $this->getVotingTemplate()->setVariable('QUESTION', $xlvoQuestionTypesGUI->getMobileHTML());
