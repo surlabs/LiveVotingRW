@@ -505,7 +505,7 @@ if (!$db->tableExists('xlvo_voter')) {
 
     $db->createTable('xlvo_voter', $fields);
     $db->addPrimaryKey('xlvo_voter', ['id']);
-    $db->addIndex('xlvo_voter', ['player_id', 'user_identifier'], 'in1_idx');
+    $db->addIndex('xlvo_voter', ['player_id', 'user_identifier'], 'xlvoin1');
     $db->createSequence('xlvo_voter');
 }
 ?>
