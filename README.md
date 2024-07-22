@@ -32,7 +32,6 @@ git checkout ilias8
 
 Ensure you run npm and composer install at platform root before you install/update the plugin
 ```bash
-npm install
 composer install --no-dev
 ```
 
