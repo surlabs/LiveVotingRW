@@ -53,6 +53,6 @@ php setup/setup.php update
 - SIG Panopto [Forum](https://docu.ilias.de/goto_docu_frm_13755.html)
 
 # Version History
-* The version 9.x.x for **ILIAS 9** maintained by SURLABS can be found in the Github branch **ilias8**
+* The version 9.x.x for **ILIAS 9** maintained by SURLABS can be found in the Github branch **ilias9**
 * The version 8.x.x for **ILIAS 8** maintained by SURLABS can be found in the Github branch **ilias8**
 * The previous plugin versions for ILIAS <8 is archived. It can be found in https://github.com/fluxapps/LiveVoting
