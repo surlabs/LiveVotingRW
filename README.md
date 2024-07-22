@@ -5,7 +5,7 @@
 	</picture>
 </div>
 
-# LiveVoting Repository Object Plugin for ILIAS 8
+# LiveVoting Repository Object Plugin for ILIAS 9
 This plugin allows users to embed LiveVoting videos in ILIAS as repository objects
 
 ## Installation & Update
@@ -23,11 +23,12 @@ cd Customizing/global/plugins/Services/Repository/RepositoryObject
 
 ```bash
 git clone https://github.com/surlabs/LiveVotingRW.git ./LiveVoting
-git checkout ilias8
+git checkout ilias9
 ```
 
-Ensure you run composer install at platform root before you install/update the plugin
+Ensure you run npm and composer install at platform root before you install/update the plugin
 ```bash
+npm install
 composer install --no-dev
 ```
 
