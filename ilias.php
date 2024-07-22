@@ -39,7 +39,7 @@ switch ($context) {
         LiveVotingInitialisation::init();
         LiveVotingParticipant::getInstance()->setIdentifier(session_id())->setType(1);
 
-    break;
+        break;
 }
 
 LiveVotingConfig::load();

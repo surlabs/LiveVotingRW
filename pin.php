@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * This file is part of the LiveVoting Repository Object plugin for ILIAS.
  * This plugin allows to create real time votings within ILIAS.
@@ -24,10 +25,9 @@ use LiveVoting\player\LiveVotingInitialisationUI;
 use LiveVoting\Utils\ParamManager;
 use LiveVoting\votings\LiveVoting;
 use LiveVoting\votings\LiveVotingParticipant;
+
 require_once __DIR__ . '/../../../../../../../libs/composer/vendor/autoload.php';
 require_once "dir.php";
-
-
 
 
 try {
@@ -45,7 +45,7 @@ try {
 
     $DIC->ctrl()->setTargetScript(LiveVotingConfig::getFullApiUrl());
 
-    if(!empty($pin)) {
+    if (!empty($pin)) {
         $DIC->ctrl()->redirectByClass(["ilUIPluginRouterGUI", "LiveVotingPlayerGUI"], 'startVoterPlayer');
     } else {
         $DIC->ctrl()->redirectByClass(["ilUIPluginRouterGUI", "LiveVotingPlayerGUI"], 'requestPin');
