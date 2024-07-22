@@ -17,6 +17,7 @@ declare(strict_types=1);
  * info@surlabs.es
  *
  */
+
 namespace LiveVoting\Utils;
 
 use ilLiveVotingPlugin;

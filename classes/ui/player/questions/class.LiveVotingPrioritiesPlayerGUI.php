@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * This file is part of the LiveVoting Repository Object plugin for ILIAS.
  * This plugin allows to create real time votings within ILIAS.
@@ -69,7 +70,7 @@ class LiveVotingPrioritiesPlayerGUI extends LiveVotingCorrectOrderPlayerGUI
         $states = $this->getButtonsStates();
         $b = ilLinkButton::getInstance();
         $b->setId(self::BUTTON_TOTTLE_DISPLAY_CORRECT_ORDER);
-        if ( array_key_exists(self::BUTTON_TOTTLE_DISPLAY_CORRECT_ORDER,$states) && $states[self::BUTTON_TOTTLE_DISPLAY_CORRECT_ORDER]) {
+        if (array_key_exists(self::BUTTON_TOTTLE_DISPLAY_CORRECT_ORDER, $states) && $states[self::BUTTON_TOTTLE_DISPLAY_CORRECT_ORDER]) {
             $b->setCaption('<span class="glyphicon glyphicon-align-left"></span>', false);
         } else {
             $b->setCaption('<span class="glyphicon glyphicon-sort-by-attributes-alt"></span>', false);

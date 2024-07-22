@@ -18,6 +18,7 @@ declare(strict_types=1);
  * info@surlabs.es
  *
  */
+
 namespace LiveVoting\UI\QuestionsResults;
 
 use ilException;
@@ -41,6 +42,7 @@ class LiveVotingInputFreeTextUI extends LiveVotingInputResultsGUI
      * @var bool
      */
     protected bool $edit_mode = false;
+
     /**
      * LiveVotingInputFreeTextUI constructor.
      *
@@ -57,7 +59,7 @@ class LiveVotingInputFreeTextUI extends LiveVotingInputResultsGUI
      * @throws LiveVotingException
      * @throws ilException
      */
-    public function getHTML() :string
+    public function getHTML(): string
     {
         global $DIC;
         $button_states = $this->player->getButtonStates();
@@ -65,7 +67,7 @@ class LiveVotingInputFreeTextUI extends LiveVotingInputResultsGUI
         //dump($this->player->getButtonStates());exit;
 
         $this->edit_mode = (array_key_exists('btn_categorize', $button_states) && $button_states['btn_categorize'] == 'true');
-        $tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory().'/templates/default/QuestionTypes/FreeInput/tpl.free_input_results.html', true, true);
+        $tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/QuestionTypes/FreeInput/tpl.free_input_results.html', true, true);
 
         $categories = new LiveVotingInputFreeTextCategoriesUI($this->player, $this->edit_mode);
 
@@ -74,10 +76,9 @@ class LiveVotingInputFreeTextUI extends LiveVotingInputResultsGUI
         $bars->setShowTotalVotes(true);
 
 
-
         $votes = LiveVotingVote::getVotesOfOption($this->player->getActiveVotingObject()->getFirstOption()->getId(), $this->player->getRoundId());
 
-        foreach ($votes as $vote){
+        foreach ($votes as $vote) {
             if ($cat_id = $vote->getFreeInputCategory()) {
                 try {
                     $categories->addBar(new LiveVotingBarFreeTextUI($vote), $cat_id);

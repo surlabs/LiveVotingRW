@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * This file is part of the LiveVoting Repository Object plugin for ILIAS.
  * This plugin allows to create real time votings within ILIAS.
@@ -20,6 +21,7 @@ declare(strict_types=1);
 
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\votings\LiveVotingPlayer;
+
 /**
  * Class LiveVotingQuestionTypesUI
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
@@ -58,10 +60,9 @@ abstract class LiveVotingQuestionTypesUI
                             // the selected or clicked command button will
                             // always be sent as first array entry. This
                             // should definitely be done differently.
-                            $cmd = (string) array_key_first($cmd);
-                        }
-                        else {
-                            $cmd = (string) $cmd;
+                            $cmd = (string)array_key_first($cmd);
+                        } else {
+                            $cmd = (string)$cmd;
                         }
                     }
                 }

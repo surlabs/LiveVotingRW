@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * This file is part of the LiveVoting Repository Object plugin for ILIAS.
  * This plugin allows to create real time votings within ILIAS.
@@ -54,6 +55,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 {
     private Factory $factory;
     private Renderer $renderer;
+
     public function __construct(int $a_ref_id = 0, int $a_id_type = self::REPOSITORY_NODE_ID, int $a_parent_node_id = 0)
     {
         global $DIC;
@@ -87,7 +89,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
         $DIC->ui()->mainTemplate()->setPermanentLink(ilLiveVotingPlugin::PLUGIN_ID, $this->ref_id);
 
-        switch ($cmd){
+        switch ($cmd) {
             case 'index':
                 $this->showContent();
                 break;
@@ -192,18 +194,18 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
         $liveVotingChoicesUI = new LiveVotingChoicesUI();
         $form = $liveVotingChoicesUI->getChoicesForm();
-        if($DIC->http()->request()->getMethod() == "POST") {
+        if ($DIC->http()->request()->getMethod() == "POST") {
 
             $id = $liveVotingChoicesUI->save($form->withRequest($DIC->http()->request())->getData());
 
-            if($id !== 0){
+            if ($id !== 0) {
                 $DIC->ctrl()->setParameter($this, "question_id", $id);
                 $DIC->ctrl()->setParameter($this, "show_success", true);
                 $DIC->ctrl()->redirect($this, "edit");
 
             } else {
                 $saving_info = $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure($DIC->language()->txt("form_input_not_valid")));
-                $this->tpl->setContent($saving_info.$DIC->ui()->renderer()->render($form->withRequest($DIC->http()->request())));
+                $this->tpl->setContent($saving_info . $DIC->ui()->renderer()->render($form->withRequest($DIC->http()->request())));
             }
         } else {
             $this->tpl->setContent($DIC->ui()->renderer()->render($form));
@@ -222,18 +224,18 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
         $liveVotingFreeInputUI = new LiveVotingFreeInputUI();
         $form = $liveVotingFreeInputUI->getFreeForm();
-        if($DIC->http()->request()->getMethod() == "POST") {
+        if ($DIC->http()->request()->getMethod() == "POST") {
 
             $id = $liveVotingFreeInputUI->save($form->withRequest($DIC->http()->request())->getData());
 
-            if($id !== 0){
+            if ($id !== 0) {
                 $DIC->ctrl()->setParameter($this, "question_id", $id);
                 $DIC->ctrl()->setParameter($this, "show_success", true);
                 $DIC->ctrl()->redirect($this, "edit");
 
             } else {
                 $saving_info = $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure($DIC->language()->txt("form_input_not_valid")));
-                $this->tpl->setContent($saving_info.$DIC->ui()->renderer()->render($form->withRequest($DIC->http()->request())));
+                $this->tpl->setContent($saving_info . $DIC->ui()->renderer()->render($form->withRequest($DIC->http()->request())));
             }
         } else {
             $this->tpl->setContent($DIC->ui()->renderer()->render($form));
@@ -251,18 +253,18 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
         $liveVotingCorrectOrderUI = new LiveVotingCorrectOrderUI();
         $form = $liveVotingCorrectOrderUI->getCorrectOrderForm();
-        if($DIC->http()->request()->getMethod() == "POST") {
+        if ($DIC->http()->request()->getMethod() == "POST") {
 
             $id = $liveVotingCorrectOrderUI->save($form->withRequest($DIC->http()->request())->getData());
 
-            if($id !== 0){
+            if ($id !== 0) {
                 $DIC->ctrl()->setParameter($this, "question_id", $id);
                 $DIC->ctrl()->setParameter($this, "show_success", true);
                 $DIC->ctrl()->redirect($this, "edit");
 
             } else {
                 $saving_info = $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure($DIC->language()->txt("form_input_not_valid")));
-                $this->tpl->setContent($saving_info.$DIC->ui()->renderer()->render($form->withRequest($DIC->http()->request())));
+                $this->tpl->setContent($saving_info . $DIC->ui()->renderer()->render($form->withRequest($DIC->http()->request())));
             }
         } else {
             $this->tpl->setContent($DIC->ui()->renderer()->render($form));
@@ -282,18 +284,18 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
         $liveVotingPrioritiesUI = new LiveVotingPrioritiesUI();
         $form = $liveVotingPrioritiesUI->getPrioritiesForm();
-        if($DIC->http()->request()->getMethod() == "POST") {
+        if ($DIC->http()->request()->getMethod() == "POST") {
 
             $id = $liveVotingPrioritiesUI->save($form->withRequest($DIC->http()->request())->getData());
 
-            if($id !== 0){
+            if ($id !== 0) {
                 $DIC->ctrl()->setParameter($this, "question_id", $id);
                 $DIC->ctrl()->setParameter($this, "show_success", true);
                 $DIC->ctrl()->redirect($this, "edit");
 
             } else {
                 $saving_info = $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure($DIC->language()->txt("form_input_not_valid")));
-                $this->tpl->setContent($saving_info.$DIC->ui()->renderer()->render($form->withRequest($DIC->http()->request())));
+                $this->tpl->setContent($saving_info . $DIC->ui()->renderer()->render($form->withRequest($DIC->http()->request())));
             }
         } else {
             $this->tpl->setContent($DIC->ui()->renderer()->render($form));
@@ -312,18 +314,18 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
         $liveVotingRangeUI = new LiveVotingRangeUI();
         $form = $liveVotingRangeUI->getRangeForm();
-        if($DIC->http()->request()->getMethod() == "POST") {
+        if ($DIC->http()->request()->getMethod() == "POST") {
 
             $id = $liveVotingRangeUI->save($form->withRequest($DIC->http()->request())->getData());
 
-            if($id !== 0){
+            if ($id !== 0) {
                 $DIC->ctrl()->setParameter($this, "question_id", $id);
                 $DIC->ctrl()->setParameter($this, "show_success", true);
                 $DIC->ctrl()->redirect($this, "edit");
 
             } else {
                 $saving_info = $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure($DIC->language()->txt("form_input_not_valid")));
-                $this->tpl->setContent($saving_info.$DIC->ui()->renderer()->render($form->withRequest($DIC->http()->request())));
+                $this->tpl->setContent($saving_info . $DIC->ui()->renderer()->render($form->withRequest($DIC->http()->request())));
             }
         } else {
             $this->tpl->setContent($DIC->ui()->renderer()->render($form));
@@ -365,7 +367,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
      */
     protected function setSubTabs(string $tab, string $active_sub_tab): void
     {
-        if($tab == 'tab_content'){
+        if ($tab == 'tab_content') {
             $this->tabs->addSubTab("subtab_show",
                 $this->plugin->txt('subtab_show'),
                 $this->ctrl->getLinkTarget($this, "index")
@@ -386,25 +388,25 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         $this->tabs->activateSubTab($active_sub_tab);
     }
 
-/*    protected function triageCmdClass($next_class, $cmd): void
-    {
-        switch($next_class){
-            default:
-                if (strcasecmp($_GET['baseClass'], ilAdministrationGUI::class) == 0) {
-                    $this->viewObject();
-                    return;
-                }
-                if (!$cmd) {
-                    $cmd = $this->getStandardCmd();
-                }
-                if ($this->getCreationMode()) {
-                    $this->$cmd();
-                } else {
-                    $this->performCommand($cmd);
-                }
-                break;
-        }
-    }*/
+    /*    protected function triageCmdClass($next_class, $cmd): void
+        {
+            switch($next_class){
+                default:
+                    if (strcasecmp($_GET['baseClass'], ilAdministrationGUI::class) == 0) {
+                        $this->viewObject();
+                        return;
+                    }
+                    if (!$cmd) {
+                        $cmd = $this->getStandardCmd();
+                    }
+                    if ($this->getCreationMode()) {
+                        $this->$cmd();
+                    } else {
+                        $this->performCommand($cmd);
+                    }
+                    break;
+            }
+        }*/
 
     public function getObjId(): int
     {
@@ -692,7 +694,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
                 $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->confirmation($this->txt('voting_confirm_reset')));
 
                 $confirm = new ilConfirmationGUI();
-                $confirm->addItem("question_id", (string) $question->getId(), $question->getTitle());
+                $confirm->addItem("question_id", (string)$question->getId(), $question->getTitle());
                 $confirm->setHeaderText($this->txt('voting_confirm_reset'));
                 $confirm->setFormAction($DIC->ctrl()->getFormAction($this));
                 $confirm->setCancel($this->txt('voting_cancel'), "manage");
@@ -718,7 +720,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure(ilLiveVotingPlugin::getInstance()->txt('permission_denied_write')));
             $DIC->ctrl()->redirect($this, "index");
         } else {
-            $question = $this->object->getLiveVoting()->getQuestionById((int) $_POST['question_id']);
+            $question = $this->object->getLiveVoting()->getQuestionById((int)$_POST['question_id']);
 
             if ($question->getObjId() == $this->getObjId()) {
                 $question->reset();
@@ -763,7 +765,8 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         $DIC->ui()->mainTemplate()->setContent($form);
     }
 
-    private function getDuplicateToAnotherObjectSelectForm(LiveVotingQuestion $question): string {
+    private function getDuplicateToAnotherObjectSelectForm(LiveVotingQuestion $question): string
+    {
         $form = new ilPropertyFormGUI();
 
         $form->setFormAction($this->ctrl->getFormAction($this));
@@ -805,7 +808,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
             if ($question->getObjId() == $this->getObjId()) {
                 $confirm = new ilConfirmationGUI();
-                $confirm->addItem("question_id", (string) $question->getId(), $question->getTitle());
+                $confirm->addItem("question_id", (string)$question->getId(), $question->getTitle());
                 $confirm->setHeaderText($this->txt('voting_delete_confirm'));
                 $confirm->setFormAction($DIC->ctrl()->getFormAction($this));
                 $confirm->setCancel($this->txt('voting_cancel'), "manage");
@@ -831,7 +834,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             $DIC->ui()->renderer()->render($DIC->ui()->factory()->messageBox()->failure(ilLiveVotingPlugin::getInstance()->txt('permission_denied_write')));
             $DIC->ctrl()->redirect($this, "index");
         } else {
-            $question = $this->object->getLiveVoting()->getQuestionById((int) $_POST['question_id']);
+            $question = $this->object->getLiveVoting()->getQuestionById((int)$_POST['question_id']);
 
             if ($question->getObjId() == $this->getObjId()) {
                 $question->delete();
@@ -848,7 +851,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
      * @throws ilCtrlException
      * @throws LiveVotingException
      */
-    protected function startPlayer():void
+    protected function startPlayer(): void
     {
 
         $this->tabs->activateTab("tab_content");
@@ -859,7 +862,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
     }
 
-    protected function startPlayerAnUnfreeze():void
+    protected function startPlayerAnUnfreeze(): void
     {
         $this->tabs->activateTab("tab_content");
 
@@ -992,7 +995,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         global $DIC;
 
         $table = new LiveVotingResultsTableGUI($this, "results");
-        LiveVotingResultsUI::buildFilters($table, (int) $_GET['round_id'], $this->object->getLiveVoting()->getQuestions());
+        LiveVotingResultsUI::buildFilters($table, (int)$_GET['round_id'], $this->object->getLiveVoting()->getQuestions());
         $table->initFilter();
         $table->writeFilterToSession();
         $DIC->ctrl()->redirect($this, "results");
@@ -1008,7 +1011,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         global $DIC;
 
         $table = new LiveVotingResultsTableGUI($this, "results");
-        LiveVotingResultsUI::buildFilters($table, (int) $_GET['round_id'], $this->object->getLiveVoting()->getQuestions());
+        LiveVotingResultsUI::buildFilters($table, (int)$_GET['round_id'], $this->object->getLiveVoting()->getQuestions());
         $table->initFilter();
         $table->resetFilter();
         $DIC->ctrl()->redirect($this, "results");
@@ -1072,10 +1075,10 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
                 $liveVoting->getPlayer()->previousQuestion();
                 break;
             case 'open':
-                $liveVoting->getPlayer()->open((int) $_POST["xvi"]);
+                $liveVoting->getPlayer()->open((int)$_POST["xvi"]);
                 break;
             case 'countdown':
-                $liveVoting->getPlayer()->startCountDown((int) $_POST['seconds']);
+                $liveVoting->getPlayer()->startCountDown((int)$_POST['seconds']);
                 break;
             case 'input':
                 global $DIC;
@@ -1085,11 +1088,11 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             case 'add_vote':
                 $vote = new LiveVotingVote();
                 $user = LiveVotingParticipant::getInstance();
-                $vote->setUserId((int) $user->getIdentifier());
+                $vote->setUserId((int)$user->getIdentifier());
                 $vote->setUserIdType(1);
                 $vote->setVotingId($liveVoting->getPlayer()->getActiveVoting());
                 $options = $liveVoting->getPlayer()->getActiveVotingObject()->getOptions();
-                $var=array_values($options);
+                $var = array_values($options);
                 $option = array_shift($var);
                 $vote->setOptionId($option->getId());
                 $vote->setType(2);
@@ -1102,7 +1105,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
                 break;
             case 'remove_vote':
-                $vote = new LiveVotingVote((int) $_POST['vote_id']);
+                $vote = new LiveVotingVote((int)$_POST['vote_id']);
                 $vote->delete();
                 break;
             case 'add_category':
@@ -1119,7 +1122,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             case 'remove_category':
                 $database = new LiveVotingDatabase();
 
-                $database->update('rep_robj_xlvo_vote_n',  array(
+                $database->update('rep_robj_xlvo_vote_n', array(
                     "free_input_category" => 0
                 ), array(
                     "voting_id" => $liveVoting->getPlayer()->getActiveVoting(),
@@ -1127,27 +1130,27 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
                     "free_input_category" => $_POST['category_id']
                 ));
 
-               $database->delete('rep_robj_xlvo_cat', array(
+                $database->delete('rep_robj_xlvo_cat', array(
                     "id" => $_POST['category_id']
                 ));
 
                 break;
             case 'change_category':
-                $vote = new LiveVotingVote((int) $_POST['vote_id']);
+                $vote = new LiveVotingVote((int)$_POST['vote_id']);
 
                 $database = new LiveVotingDatabase();
 
                 $votes = $database->select('rep_robj_xlvo_vote_n', array(
-                    'voting_id'           => $vote->getVotingId(),
-                    'round_id'            => $vote->getRoundId(),
-                    'free_input'          => $vote->getFreeInput(),
+                    'voting_id' => $vote->getVotingId(),
+                    'round_id' => $vote->getRoundId(),
+                    'free_input' => $vote->getFreeInput(),
                     'free_input_category' => $vote->getFreeInputCategory()
                 ), array('id'));
 
 
                 foreach ($votes as $vote) {
                     $vote = new LiveVotingVote((int)$vote['id']);
-                    $vote->setFreeInputCategory((int) $_POST['category_id']);
+                    $vote->setFreeInputCategory((int)$_POST['category_id']);
                     $vote->save();
                 }
                 exit;

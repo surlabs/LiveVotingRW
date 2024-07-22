@@ -86,7 +86,7 @@ class LiveVotingConfig
      * @return mixed
      * @throws LiveVotingException
      */
-    public static function getFromDB(string $key) :mixed
+    public static function getFromDB(string $key): mixed
     {
         $config = (new LiveVotingDatabase)->select('xlvo_config', array(
             'name' => $key
@@ -154,7 +154,8 @@ class LiveVotingConfig
      * Get full api url
      * @throws LiveVotingException
      */
-    public static function getFullApiUrl(): string {
+    public static function getFullApiUrl(): string
+    {
         return self::getBaseVoteUrl() . ltrim("./Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/ilias.php", "./");
     }
 

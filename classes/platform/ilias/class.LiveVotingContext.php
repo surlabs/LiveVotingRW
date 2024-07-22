@@ -45,7 +45,7 @@ class LiveVotingContext extends ilContext
         ilContext::$class_name = LiveVotingContextUI::class;
         ilContext::$type = "-1";
 
-        if($context){
+        if ($context) {
             self::setContext($context);
         }
 
@@ -57,7 +57,7 @@ class LiveVotingContext extends ilContext
      */
     public static function getContext()
     {
-        if(!empty($_COOKIE['xlvo_context'])){
+        if (!empty($_COOKIE['xlvo_context'])) {
             return $_COOKIE['xlvo_context'];
         }
 
@@ -65,18 +65,18 @@ class LiveVotingContext extends ilContext
     }
 
     /**
-     * @throws Exception
      * @param $context
+     * @throws Exception
      */
     public static function setContext($context)
     {
-        if($context === 2 || $context === 1){
+        if ($context === 2 || $context === 1) {
             $result = setcookie('xlvo_context', (string)$context, 0, '/');
         } else {
             throw new Exception('Invalid context received');
         }
 
-        if(!$result){
+        if (!$result) {
             throw new Exception("error setting cookie");
         }
     }

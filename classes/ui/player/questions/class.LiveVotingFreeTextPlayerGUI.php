@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * This file is part of the LiveVoting Repository Object plugin for ILIAS.
  * This plugin allows to create real time votings within ILIAS.
@@ -28,7 +29,6 @@ use LiveVoting\Utils\LiveVotingUtils;
 use LiveVoting\Utils\ParamManager;
 use LiveVoting\votings\LiveVoting;
 use LiveVoting\votings\LiveVotingVote;
-
 
 
 /**
@@ -83,7 +83,7 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
                     $input = LiveVotingUtils::secureString($item['free_input']);
                     if (!empty($input) && strlen($input) <= $input_gui->getMaxLength()) {
                         $array[] = array(
-                            "input"   => $input,
+                            "input" => $input,
                             "vote_id" => $item['vote_id'],
                         );
                     }
@@ -95,7 +95,7 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
             $input = LiveVotingUtils::secureString(filter_input(INPUT_POST, 'free_input'));
             if (!empty($input) && strlen($input) <= $input_gui->getMaxLength()) {
                 $this->player->input(array(
-                    "input"   => $input,
+                    "input" => $input,
                     "vote_id" => filter_input(INPUT_POST, 'vote_id'),
                 ));
             }
@@ -111,7 +111,7 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
     public function getMobileHTML(): string
     {
 
-        $this->tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory().'/templates/default/QuestionTypes/FreeInput/tpl.free_input.html', true, true);
+        $this->tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/QuestionTypes/FreeInput/tpl.free_input.html', true, true);
         $this->render();
 
         return $this->tpl->get() . LiveVotingJs::getInstance()->name('FreeInput')->category('QuestionTypes')->getRunCode();
@@ -226,7 +226,7 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
         foreach ($xlvoVotes as $xlvoVote) {
             $array[] = array(
                 'free_input' => $xlvoVote->getFreeInput(),
-                'vote_id'    => $xlvoVote->getId(),
+                'vote_id' => $xlvoVote->getId(),
             );
         }
 
@@ -267,7 +267,7 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
      */
     public function handleButtonCall($button_id, $data)
     {
-        $data = (array_key_exists('btn_categorize',  $this->getButtonsStates()) && $this->getButtonsStates()['btn_categorize'] == 'true' )? 'false' : 'true';
+        $data = (array_key_exists('btn_categorize', $this->getButtonsStates()) && $this->getButtonsStates()['btn_categorize'] == 'true') ? 'false' : 'true';
         $this->saveButtonState($button_id, $data);
     }
 

@@ -27,7 +27,8 @@ use ilDBInterface;
  * Class LiveVotingDatabase
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
  */
-class LiveVotingDatabase {
+class LiveVotingDatabase
+{
     private ilDBInterface $db;
     private array $allowedTables = array(
         "rep_robj_xlvo_cat",

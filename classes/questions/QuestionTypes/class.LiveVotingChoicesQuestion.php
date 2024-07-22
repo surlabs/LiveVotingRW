@@ -32,32 +32,35 @@ class LiveVotingChoicesQuestion extends LiveVotingQuestion
     private bool $multi_selection = false;
     private int $columns = 1;
 
-    public function __construct(?array $data = null) {
+    public function __construct(?array $data = null)
+    {
         parent::__construct($data);
 
         if ($data !== null) {
-            $this->multi_selection = (bool) $data["multi_selection"];
-            $this->columns = (int) $data["columns"];
+            $this->multi_selection = (bool)$data["multi_selection"];
+            $this->columns = (int)$data["columns"];
         }
     }
 
-    public function getQuestionType(): string {
+    public function getQuestionType(): string
+    {
         return "Choices";
     }
 
-    public function save(): int {
+    public function save(): int
+    {
         $id = parent::save();
 
         $database = new LiveVotingDatabase();
 
         $database->update("rep_robj_xlvo_voting_n", array(
-            "multi_selection" => (int) $this->multi_selection,
+            "multi_selection" => (int)$this->multi_selection,
             "columns" => $this->columns,
         ), array(
             "id" => $id
         ));
 
-        return  $id;
+        return $id;
     }
 
     public function isMultiSelection(): bool
@@ -83,11 +86,11 @@ class LiveVotingChoicesQuestion extends LiveVotingQuestion
     public function getComputedColums(): float
     {
         return (12 / (in_array($this->getColumns(), array(
-            1,
-            2,
-            3,
-            4,
-        )) ? $this->getColumns() : 1));
+                1,
+                2,
+                3,
+                4,
+            )) ? $this->getColumns() : 1));
     }
 
     function getVotesRepresentation(array $answer): string

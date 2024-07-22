@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * This file is part of the LiveVoting Repository Object plugin for ILIAS.
  * This plugin allows to create real time votings within ILIAS.
@@ -25,7 +26,6 @@ use LiveVoting\Utils\ParamManager;
 use LiveVoting\votings\LiveVoting;
 use LiveVoting\votings\LiveVotingParticipant;
 use LiveVoting\votings\LiveVotingVote;
-
 
 
 /**
@@ -60,7 +60,7 @@ class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
         $liveVoting = LiveVoting::getLiveVotingFromPin($param_manager->getPin());
         $this->player = $liveVoting->getPlayer();
 
-        $option_id = (int) $_GET['option_id'];
+        $option_id = (int)$_GET['option_id'];
 
         $vote_id = null;
 
@@ -92,7 +92,7 @@ class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
         $states = $this->getButtonsStates();
         $t = ilLinkButton::getInstance();
         $t->setId(self::BUTTON_TOGGLE_PERCENTAGE);
-        if (in_array(self::BUTTON_TOGGLE_PERCENTAGE,$states)) {
+        if (in_array(self::BUTTON_TOGGLE_PERCENTAGE, $states)) {
             $t->setCaption(' %', false);
         } else {
             $t->setCaption('<span class="glyphicon glyphicon-user" aria-hidden="true"></span>', false);
@@ -111,7 +111,7 @@ class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
     {
         //var_dump($button_id, $data);exit;
         $states = $this->getButtonsStates();
-        $this->saveButtonState($button_id, !(array_key_exists($button_id,$states) && $states[$button_id]));
+        $this->saveButtonState($button_id, !(array_key_exists($button_id, $states) && $states[$button_id]));
     }
 
 
@@ -125,7 +125,7 @@ class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
     public function getMobileHTML(): string
     {
         global $DIC;
-        $tpl = new ilTemplate( ilLiveVotingPlugin::getInstance()->getDirectory().'/templates/default/QuestionTypes/SingleVote/tpl.single_vote.html', false, true);
+        $tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/QuestionTypes/SingleVote/tpl.single_vote.html', false, true);
         $answer_count = 64;
         foreach ($this->getPlayer()->getActiveVotingObject()->getOptions() as $xlvoOption) {
             $answer_count++;

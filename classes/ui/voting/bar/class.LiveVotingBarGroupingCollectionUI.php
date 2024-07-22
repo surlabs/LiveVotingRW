@@ -17,6 +17,7 @@ declare(strict_types=1);
  * info@surlabs.es
  *
  */
+
 namespace LiveVoting\UI\Voting\Bar;
 
 use ilException;
@@ -206,7 +207,7 @@ final class LiveVotingBarGroupingCollectionUI extends LiveVotingBarCollectionUI
      * Count the occurrences of bar within the given collection of bar.
      *
      * @param LiveVotingBarFreeTextUI[] $bars The collection which should be searched
-     * @param LiveVotingBarFreeTextUI   $bar
+     * @param LiveVotingBarFreeTextUI $bar
      *
      * @return int The times bar was found in bars.
      */

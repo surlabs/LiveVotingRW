@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * This file is part of the LiveVoting Repository Object plugin for ILIAS.
  * This plugin allows to create real time votings within ILIAS.
@@ -26,7 +27,6 @@ use LiveVoting\Utils\LiveVotingJs;
 use LiveVoting\Utils\ParamManager;
 use LiveVoting\votings\LiveVoting;
 use LiveVoting\votings\LiveVotingVote;
-
 
 
 /**
@@ -73,7 +73,7 @@ class LiveVotingCorrectOrderPlayerGUI extends LiveVotingQuestionTypesUI
         $this->player = $liveVoting->getPlayer();
 
         $this->player->input(array(
-            "input"   => json_encode($_POST['id']),
+            "input" => json_encode($_POST['id']),
             "vote_id" => $_POST['vote_id']
         ));
     }
@@ -102,7 +102,7 @@ class LiveVotingCorrectOrderPlayerGUI extends LiveVotingQuestionTypesUI
     protected function getFormContent(): string
     {
         global $DIC;
-        $tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory().'/templates/default/QuestionTypes/FreeOrder/tpl.free_order.html', true, false);
+        $tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/QuestionTypes/FreeOrder/tpl.free_order.html', true, false);
         $tpl->setVariable('ACTION', $DIC->ctrl()->getFormAction($this));
         $tpl->setVariable('ID', 'xlvo_sortable');
         $tpl->setVariable('BTN_RESET', ilLiveVotingPlugin::getInstance()->txt('qtype_4_clear'));
@@ -129,7 +129,7 @@ class LiveVotingCorrectOrderPlayerGUI extends LiveVotingQuestionTypesUI
         $bars->setShowOptionLetter(true);
         $tpl->setVariable('CONTENT', $bars->getHTML());
 
-        if ($this->isShowCorrectOrder() && $this->getPlayer()->getActiveVotingObject()->isCorrectOrder()){
+        if ($this->isShowCorrectOrder() && $this->getPlayer()->getActiveVotingObject()->isCorrectOrder()) {
             $correct_order = $this->getCorrectOrder();
             $solution_html = '<p>' . ilLiveVotingPlugin::getInstance()->txt('qtype_4_correct_solution');
 
@@ -155,15 +155,15 @@ class LiveVotingCorrectOrderPlayerGUI extends LiveVotingQuestionTypesUI
         $states = $this->getButtonsStates();
         $b = ilLinkButton::getInstance();
         $b->setId(self::BUTTON_TOTTLE_DISPLAY_CORRECT_ORDER);
-        if (array_key_exists(self::BUTTON_TOTTLE_DISPLAY_CORRECT_ORDER,$states) && $states[self::BUTTON_TOTTLE_DISPLAY_CORRECT_ORDER]) {
+        if (array_key_exists(self::BUTTON_TOTTLE_DISPLAY_CORRECT_ORDER, $states) && $states[self::BUTTON_TOTTLE_DISPLAY_CORRECT_ORDER]) {
             $b->setCaption('<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>', false);
         } else {
-            $b->setCaption('<span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>' , false);
+            $b->setCaption('<span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>', false);
         }
 
         $t = ilLinkButton::getInstance();
         $t->setId(self::BUTTON_TOGGLE_PERCENTAGE);
-        if (array_key_exists(self::BUTTON_TOGGLE_PERCENTAGE,$states) && $states[self::BUTTON_TOGGLE_PERCENTAGE]) {
+        if (array_key_exists(self::BUTTON_TOGGLE_PERCENTAGE, $states) && $states[self::BUTTON_TOGGLE_PERCENTAGE]) {
             $t->setCaption(' %', false);
         } else {
             $t->setCaption('<span class="glyphicon glyphicon-user" aria-hidden="true"></span>', false);
@@ -180,7 +180,7 @@ class LiveVotingCorrectOrderPlayerGUI extends LiveVotingQuestionTypesUI
     {
         $states = $this->getButtonsStates();
 
-        return ((bool) array_key_exists( self::BUTTON_TOTTLE_DISPLAY_CORRECT_ORDER,$states) && $this->getPlayer()->isShowResults());
+        return ((bool)array_key_exists(self::BUTTON_TOTTLE_DISPLAY_CORRECT_ORDER, $states) && $this->getPlayer()->isShowResults());
     }
 
 
@@ -192,7 +192,7 @@ class LiveVotingCorrectOrderPlayerGUI extends LiveVotingQuestionTypesUI
     public function handleButtonCall($button_id, $data)
     {
         $states = $this->getButtonsStates();
-        $this->saveButtonState($button_id, !(array_key_exists($button_id,$states) && $states[$button_id]));
+        $this->saveButtonState($button_id, !(array_key_exists($button_id, $states) && $states[$button_id]));
     }
 
 
@@ -216,7 +216,7 @@ class LiveVotingCorrectOrderPlayerGUI extends LiveVotingQuestionTypesUI
         $correct_order = array();
         $options = $this->getPlayer()->getActiveVotingObject()->getOptions();
         foreach ($options as $xlvoOption) {
-            $correct_order[(int) $xlvoOption->getCorrectPosition()] = $xlvoOption;
+            $correct_order[(int)$xlvoOption->getCorrectPosition()] = $xlvoOption;
         };
         ksort($correct_order);
 

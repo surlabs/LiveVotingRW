@@ -32,32 +32,35 @@ class LiveVotingFreeTextQuestion extends LiveVotingQuestion
     private bool $multi_free_input = false;
     private int $answer_field = 1;
 
-    public function __construct(?array $data = null) {
+    public function __construct(?array $data = null)
+    {
         parent::__construct($data);
 
         if ($data !== null) {
-            $this->multi_free_input = (bool) $data["multi_free_input"];
-            $this->answer_field = (int) $data["answer_field"];
+            $this->multi_free_input = (bool)$data["multi_free_input"];
+            $this->answer_field = (int)$data["answer_field"];
         }
     }
 
-    public function getQuestionType(): string {
+    public function getQuestionType(): string
+    {
         return "FreeText";
     }
 
-    public function save(): int {
+    public function save(): int
+    {
         $id = parent::save();
 
         $database = new LiveVotingDatabase();
 
         $database->update("rep_robj_xlvo_voting_n", array(
-            "multi_free_input" => (int) $this->multi_free_input,
+            "multi_free_input" => (int)$this->multi_free_input,
             "answer_field" => $this->answer_field,
         ), array(
             "id" => $id
         ));
 
-        return  $id;
+        return $id;
     }
 
     public function isMultiFreeInput(): bool

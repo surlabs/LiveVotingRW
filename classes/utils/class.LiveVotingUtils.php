@@ -26,7 +26,7 @@ use Exception;
 
 /**
  *  Class LiveVotingUtils
- *  @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
+ * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
  */
 class LiveVotingUtils
 {
@@ -41,14 +41,14 @@ class LiveVotingUtils
     }
 
 
-
     /**
      * This method is a better alternative to ilUtil::secureString because ensure that the tag is really a tag and not a comparator.
      *
      * @param string $a_str
      * @return string
      */
-    public static function secureString(string $a_str) : string {
+    public static function secureString(string $a_str): string
+    {
         $sec_tags = ["strong",
             "em",
             "u",

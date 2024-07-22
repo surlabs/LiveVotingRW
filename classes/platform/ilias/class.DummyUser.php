@@ -23,7 +23,8 @@ namespace LiveVoting\platform\ilias;
 
 use ilObjUser;
 
-class DummyUser extends ilObjUser {
+class DummyUser extends ilObjUser
+{
     /**
      * DummyUser constructor.
      */
@@ -39,7 +40,7 @@ class DummyUser extends ilObjUser {
      *
      * @return string returns the language code "de" without the quotes.
      */
-    public function getLanguage():string
+    public function getLanguage(): string
     {
         global $DIC;
         return $DIC->language()->getLangKey();
@@ -49,7 +50,7 @@ class DummyUser extends ilObjUser {
     /**
      * @return int
      */
-    public function getId() : int
+    public function getId(): int
     {
         return 13;
     }

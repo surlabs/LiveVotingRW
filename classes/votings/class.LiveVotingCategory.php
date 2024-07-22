@@ -85,10 +85,11 @@ class LiveVotingCategory
         $this->round_id = $round_id;
     }
 
-        /**
+    /**
      * @throws LiveVotingException
      */
-    public function save(): int {
+    public function save(): int
+    {
         $database = new LiveVotingDatabase();
         if ($this->id != 0) {
             $database->update("rep_robj_xlvo_cat", array(
@@ -130,8 +131,8 @@ class LiveVotingCategory
             if (isset($result[0]["title"])) {
                 $this->setTitle($result[0]["title"]);
             }
-            $this->setVotingId((int) $result[0]["voting_id"]);
-            $this->setRoundId((int) $result[0]["round_id"]);
+            $this->setVotingId((int)$result[0]["voting_id"]);
+            $this->setRoundId((int)$result[0]["round_id"]);
         } else {
             throw new LiveVotingException("Category not found");
         }

@@ -17,6 +17,7 @@ declare(strict_types=1);
  * info@surlabs.es
  *
  */
+
 namespace LiveVoting\UI\Voting\Bar;
 
 use ilLiveVotingPlugin;
@@ -53,7 +54,7 @@ class LiveVotingBarCollectionUI
      */
     public function __construct()
     {
-        $this->tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory().'/templates/default/Bar/tpl.bar_collection.html', true, true);
+        $this->tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/Bar/tpl.bar_collection.html', true, true);
     }
 
     /**

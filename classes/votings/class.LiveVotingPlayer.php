@@ -100,7 +100,8 @@ class LiveVotingPlayer
     /**
      * @throws LiveVotingException
      */
-    public function getActiveVotingObject(): ?LiveVotingQuestion {
+    public function getActiveVotingObject(): ?LiveVotingQuestion
+    {
         if ($this->active_voting > 0) {
             return LiveVotingQuestion::loadQuestionById($this->active_voting);
         } else {
@@ -198,11 +199,13 @@ class LiveVotingPlayer
         $this->round_id = $round_id;
     }
 
-    public function isKeyboardActive(): bool {
+    public function isKeyboardActive(): bool
+    {
         return $this->keyboard_active;
     }
 
-    public function setKeyboardActive(bool $keyboard_active): void {
+    public function setKeyboardActive(bool $keyboard_active): void
+    {
         $this->keyboard_active = $keyboard_active;
     }
 
@@ -219,20 +222,21 @@ class LiveVotingPlayer
     /**
      * @throws LiveVotingException
      */
-    public function save(): int {
+    public function save(): int
+    {
         $database = new LiveVotingDatabase();
 
         if (isset($this->id) && $this->id != 0) {
             $database->update("rep_robj_xlvo_player_n", array(
                 "active_voting" => $this->active_voting,
                 "status" => $this->status,
-                "frozen" => (int) $this->frozen,
+                "frozen" => (int)$this->frozen,
                 "timestamp_refresh" => $this->timestamp_refresh,
-                "show_results" => (int) $this->show_results,
+                "show_results" => (int)$this->show_results,
                 "button_states" => json_encode($this->button_states),
                 "countdown" => $this->countdown,
                 "countdown_start" => $this->countdown_start,
-                "force_reload" => (int) $this->force_reload,
+                "force_reload" => (int)$this->force_reload,
                 "round_id" => $this->round_id
             ), array(
                 "id" => $this->id
@@ -245,13 +249,13 @@ class LiveVotingPlayer
                 "obj_id" => $this->obj_id,
                 "active_voting" => $this->active_voting,
                 "status" => $this->status,
-                "frozen" => (int) $this->frozen,
+                "frozen" => (int)$this->frozen,
                 "timestamp_refresh" => $this->timestamp_refresh,
-                "show_results" => (int) $this->show_results,
+                "show_results" => (int)$this->show_results,
                 "button_states" => json_encode($this->button_states),
                 "countdown" => $this->countdown,
                 "countdown_start" => $this->countdown_start,
-                "force_reload" => (int) $this->force_reload,
+                "force_reload" => (int)$this->force_reload,
                 "round_id" => $this->round_id
             ));
         } else {
@@ -271,18 +275,18 @@ class LiveVotingPlayer
         $result = $database->select("rep_robj_xlvo_player_n", ["id" => $this->getId()]);
 
         if (isset($result[0])) {
-            $this->setId((int) $result[0]["id"]);
-            $this->setObjId((int) $result[0]["obj_id"]);
-            $this->setActiveVoting((int) $result[0]["active_voting"]);
-            $this->setStatus((int) $result[0]["status"]);
-            $this->setFrozen((bool) $result[0]["frozen"]);
-            $this->setTimestampRefresh((int) $result[0]["timestamp_refresh"]);
-            $this->setShowResults((bool) $result[0]["show_results"]);
+            $this->setId((int)$result[0]["id"]);
+            $this->setObjId((int)$result[0]["obj_id"]);
+            $this->setActiveVoting((int)$result[0]["active_voting"]);
+            $this->setStatus((int)$result[0]["status"]);
+            $this->setFrozen((bool)$result[0]["frozen"]);
+            $this->setTimestampRefresh((int)$result[0]["timestamp_refresh"]);
+            $this->setShowResults((bool)$result[0]["show_results"]);
             $this->setButtonStates(json_decode($result[0]["button_states"], true));
-            $this->setCountdown((int) $result[0]["countdown"]);
-            $this->setCountdownStart((int) $result[0]["countdown_start"]);
-            $this->setForceReload((bool) $result[0]["force_reload"]);
-            $this->setRoundId((int) $result[0]["round_id"]);
+            $this->setCountdown((int)$result[0]["countdown"]);
+            $this->setCountdownStart((int)$result[0]["countdown_start"]);
+            $this->setForceReload((bool)$result[0]["force_reload"]);
+            $this->setRoundId((int)$result[0]["round_id"]);
         }
     }
 
@@ -474,7 +478,7 @@ class LiveVotingPlayer
      */
     public function isUnattended(): bool
     {
-        if ($this->getStatus() != self::STAT_STOPPED AND ($this->getTimestampRefresh() < (LiveVotingUtils::getTime() - 30))) {
+        if ($this->getStatus() != self::STAT_STOPPED and ($this->getTimestampRefresh() < (LiveVotingUtils::getTime() - 30))) {
             $this->setStatus(self::STAT_STOPPED);
 
             $this->save();
@@ -515,8 +519,8 @@ class LiveVotingPlayer
 
         $votes = $database->select("rep_robj_xlvo_vote_n", array(
             'voting_id' => $this->getActiveVoting(),
-            'status'    => 1,
-            'round_id'  => $this->getRoundId()
+            'status' => 1,
+            'round_id' => $this->getRoundId()
         ), ["last_update"], "ORDER BY last_update DESC");
 
         $last_update = 0;
@@ -533,7 +537,7 @@ class LiveVotingPlayer
             "show_results" => $this->isShowResults(),
             "frozen" => $this->isFrozen(),
             "votes" => count($votes),
-            "last_update" => (int) $last_update,
+            "last_update" => (int)$last_update,
             "attendees" => vsprintf(ilLiveVotingPlugin::getInstance()->txt("start_online"), [LiveVotingVoter::countVoters($this->getId())]),
             "qtype" => $this->getActiveVotingObject()->getQuestionType(),
             "countdown" => $this->remainingCountDown(),
@@ -571,7 +575,7 @@ class LiveVotingPlayer
         $player = new LiveVotingPlayer();
 
         if (isset($result[0])) {
-            $player->setId((int) $result[0]["id"]);
+            $player->setId((int)$result[0]["id"]);
             $player->loadFromDB();
         } else {
             $player->setObjId($getId);
@@ -690,10 +694,10 @@ class LiveVotingPlayer
      * @throws LiveVotingException
      */
     public function open(int $question_id): void
-   {
-       $this->setActiveVoting($question_id);
-       $this->save();
-   }
+    {
+        $this->setActiveVoting($question_id);
+        $this->save();
+    }
 
     /**
      * @throws LiveVotingException
@@ -743,11 +747,11 @@ class LiveVotingPlayer
         $liveVotingConfig = new LiveVoting($this->obj_id, false);
 
         foreach ($array as $item) {
-            $vote = new LiveVotingVote((int) $item['vote_id']);
+            $vote = new LiveVotingVote((int)$item['vote_id']);
             $user = LiveVotingParticipant::getInstance();
 
             if ($user->getType() == 1) {
-                $vote->setUserId((int) $user->getIdentifier());
+                $vote->setUserId((int)$user->getIdentifier());
                 $vote->setUserIdType(0);
             } else {
                 $vote->setUserIdentifier($user->getIdentifier());
@@ -756,7 +760,7 @@ class LiveVotingPlayer
 
             $vote->setVotingId($this->getActiveVoting());
             $options = $this->getActiveVotingObject()->getOptions();
-            $var=array_values($options);
+            $var = array_values($options);
             $option = array_shift($var);
             if (!$option instanceof LiveVotingQuestionOption) {
                 throw new LiveVotingException('No Option given');

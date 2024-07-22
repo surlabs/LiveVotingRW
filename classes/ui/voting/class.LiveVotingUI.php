@@ -88,7 +88,7 @@ class LiveVotingUI
 
     public function executeCommand(): void
     {
-        GLOBAL $DIC;
+        global $DIC;
 
         $cmd = $DIC->ctrl()->getCmd('showIndex');
 
@@ -189,9 +189,9 @@ class LiveVotingUI
 
             $target = $DIC->ctrl()->getLinkTargetByClass("ilObjLiveVotingGUI", "startPlayer");
             if ($async) {
-                $current_selection_list->addItem($title, (string) $id, $target, '', '', '', '', false, 'xlvoPlayer.open(' . $id . ')');
+                $current_selection_list->addItem($title, (string)$id, $target, '', '', '', '', false, 'xlvoPlayer.open(' . $id . ')');
             } else {
-                $current_selection_list->addItem($title, (string) $id, $target);
+                $current_selection_list->addItem($title, (string)$id, $target);
             }
         }
 
@@ -202,15 +202,15 @@ class LiveVotingUI
      * @param ilObjLiveVotingGUI $parent
      * @throws ilCtrlException
      */
-    public function initJsAndCss(ilObjLiveVotingGUI $parent) :void
+    public function initJsAndCss(ilObjLiveVotingGUI $parent): void
     {
         global $DIC;
         $mathJaxSetting = new ilSetting("MathJax");
         $settings = array(
             'status_running' => 1,
-            'identifier'     => 'xvi',
-            'use_mathjax'    => (bool) $mathJaxSetting->get("enable"),
-            'debug'          => false
+            'identifier' => 'xvi',
+            'use_mathjax' => (bool)$mathJaxSetting->get("enable"),
+            'debug' => false
         );
 
         LiveVotingJS::getInstance()->initMathJax();
@@ -241,10 +241,10 @@ class LiveVotingUI
         $DIC->ui()->mainTemplate()->addCss($this->pl->getDirectory() . '/templates/css/bar.css');
 
         LiveVotingInputFreeTextUI::addJsAndCss();
-         /*xlvoCorrectOrderResultsGUI::addJsAndCss();
-         xlvoFreeOrderResultsGUI::addJsAndCss();
-         xlvoNumberRangeResultsGUI::addJsAndCss();
-         xlvoSingleVoteResultsGUI::addJsAndCss();*/
+        /*xlvoCorrectOrderResultsGUI::addJsAndCss();
+        xlvoFreeOrderResultsGUI::addJsAndCss();
+        xlvoNumberRangeResultsGUI::addJsAndCss();
+        xlvoSingleVoteResultsGUI::addJsAndCss();*/
     }
 
     /**
@@ -288,7 +288,7 @@ class LiveVotingUI
         // Freeze
         $suspendButton = ilLinkButton::getInstance();
         $suspendButton->addCSSClass('btn-warning');
-        $suspendButton->setCaption('<span class="glyphicon glyphicon-pause"></span> '.$this->pl->txt('player_freeze'), false);
+        $suspendButton->setCaption('<span class="glyphicon glyphicon-pause"></span> ' . $this->pl->txt('player_freeze'), false);
         $suspendButton->setUrl('#');
         $suspendButton->setId('btn-freeze');
         $DIC->toolbar()->addButtonInstance($suspendButton);
@@ -296,7 +296,7 @@ class LiveVotingUI
         // Unfreeze
         $playButton = ilLinkButton::getInstance();
         $playButton->setPrimary(true);
-        $playButton->setCaption('<span class="glyphicon glyphicon-play"></span> '.$this->pl->txt('player_unfreeze'), false);
+        $playButton->setCaption('<span class="glyphicon glyphicon-play"></span> ' . $this->pl->txt('player_unfreeze'), false);
         $playButton->setUrl('#');
         $playButton->setId('btn-unfreeze');
 
@@ -329,7 +329,7 @@ class LiveVotingUI
 
         // Reset
         $suspendButton = ilLinkButton::getInstance();
-        $suspendButton->setCaption('<span class="glyphicon glyphicon-remove"></span> '. $this->pl->txt('player_reset'), false);
+        $suspendButton->setCaption('<span class="glyphicon glyphicon-remove"></span> ' . $this->pl->txt('player_reset'), false);
         $suspendButton->setUrl('#');
         $suspendButton->setId('btn-reset');
         $DIC->toolbar()->addButtonInstance($suspendButton);
@@ -384,14 +384,14 @@ class LiveVotingUI
         $suspendButton->setUrl($DIC->ctrl()->getLinkTarget(new ilObjLiveVotingGUI(), 'terminate'));
         $suspendButton->setId('btn-terminate');
         $DIC->toolbar()->addButtonInstance($suspendButton);
-/*        if (false) {
-            // PAUSE PULL
-            $suspendButton = ilLinkButton::getInstance();
-            $suspendButton->setCaption('Toogle Pulling', false);
-            $suspendButton->setUrl('#');
-            $suspendButton->setId('btn-toggle-pull');
-            $DIC->toolbar()->addButtonInstance($suspendButton);
-        }*/
+        /*        if (false) {
+                    // PAUSE PULL
+                    $suspendButton = ilLinkButton::getInstance();
+                    $suspendButton->setCaption('Toogle Pulling', false);
+                    $suspendButton->setUrl('#');
+                    $suspendButton->setId('btn-toggle-pull');
+                    $DIC->toolbar()->addButtonInstance($suspendButton);
+                }*/
     }
 
     /**
@@ -420,9 +420,9 @@ class LiveVotingUI
             $target = $DIC->ctrl()->getLinkTarget(new ilObjLiveVotingGUI(), 'startPlayer');
 
             if ($async) {
-                $current_selection_list->addItem($t, (string) $id, $target, '', '', '', '', false, 'xlvoPlayer.open(' . $id . ')');
+                $current_selection_list->addItem($t, (string)$id, $target, '', '', '', '', false, 'xlvoPlayer.open(' . $id . ')');
             } else {
-                $current_selection_list->addItem($t, (string) $id, $target);
+                $current_selection_list->addItem($t, (string)$id, $target);
             }
         }
 

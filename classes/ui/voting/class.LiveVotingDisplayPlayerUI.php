@@ -182,7 +182,7 @@ class LiveVotingDisplayPlayerUI
 
         if ($option->getType() == LiveVotingQuestion::QUESTION_TYPES_IDS["NumberRange"]) {
             $columnWith = 6; //because of bootstrap grid 12 = 100%, 6 = 50% therefore 2 columns
-            $percentage = (int) $question->isPercentage() === 1 ? ' %' : '';
+            $percentage = (int)$question->isPercentage() === 1 ? ' %' : '';
 
             $this->tpl->setCurrentBlock('option2');
             $this->tpl->setVariable('OPTION_LETTER', ilLiveVotingPlugin::getInstance()->txt('qtype_6_range_start'));
@@ -206,7 +206,6 @@ class LiveVotingDisplayPlayerUI
         $this->tpl->setVariable('OPTION_TEXT', $option->getText());
         $this->tpl->parseCurrentBlock();
     }
-
 
 
 }

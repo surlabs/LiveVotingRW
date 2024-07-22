@@ -278,26 +278,31 @@ class LiveVoting
         $this->results_behaviour = $results_behaviour;
     }
 
-    public function getPuk(): string {
+    public function getPuk(): string
+    {
         return $this->puk;
     }
 
-    public function setPuk(string $puk): void {
+    public function setPuk(string $puk): void
+    {
         $this->puk = $puk;
     }
 
-    public function getPlayer(): LiveVotingPlayer {
+    public function getPlayer(): LiveVotingPlayer
+    {
         return $this->player;
     }
 
-    public function setPlayer(LiveVotingPlayer $player): void {
+    public function setPlayer(LiveVotingPlayer $player): void
+    {
         $this->player = $player;
     }
 
     /**
      * @throws LiveVotingException
      */
-    public function save(): int {
+    public function save(): int
+    {
         if (!isset($this->id) || $this->id == 0) {
             throw new LiveVotingException("LiveVoting::save() - LiveVoting ID is 0");
         }
@@ -307,12 +312,12 @@ class LiveVoting
         $database->insertOnDuplicatedKey("rep_robj_xlvo_config_n", array(
             "obj_id" => $this->id,
             "pin" => $this->pin,
-            "obj_online" => (int) $this->online,
-            "anonymous" => (int) $this->anonymous,
+            "obj_online" => (int)$this->online,
+            "anonymous" => (int)$this->anonymous,
             "frozen_behaviour" => $this->frozen_behaviour,
             "results_behaviour" => $this->results_behaviour,
-            "voting_history" => (int) $this->voting_history,
-            "show_attendees" => (int) $this->show_attendees,
+            "voting_history" => (int)$this->voting_history,
+            "show_attendees" => (int)$this->show_attendees,
             "puk" => $this->puk
         ));
 
@@ -330,12 +335,12 @@ class LiveVoting
 
         if (isset($result[0])) {
             $this->setPin($result[0]["pin"]);
-            $this->setOnline((bool) $result[0]["obj_online"]);
-            $this->setAnonymous((bool) $result[0]["anonymous"]);
-            $this->setFrozenBehaviour((int) $result[0]["frozen_behaviour"]);
-            $this->setResultsBehaviour((int) $result[0]["results_behaviour"]);
-            $this->setVotingHistory((bool) $result[0]["voting_history"]);
-            $this->setShowAttendees((bool) $result[0]["show_attendees"]);
+            $this->setOnline((bool)$result[0]["obj_online"]);
+            $this->setAnonymous((bool)$result[0]["anonymous"]);
+            $this->setFrozenBehaviour((int)$result[0]["frozen_behaviour"]);
+            $this->setResultsBehaviour((int)$result[0]["results_behaviour"]);
+            $this->setVotingHistory((bool)$result[0]["voting_history"]);
+            $this->setShowAttendees((bool)$result[0]["show_attendees"]);
             $this->setPuk($result[0]["puk"]);
         } else {
             $this->loadDefaultValues();
@@ -348,7 +353,7 @@ class LiveVoting
         ), ["id"]);
 
         foreach ($questions_id as $question_id) {
-            $this->questions[] = LiveVotingQuestion::loadQuestionById((int) $question_id["id"]);
+            $this->questions[] = LiveVotingQuestion::loadQuestionById((int)$question_id["id"]);
         }
     }
 
@@ -457,12 +462,13 @@ class LiveVoting
     /**
      * @throws LiveVotingException
      */
-    public static function getObjIdFromPin(string $pin, bool $safe_mode = true): int {
+    public static function getObjIdFromPin(string $pin, bool $safe_mode = true): int
+    {
         $database = new LiveVotingDatabase();
         $result = $database->select("rep_robj_xlvo_config_n", array("pin" => $pin), array("obj_id"));
 
         if (isset($result[0])) {
-            $liveVoting = new LiveVoting((int) $result[0]["obj_id"]);
+            $liveVoting = new LiveVoting((int)$result[0]["obj_id"]);
 
             if (!$liveVoting->isOnline()) {
                 if ($safe_mode) {
@@ -485,12 +491,13 @@ class LiveVoting
     /**
      * @throws LiveVotingException
      */
-    public static function getLiveVotingFromPin(string $pin): ?LiveVoting {
+    public static function getLiveVotingFromPin(string $pin): ?LiveVoting
+    {
         $database = new LiveVotingDatabase();
         $result = $database->select("rep_robj_xlvo_config_n", array("pin" => $pin), array("obj_id"));
 
         if (isset($result[0])) {
-            return new LiveVoting((int) $result[0]["obj_id"]);
+            return new LiveVoting((int)$result[0]["obj_id"]);
         }
 
         return null;

@@ -92,7 +92,7 @@ class LiveVotingInitialisationUI
      */
     protected function __construct($context = null)
     {
-        if($context){
+        if ($context) {
             LiveVotingContext::setContext($context);
         }
 
@@ -158,7 +158,7 @@ class LiveVotingInitialisationUI
         $this->initNavigationHistory();
         $this->initHelp();
 
-       LiveVotingInitialisation::initUIFramework($DIC);
+        LiveVotingInitialisation::initUIFramework($DIC);
     }
 
     /**
@@ -206,7 +206,7 @@ class LiveVotingInitialisationUI
 
         $param_manager = ParamManager::getInstance();
 
-        if(!$param_manager->getPuk()){
+        if (!$param_manager->getPuk()) {
             $tpl->touchBlock("navbar");
         }
 
@@ -385,16 +385,16 @@ class LiveVotingInitialisationUI
     /*
         * @return void
         */
-    private function initDependencyInjection():void
+    private function initDependencyInjection(): void
     {
         global $DIC;
         $DIC = new Container();
-        $DIC["ilLoggerFactory"] = function ($c){
+        $DIC["ilLoggerFactory"] = function ($c) {
             return ilLoggerFactory::getInstance();
         };
     }
 
-    private function initSettings():void
+    private function initSettings(): void
     {
         $this->settings = new ilSetting();
         $this->makeGlobal("ilSetting", $this->settings);
@@ -420,14 +420,14 @@ class LiveVotingInitialisationUI
         define('IS_PAYMENT_ENABLED', false);
     }
 
-    private function requireCommonIncludes():void
+    private function requireCommonIncludes(): void
     {
         require_once 'include/inc.ilias_version.php';
 
         //$this->makeGlobal("ilBench", new ilBenchmark());
     }
 
-    private function initLocale():void
+    private function initLocale(): void
     {
         if (trim((string)$this->settings->get("locale"))) {
             $larr = explode(",", trim($this->settings->get("locale")));
@@ -451,7 +451,7 @@ class LiveVotingInitialisationUI
         }
     }
 
-    private function initLanguage():void
+    private function initLanguage(): void
     {
         $this->makeGlobal('lng', ilLanguage::getGlobalInstance());
     }
@@ -509,7 +509,7 @@ class LiveVotingInitialisationUI
     public static function removeTrailingPathSeparators(string $path): string
     {
         $path = preg_replace("/[\/\\\]+$/", "", $path);
-        return (string) $path;
+        return (string)$path;
     }
 
     /**
@@ -517,7 +517,7 @@ class LiveVotingInitialisationUI
      */
     private function initErrorHandling()
     {
-        error_reporting(E_ALL&~E_DEPRECATED&~E_STRICT&~E_NOTICE);
+        error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT & ~E_NOTICE);
 
         $this->requireCommonIncludes();
 
@@ -572,7 +572,7 @@ class LiveVotingInitialisationUI
      * Init log instance
      * @return void
      */
-    private function initLog():void
+    private function initLog(): void
     {
         $log = ilLoggerFactory::getRootLogger();
 
@@ -585,7 +585,7 @@ class LiveVotingInitialisationUI
      * set session cookie params for path, domain, etc.
      * @return void
      */
-    private function setCookieParams():void
+    private function setCookieParams(): void
     {
         $GLOBALS['COOKIE_PATH'] = '/';
         $cookie_path = '/';
@@ -609,10 +609,10 @@ class LiveVotingInitialisationUI
     /**
      * This method determines the current client and sets the
      * constant CLIENT_ID.
-     * @throws Exception
      * @return void
+     * @throws Exception
      */
-    private function determineClient():void
+    private function determineClient(): void
     {
         // check whether ini file object exists
         if (!is_object($this->iliasIniFile)) {
@@ -639,7 +639,7 @@ class LiveVotingInitialisationUI
                 define("CLIENT_ID", $_GET["client_id"]);
             }
         }
-        if (!defined('CLIENT_ID') ) {
+        if (!defined('CLIENT_ID')) {
             $default_client = $this->iliasIniFile->readVariable("clients", "default");
             define("CLIENT_ID", $default_client);
         }
@@ -648,11 +648,11 @@ class LiveVotingInitialisationUI
 
     /**
      * Create or override a global variable.
-     * @param string $name  The name of the global variable.
+     * @param string $name The name of the global variable.
      * @param object $value The value where the global variable should point at.
      * @return void
      */
-    private function makeGlobal(string $name, object $value):void
+    private function makeGlobal(string $name, object $value): void
     {
         global $DIC;
         $GLOBALS[$name] = $value;
@@ -694,7 +694,7 @@ class LiveVotingInitialisationUI
      * Initialise a fake access service to satisfy the help system module.
      * @return void
      */
-    private function initAccess():void
+    private function initAccess(): void
     {
         $this->makeGlobal('ilAccess', new ilAccess());
     }
@@ -703,9 +703,9 @@ class LiveVotingInitialisationUI
      * Initialise a fake three service to satisfy the help system module.
      * @return void
      */
-    private function initTree():void
+    private function initTree(): void
     {
-        $this->makeGlobal('tree', new ilTree(intval(ROOT_FOLDER_ID),intval(ROOT_FOLDER_ID)));
+        $this->makeGlobal('tree', new ilTree(intval(ROOT_FOLDER_ID), intval(ROOT_FOLDER_ID)));
     }
 
     /**
@@ -713,7 +713,7 @@ class LiveVotingInitialisationUI
      * @return void
      */
 
-    private static function initHTTPServices():void
+    private static function initHTTPServices(): void
     {
         global $DIC;
 
@@ -752,7 +752,7 @@ class LiveVotingInitialisationUI
      * Initialise a fake tabs service to satisfy the help system module.
      * @return void
      */
-    private function initTabs():void
+    private function initTabs(): void
     {
         $this->makeGlobal('ilTabs', new ilTabsGUI());
     }
@@ -761,7 +761,7 @@ class LiveVotingInitialisationUI
      * Initialise a fake NavigationHistory service to satisfy the help system module.
      * @return void
      */
-    private function initNavigationHistory():void
+    private function initNavigationHistory(): void
     {
         $this->makeGlobal('ilNavigationHistory', new ilNavigationHistory());
     }
@@ -770,7 +770,7 @@ class LiveVotingInitialisationUI
      * Initialise a fake help service to satisfy the help system module.
      * @return void
      */
-    private function initHelp():void
+    private function initHelp(): void
     {
         $this->makeGlobal('ilHelp', new ilHelp());
     }
@@ -778,7 +778,7 @@ class LiveVotingInitialisationUI
     /**
      * @return void
      */
-    private function initAppEventHandler():void
+    private function initAppEventHandler(): void
     {
         $this->makeGlobal("ilAppEventHandler", new ilAppEventHandler());
     }
@@ -793,14 +793,14 @@ class LiveVotingInitialisationUI
         $this->makeGlobal("mail.mime.transport.factory",
             new ilMailMimeTransportFactory($DIC->settings(), $DIC->event()));
 
-        $this->makeGlobal("mail.mime.sender.factory", new ilMailMimeSenderFactory($DIC->settings(),intval(ANONYMOUS_USER_ID)));
+        $this->makeGlobal("mail.mime.sender.factory", new ilMailMimeSenderFactory($DIC->settings(), intval(ANONYMOUS_USER_ID)));
     }
 
     /**
      * @param Container $c
      * @return void
      */
-    private function initGlobalScreen(Container $c):void
+    private function initGlobalScreen(Container $c): void
     {
         /*
         Closure::bind(function (Container $dic) {
@@ -822,7 +822,7 @@ class LiveVotingInitialisationUI
     /**
      * @return void
      */
-    private function initFilesystem():void
+    private function initFilesystem(): void
     {
         ilInitialisation::bootstrapFilesystems();
     }
@@ -830,7 +830,7 @@ class LiveVotingInitialisationUI
     /**
      * @return void
      */
-    protected function initResourceStorage() : void
+    protected function initResourceStorage(): void
     {
         global $DIC;
 

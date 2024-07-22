@@ -184,7 +184,8 @@ class LiveVotingVote
      * @throws LiveVotingException
      * @throws Exception
      */
-    public function save(): int {
+    public function save(): int
+    {
         $database = new LiveVotingDatabase();
 
         $this->last_update = LiveVotingUtils::getTime();
@@ -241,17 +242,17 @@ class LiveVotingVote
         $result = $database->select("rep_robj_xlvo_vote_n", ["id" => $this->getId()]);
 
         if (isset($result[0])) {
-            $this->setType((int) $result[0]["type"]);
-            $this->setStatus((int) $result[0]["status"]);
-            $this->setOptionId((int) $result[0]["option_id"]);
-            $this->setVotingId((int) $result[0]["voting_id"]);
-            $this->setUserIdType((int) $result[0]["user_id_type"]);
+            $this->setType((int)$result[0]["type"]);
+            $this->setStatus((int)$result[0]["status"]);
+            $this->setOptionId((int)$result[0]["option_id"]);
+            $this->setVotingId((int)$result[0]["voting_id"]);
+            $this->setUserIdType((int)$result[0]["user_id_type"]);
             $this->setUserIdentifier($result[0]["user_identifier"]);
-            $this->setUserId((int) $result[0]["user_id"]);
-            $this->setLastUpdate((int) $result[0]["last_update"]);
-            $this->setRoundId((int) $result[0]["round_id"]);
+            $this->setUserId((int)$result[0]["user_id"]);
+            $this->setLastUpdate((int)$result[0]["last_update"]);
+            $this->setRoundId((int)$result[0]["round_id"]);
             $this->setFreeInput($result[0]["free_input"]);
-            $this->setFreeInputCategory((int) $result[0]["free_input_category"]);
+            $this->setFreeInputCategory((int)$result[0]["free_input_category"]);
         }
     }
 
@@ -363,7 +364,7 @@ class LiveVotingVote
         $votes = array();
 
         foreach ($result as $row) {
-            $votes[] = new LiveVotingVote((int) $row["id"]);
+            $votes[] = new LiveVotingVote((int)$row["id"]);
         }
 
         return $votes;
@@ -397,7 +398,7 @@ class LiveVotingVote
         $vote = new LiveVotingVote();
 
         if (isset($result[0])) {
-            $vote->setId((int) $result[0]["id"]);
+            $vote->setId((int)$result[0]["id"]);
             $vote->loadFromDB();
         } else {
             $vote->setType(1);
@@ -408,7 +409,7 @@ class LiveVotingVote
         $vote->setUserIdType($participant->isILIASUser() ? 0 : 1);
 
         if ($participant->isILIASUser()) {
-            $vote->setUserId((int) $participant->getIdentifier());
+            $vote->setUserId((int)$participant->getIdentifier());
         } else {
             $vote->setUserIdentifier($participant->getIdentifier());
         }
@@ -471,9 +472,9 @@ class LiveVotingVote
 
         foreach ($result as $row) {
             if (!$distinct) {
-                $votes[] = new LiveVotingVote((int) $row["id"]);
+                $votes[] = new LiveVotingVote((int)$row["id"]);
             } else {
-                $votes[$row["user_identifier"] . "_" . $row["user_id"]] = new LiveVotingVote((int) $row["id"]);
+                $votes[$row["user_identifier"] . "_" . $row["user_id"]] = new LiveVotingVote((int)$row["id"]);
             }
         }
 
@@ -500,7 +501,7 @@ class LiveVotingVote
         $votes = array();
 
         foreach ($result as $row) {
-            $votes[] = new LiveVotingVote((int) $row["id"]);
+            $votes[] = new LiveVotingVote((int)$row["id"]);
         }
 
         return $votes;
@@ -527,7 +528,7 @@ class LiveVotingVote
         $votes = array();
 
         foreach ($result as $row) {
-            $votes[] = new LiveVotingVote((int) $row["id"]);
+            $votes[] = new LiveVotingVote((int)$row["id"]);
         }
 
         return $votes;
@@ -546,7 +547,7 @@ class LiveVotingVote
             "round_id" => $round_id
         ), ["COUNT(id) AS count"]);
 
-        return (int) $result[0]["count"];
+        return (int)$result[0]["count"];
     }
 
     /**

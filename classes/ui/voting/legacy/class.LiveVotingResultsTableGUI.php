@@ -99,9 +99,9 @@ class LiveVotingResultsTableGUI extends ilTable2GUI
         $questions = array();
 
         if (isset($this->filter['voting']) && $this->filter['voting'] != "") {
-            $a_questions[] = LiveVotingQuestion::loadQuestionById((int) $this->filter['voting']);
+            $a_questions[] = LiveVotingQuestion::loadQuestionById((int)$this->filter['voting']);
         } else if (isset($this->filter['voting_title']) && $this->filter['voting_title'] != "") {
-            $a_questions[] = LiveVotingQuestion::loadQuestionById((int) $this->filter['voting_title']);
+            $a_questions[] = LiveVotingQuestion::loadQuestionById((int)$this->filter['voting_title']);
         } else {
             $a_questions = LiveVotingQuestion::loadAllQuestionsByObjectId($obj_id);
         }
@@ -117,20 +117,20 @@ class LiveVotingResultsTableGUI extends ilTable2GUI
         foreach ($votes as $vote) {
             foreach ($questions as $question) {
                 $answers = $this->getVotesForQuestion($all_votes, $question->getId(), $vote);
-                
+
                 $a_data[] = array(
-                    "position"        => $question->getPosition(),
-                    "participant"     => $vote->getParticipantName(),
-                    "user_id"         => $vote->getUserId(),
+                    "position" => $question->getPosition(),
+                    "participant" => $vote->getParticipantName(),
+                    "user_id" => $vote->getUserId(),
                     "user_identifier" => $vote->getUserIdentifier(),
-                    "question_type"   => $question->getQuestionTypeId(),
-                    "title"           => $question->getTitle(),
-                    "question"        => $question->getQuestion(),
-                    "answer"          => $question->getVotesRepresentation($answers),
-                    "answer_ids"      => $this->concatAnswersIds($answers),
-                    "voting_id"       => $question->getId(),
-                    "round_id"        => $round_id,
-                    "id"              => $vote->getId()
+                    "question_type" => $question->getQuestionTypeId(),
+                    "title" => $question->getTitle(),
+                    "question" => $question->getQuestion(),
+                    "answer" => $question->getVotesRepresentation($answers),
+                    "answer_ids" => $this->concatAnswersIds($answers),
+                    "voting_id" => $question->getId(),
+                    "round_id" => $round_id,
+                    "id" => $vote->getId()
                 );
             }
         }
@@ -164,7 +164,7 @@ class LiveVotingResultsTableGUI extends ilTable2GUI
     }
 
 
-    public function initFilter() :void
+    public function initFilter(): void
     {
         $this->filter['participant'] = $this->getFilterItemByPostVar('participant')->getValue();
         $this->filter['voting'] = $this->getFilterItemByPostVar('voting')->getValue();
@@ -208,9 +208,9 @@ class LiveVotingResultsTableGUI extends ilTable2GUI
     {
         return array(
             'participant' => 'participant',
-            'title'       => 'title',
-            'question'    => 'question',
-            'answer'      => 'answer',
+            'title' => 'title',
+            'question' => 'question',
+            'answer' => 'answer',
         );
     }
 

@@ -78,7 +78,7 @@ class LiveVotingPrioritiesUI
         $this->factory = $DIC->ui()->factory();
         $this->renderer = $DIC->ui()->renderer();
 
-        if($question_id) {
+        if ($question_id) {
             $this->question = LiveVotingQuestion::loadQuestionById($question_id);
         }
     }
@@ -114,26 +114,26 @@ class LiveVotingPrioritiesUI
             //Answers section
             $form_answers = [];
 
-            if(isset($this->question)) {
+            if (isset($this->question)) {
                 $options = $this->question->getOptions();
             }
 
             $form_answers["hidden"] = $this->factory->input()->field()->hidden()
-                ->withValue(isset($options) ? htmlspecialchars(str_replace('"', "\'", json_encode(array_map(function($option) {
+                ->withValue(isset($options) ? htmlspecialchars(str_replace('"', "\'", json_encode(array_map(function ($option) {
                     return [
                         "text" => $option->getText(),
                         "id" => $option->getId()
                     ];
                 }, $options), JSON_UNESCAPED_UNICODE))) : "")
                 ->withOnLoadCode(function ($id) {
-                    return "xlvoForms.initHiddenInput('".$id."')";
+                    return "xlvoForms.initHiddenInput('" . $id . "')";
                 })
                 ->withLabel('options');
 
             $form_answers["input"] = $this->factory->input()->field()->text(
                 $this->plugin->txt('qtype_1_options'))
                 ->withOnLoadCode(function ($id) {
-                    return "xlvoForms.initMultipleInputs('".$id."')";
+                    return "xlvoForms.initMultipleInputs('" . $id . "')";
                 })
                 ->withMaxLength(255)
                 ->withRequired(true);
@@ -141,12 +141,12 @@ class LiveVotingPrioritiesUI
 
             $section_answers = $this->factory->input()->field()->section($form_answers, $this->plugin->txt("qtype_form_header"), "");
 
-            $sections =  [
+            $sections = [
                 "config_question" => $section_questions,
                 "config_answers" => $section_answers
             ];
 
-            if(isset($this->question)){
+            if (isset($this->question)) {
                 $this->control->setParameterByClass(ilObjLiveVotingGUI::class, "question_id", $this->question->getId());
                 $form_action = $this->control->getFormActionByClass(ilObjLiveVotingGUI::class, "edit");
 
@@ -234,7 +234,7 @@ class LiveVotingPrioritiesUI
         if ($result && isset($result["config_question"], $result["config_answers"]["hidden"]) && $result["config_answers"]["hidden"] !== "") {
             $question_data = $result["config_question"];
             $answers_data = $result["config_answers"];
-            $options_data = json_decode(str_replace("\'", '"',$answers_data["hidden"]));
+            $options_data = json_decode(str_replace("\'", '"', $answers_data["hidden"]));
 
             if (!empty($options_data)) {
                 $question = $question_id ? LiveVotingQuestion::loadQuestionById($question_id) : LiveVotingQuestion::loadNewQuestion("Priorities");
