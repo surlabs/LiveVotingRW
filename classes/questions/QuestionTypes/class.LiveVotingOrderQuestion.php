@@ -34,16 +34,18 @@ class LiveVotingOrderQuestion extends LiveVotingQuestion
     private bool $randomise_option_sequence = false;
     private bool $correct_order = false;
 
-    public function __construct(?array $data = null) {
+    public function __construct(?array $data = null)
+    {
         parent::__construct($data);
 
         if ($data !== null) {
-            $this->columns = (int) $data["columns"];
-            $this->randomise_option_sequence = (bool) $data["randomise_option_sequence"];
+            $this->columns = (int)$data["columns"];
+            $this->randomise_option_sequence = (bool)$data["randomise_option_sequence"];
         }
     }
 
-    public function getQuestionType(): string {
+    public function getQuestionType(): string
+    {
         if ($this->correct_order) {
             return "CorrectOrder";
         } else {
@@ -51,7 +53,8 @@ class LiveVotingOrderQuestion extends LiveVotingQuestion
         }
     }
 
-    public function save(): int {
+    public function save(): int
+    {
         $id = parent::save();
 
         $database = new LiveVotingDatabase();
@@ -61,14 +64,14 @@ class LiveVotingOrderQuestion extends LiveVotingQuestion
         );
 
         if ($this->correct_order) {
-            $data["randomise_option_sequence"] = (int) $this->randomise_option_sequence;
+            $data["randomise_option_sequence"] = (int)$this->randomise_option_sequence;
         }
 
         $database->update("rep_robj_xlvo_voting_n", $data, array(
             "id" => $id
         ));
 
-        return  $id;
+        return $id;
     }
 
     public function getColumns(): int
@@ -165,7 +168,7 @@ class LiveVotingOrderQuestion extends LiveVotingQuestion
         $correct_order_ids = array();
 
         foreach ($this->options as $option) {
-            $correct_order_ids[(int) $option->getCorrectPosition()] = (string) $option->getId();
+            $correct_order_ids[(int)$option->getCorrectPosition()] = (string)$option->getId();
         };
 
         ksort($correct_order_ids);

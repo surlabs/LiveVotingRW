@@ -53,14 +53,15 @@ abstract class LiveVotingQuestion
     protected array $options = array();
     private LiveVotingQuestionOption $first_option;
 
-    public function __construct(?array $data = null) {
+    public function __construct(?array $data = null)
+    {
         if ($data !== null) {
-            $this->id = (int) $data["id"];
-            $this->obj_id = (int) $data["obj_id"];
-            $this->title = (string) $data["title"];
-            $this->question = (string) $data["question"];
-            $this->position = (int) $data["position"];
-            $this->voting_status = (int) $data["voting_status"];
+            $this->id = (int)$data["id"];
+            $this->obj_id = (int)$data["obj_id"];
+            $this->title = (string)$data["title"];
+            $this->question = (string)$data["question"];
+            $this->position = (int)$data["position"];
+            $this->voting_status = (int)$data["voting_status"];
             $this->options = $data["options"];
 
             if (!empty($this->options)) {
@@ -69,9 +70,10 @@ abstract class LiveVotingQuestion
         }
     }
 
-    public abstract function getQuestionType() : string;
+    public abstract function getQuestionType(): string;
 
-    public function getQuestionTypeId(): int {
+    public function getQuestionTypeId(): int
+    {
         return self::QUESTION_TYPES_IDS[$this->getQuestionType()];
     }
 
@@ -90,7 +92,7 @@ abstract class LiveVotingQuestion
 
         if ($result) {
             foreach ($result as $row) {
-                $row["options"] = LiveVotingQuestionOption::loadAllOptionsByVotingId((int) $row["id"]);
+                $row["options"] = LiveVotingQuestionOption::loadAllOptionsByVotingId((int)$row["id"]);
 
                 switch ($row["voting_type"]) {
                     case self::QUESTION_TYPES_IDS["Choices"]:
@@ -121,7 +123,8 @@ abstract class LiveVotingQuestion
     /**
      * @throws LiveVotingException
      */
-    public static function loadQuestionById(int $id) : ?LiveVotingQuestion {
+    public static function loadQuestionById(int $id): ?LiveVotingQuestion
+    {
         $question = null;
 
         $database = new LiveVotingDatabase();
@@ -160,7 +163,8 @@ abstract class LiveVotingQuestion
     /**
      * @throws LiveVotingException
      */
-    public static function loadNewQuestion(string $type) : ?LiveVotingQuestion {
+    public static function loadNewQuestion(string $type): ?LiveVotingQuestion
+    {
         if (!array_key_exists($type, self::QUESTION_TYPES_IDS)) {
             throw new LiveVotingException("Invalid question type");
         }
@@ -212,7 +216,8 @@ abstract class LiveVotingQuestion
      *
      * @throws LiveVotingException
      */
-    public function save() : int {
+    public function save(): int
+    {
         $database = new LiveVotingDatabase();
 
         if ($this->id != 0) {
@@ -357,7 +362,7 @@ abstract class LiveVotingQuestion
         ), ["id"], "ORDER BY position ASC LIMIT 1");
 
         if (isset($result[0])) {
-            return (int) $result[0]["id"] == $this->id;
+            return (int)$result[0]["id"] == $this->id;
         }
 
         return false;
@@ -375,7 +380,7 @@ abstract class LiveVotingQuestion
         ), ["id"], "ORDER BY position DESC LIMIT 1");
 
         if (isset($result[0])) {
-            return (int) $result[0]["id"] == $this->id;
+            return (int)$result[0]["id"] == $this->id;
         }
 
         return false;

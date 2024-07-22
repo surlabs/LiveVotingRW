@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * This file is part of the LiveVoting Repository Object plugin for ILIAS.
  * This plugin allows to create real time votings within ILIAS.
@@ -153,7 +154,7 @@ class LiveVotingPlayerGUI
      * @return void
      * @throws ilCtrlException|LiveVotingException
      */
-    private function initCssAndJs():void
+    private function initCssAndJs(): void
     {
         global $DIC;
         iljQueryUtil::initjQueryUI();
@@ -164,7 +165,7 @@ class LiveVotingPlayerGUI
 
         $delay = LiveVotingConfig::get('request_frequency');
         if (is_numeric($delay)) {
-            $delay = ((float) $delay);
+            $delay = ((float)$delay);
         } else {
             $delay = 1;
         }
@@ -172,9 +173,9 @@ class LiveVotingPlayerGUI
 
         $mathJaxSetting = new ilSetting("MathJax");
         $settings = array(
-            'use_mathjax' => (bool) $mathJaxSetting->get("enable"),
-            'debug'       => false,
-            'delay'       => $delay,
+            'use_mathjax' => (bool)$mathJaxSetting->get("enable"),
+            'debug' => false,
+            'delay' => $delay,
         );
 
         LiveVotingJs::getInstance()->api($this, array(IlUIPluginRouterGUI::class))->addSettings($settings)->name('Voter')->addTranslations($t)->init()->setRunCode();
@@ -183,16 +184,16 @@ class LiveVotingPlayerGUI
         LiveVotingJs::getInstance()->api($this)->name('SingleVote')->category('QuestionTypes/SingleVote')
             ->addLibToHeader('jquery.ui.touch-punch.min.js')->init();
 
-        $DIC->ui()->mainTemplate()->addCss(ilLiveVotingPlugin::getInstance()->getDirectory()."/templates/customUI/MultiLineNewInputGUI/css/multi_line_new_input_gui.css");
-        $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory()."/templates/customUI/MultiLineNewInputGUI/js/multi_line_new_input_gui.js");
+        $DIC->ui()->mainTemplate()->addCss(ilLiveVotingPlugin::getInstance()->getDirectory() . "/templates/customUI/MultiLineNewInputGUI/css/multi_line_new_input_gui.css");
+        $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory() . "/templates/customUI/MultiLineNewInputGUI/js/multi_line_new_input_gui.js");
 
         $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/js/xlvoVoter.js');
 
-        $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory(). '/templates/js/QuestionTypes/NumberRange/xlvoNumberRange.js');
+        $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/js/QuestionTypes/NumberRange/xlvoNumberRange.js');
         $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/js/QuestionTypes/SingleVote/xlvoSingleVote.js');
-        $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory(). '/templates/js/QuestionTypes/FreeOrder/xlvoFreeOrder.js');
-        $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory(). '/templates/js/QuestionTypes/FreeInput/xlvoFreeInput.js');
-        $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory(). '/templates/js/QuestionTypes/CorrectOrder/xlvoCorrectOrder.js');
+        $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/js/QuestionTypes/FreeOrder/xlvoFreeOrder.js');
+        $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/js/QuestionTypes/FreeInput/xlvoFreeInput.js');
+        $DIC->ui()->mainTemplate()->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/js/QuestionTypes/CorrectOrder/xlvoCorrectOrder.js');
         LiveVotingJs::getInstance()->api($this)->addLibToHeader('bootstrap-slider.js');
         LiveVotingJs::getInstance()->api($this)->name('CorrectOrder')->category('QuestionTypes/CorrectOrder')->init();
         LiveVotingJs::getInstance()->api($this)->name('FreeInput')->category('QuestionTypes/FreeInput')->init();
@@ -226,7 +227,7 @@ class LiveVotingPlayerGUI
         global $DIC;
         $tpl_voting = new ilTemplate($this->getPluginObject()->getDirectory() . '/templates/default/Voter/tpl.inner_screen.html', true, true);
         $this->setVotingTemplate($tpl_voting);
-        
+
         if ($this->getLiveVoting()->getPlayer()->isFrozen()) {
             $this->getVotingTemplate()->setVariable('TITLE', $this->txt('voter_header_frozen'));
             $this->getVotingTemplate()->setVariable('DESCRIPTION', $this->txt('voter_info_frozen'));
@@ -293,7 +294,7 @@ class LiveVotingPlayerGUI
     {
         global $DIC;
 
-        if(isset($_POST["pin_input"])){
+        if (isset($_POST["pin_input"])) {
             $this->checkPin();
         }
 
@@ -331,7 +332,7 @@ class LiveVotingPlayerGUI
 
         $pin = filter_input(INPUT_POST, 'pin_input');
         $live_voting = LiveVoting::getLiveVotingFromPin($pin);
-        if(isset($live_voting)){
+        if (isset($live_voting)) {
             $this->setLiveVoting($live_voting);
             $param_manager->setPin($_POST['pin_input']);
 
@@ -398,7 +399,7 @@ class LiveVotingPlayerGUI
      */
     protected function getVotingData(): void
     {
-        if($this->live_voting->isShowAttendees()) {
+        if ($this->live_voting->isShowAttendees()) {
             LiveVotingVoter::register($this->live_voting->getPlayer()->getId());
         }
 

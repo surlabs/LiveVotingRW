@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * This file is part of the LiveVoting Repository Object plugin for ILIAS.
  * This plugin allows to create real time votings within ILIAS.
@@ -78,7 +79,7 @@ class ilLiveVotingConfigGUI extends ilPluginConfigGUI
     {
         $shortlink_vote = $this->factory->input()->field()->text(
             $this->plugin_object->txt('config_allow_shortlink_link'), $this->plugin_object->txt('config_allow_shortlink_link_info')
-        )->withValue((string) LiveVotingConfig::get("allow_shortlink_link"))->withAdditionalTransformation($this->refinery->custom()->transformation(
+        )->withValue((string)LiveVotingConfig::get("allow_shortlink_link"))->withAdditionalTransformation($this->refinery->custom()->transformation(
             function ($v) {
                 LiveVotingConfig::set('allow_shortlink_link', $v);
 
@@ -90,7 +91,7 @@ class ilLiveVotingConfigGUI extends ilPluginConfigGUI
 
         $base_url_vote = $this->factory->input()->field()->text(
             $this->plugin_object->txt('config_base_url'), $this->plugin_object->txt('config_base_url_info')
-        )->withValue((string) LiveVotingConfig::get("base_url"))->withAdditionalTransformation($this->refinery->custom()->transformation(
+        )->withValue((string)LiveVotingConfig::get("base_url"))->withAdditionalTransformation($this->refinery->custom()->transformation(
             function ($v) {
                 LiveVotingConfig::set('base_url', $v);
 
@@ -115,13 +116,13 @@ class ilLiveVotingConfigGUI extends ilPluginConfigGUI
             }
         ));
 
-        if (LiveVotingConfig::get("allow_shortlink") != "1")  {
+        if (LiveVotingConfig::get("allow_shortlink") != "1") {
             $use_shortlink_vote = $use_shortlink_vote->withValue(null);
         }
 
         $shortlink_presenter = $this->factory->input()->field()->text(
             $this->plugin_object->txt('config_allow_shortlink_link_presenter'), $this->plugin_object->txt('config_allow_shortlink_link_presenter_info')
-        )->withValue((string) LiveVotingConfig::get("allow_shortlink_link_presenter"))->withAdditionalTransformation($this->refinery->custom()->transformation(
+        )->withValue((string)LiveVotingConfig::get("allow_shortlink_link_presenter"))->withAdditionalTransformation($this->refinery->custom()->transformation(
             function ($v) {
                 LiveVotingConfig::set('allow_shortlink_link_presenter', $v);
 
@@ -144,13 +145,13 @@ class ilLiveVotingConfigGUI extends ilPluginConfigGUI
             }
         ));
 
-        if (LiveVotingConfig::get("allow_shortlink_presenter") != "1")  {
+        if (LiveVotingConfig::get("allow_shortlink_presenter") != "1") {
             $use_shortlink_presenter = $use_shortlink_presenter->withValue(null);
         }
 
         $request_frequency = $this->factory->input()->field()->numeric(
             $this->plugin_object->txt('config_request_frequency'), $this->plugin_object->txt('config_request_frequency_info')
-        )->withValue(LiveVotingConfig::get("request_frequency") != "" ? (int) LiveVotingConfig::get("request_frequency") : 1)->withAdditionalTransformation($this->refinery->custom()->transformation(
+        )->withValue(LiveVotingConfig::get("request_frequency") != "" ? (int)LiveVotingConfig::get("request_frequency") : 1)->withAdditionalTransformation($this->refinery->custom()->transformation(
             function ($v) {
                 LiveVotingConfig::set('request_frequency', $v);
             }
@@ -162,7 +163,7 @@ class ilLiveVotingConfigGUI extends ilPluginConfigGUI
                 1 => "JSON",
                 2 => "XML"
             )
-        )->withValue(LiveVotingConfig::get("api_type") != "" ? (int) LiveVotingConfig::get("api_type") : 1)->withAdditionalTransformation($this->refinery->custom()->transformation(
+        )->withValue(LiveVotingConfig::get("api_type") != "" ? (int)LiveVotingConfig::get("api_type") : 1)->withAdditionalTransformation($this->refinery->custom()->transformation(
             function ($v) {
                 LiveVotingConfig::set('api_type', $v);
 
@@ -185,13 +186,13 @@ class ilLiveVotingConfigGUI extends ilPluginConfigGUI
             }
         ));
 
-        if (LiveVotingConfig::get("result_api") != "1")  {
+        if (LiveVotingConfig::get("result_api") != "1") {
             $result_api = $result_api->withValue(null);
         }
 
         $global_cache_enabled = $this->factory->input()->field()->checkbox(
             $this->plugin_object->txt('config_use_global_cache'), $this->plugin_object->txt('config_use_global_cache_info')
-        )->withValue((bool) LiveVotingConfig::get("use_global_cache"))->withAdditionalTransformation($this->refinery->custom()->transformation(
+        )->withValue((bool)LiveVotingConfig::get("use_global_cache"))->withAdditionalTransformation($this->refinery->custom()->transformation(
             function ($v) {
                 LiveVotingConfig::set('use_global_cache', $v ? "1" : "0");
             }

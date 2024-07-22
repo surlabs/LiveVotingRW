@@ -18,6 +18,7 @@ declare(strict_types=1);
  * info@surlabs.es
  *
  */
+
 namespace LiveVoting\UI\QuestionsResults;
 
 use ilTemplateException;
@@ -122,7 +123,7 @@ class LiveVotingSingleVoteResultsUI extends LiveVotingInputResultsGUI
     protected function isShowAbsolute(): bool
     {
         $states = $this->getButtonsStates();
-        return ($this->player->isShowResults() && (bool) in_array('toggle_percentage',$states));
+        return ($this->player->isShowResults() && (bool)in_array('toggle_percentage', $states));
     }
 
 }

@@ -18,6 +18,7 @@ declare(strict_types=1);
  * info@surlabs.es
  *
  */
+
 namespace LiveVoting\UI\QuestionsResults;
 
 use LiveVoting\platform\LiveVotingDatabase;
@@ -50,14 +51,14 @@ abstract class LiveVotingInputResultsGUI
     /**
      * void method to add necessary JS and CSS to maintemplate
      */
-    public static function addJsAndCss() :void
+    public static function addJsAndCss(): void
     {
     }
 
     /**
      * @throws LiveVotingException
      */
-    public function reset() :void
+    public function reset(): void
     {
         $database = new LiveVotingDatabase();
 
@@ -72,7 +73,7 @@ abstract class LiveVotingInputResultsGUI
      */
     public static function getInstance(LiveVotingPlayer $player)
     {
-        switch($player->getActiveVotingObject()->getQuestionType()){
+        switch ($player->getActiveVotingObject()->getQuestionType()) {
             case "Choices":
                 return new LiveVotingSingleVoteResultsUI($player);
             case "FreeText":

@@ -183,13 +183,13 @@ final class LiveVotingJs
     }
 
     /**
-     * @throws ilCtrlException
-     *
      * @param LiveVotingPlayerGUI $playerGUI
-     * @param array               $additional_classes
-     * @param string              $cmd
+     * @param array $additional_classes
+     * @param string $cmd
      *
      * @return LiveVotingJs
+     * @throws ilCtrlException
+     *
      */
     public function api(LiveVotingPlayerGUI $playerGUI, array $additional_classes = array(), $cmd = ''): LiveVotingJs
     {
@@ -205,12 +205,12 @@ final class LiveVotingJs
     }
 
     /**
-     * @throws ilCtrlException
-     *
      * @param ilObjLiveVotingGUI $liveVotingGUI
-     * @param string  $cmd
+     * @param string $cmd
      *
      * @return LiveVotingJs
+     * @throws ilCtrlException
+     *
      */
     public function ilias(ilObjLiveVotingGUI $liveVotingGUI, string $cmd = ''): LiveVotingJs
     {

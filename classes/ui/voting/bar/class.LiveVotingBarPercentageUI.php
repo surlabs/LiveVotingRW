@@ -73,7 +73,7 @@ class LiveVotingBarPercentageUI implements LiveVotingGeneralBarUI
      */
     public function getHTML(): string
     {
-        $tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory().'/templates/default/Bar/tpl.bar_percentage.html', true, true);
+        $tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/Bar/tpl.bar_percentage.html', true, true);
 
         $tpl->setVariable('TITLE', $this->getTitle());
 

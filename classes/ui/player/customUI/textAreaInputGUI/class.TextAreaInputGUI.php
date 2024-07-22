@@ -18,6 +18,7 @@ declare(strict_types=1);
  * info@surlabs.es
  *
  */
+
 namespace LiveVoting\UI\Player\CustomUI\TextAreaInputGUI;
 
 
@@ -45,7 +46,7 @@ class TextAreaInputGUI extends ilTextAreaInputGUI
     /**
      *
      */
-    public function customPrepare() : void
+    public function customPrepare(): void
     {
         $this->addPlugin('latex');
         $this->addButton('latex');
@@ -80,7 +81,7 @@ class TextAreaInputGUI extends ilTextAreaInputGUI
     /**
      * @return string
      */
-    public function getInlineStyle() : string
+    public function getInlineStyle(): string
     {
         return $this->inline_style;
     }
@@ -89,7 +90,7 @@ class TextAreaInputGUI extends ilTextAreaInputGUI
     /**
      * @param string $inline_style
      */
-    public function setInlineStyle(string $inline_style) : void
+    public function setInlineStyle(string $inline_style): void
     {
         $this->inline_style = $inline_style;
     }
@@ -98,7 +99,7 @@ class TextAreaInputGUI extends ilTextAreaInputGUI
     /**
      * @return int
      */
-    public function getMaxlength() : int
+    public function getMaxlength(): int
     {
         return $this->maxlength;
     }
@@ -107,7 +108,7 @@ class TextAreaInputGUI extends ilTextAreaInputGUI
     /**
      * @param int $maxlength
      */
-    public function setMaxlength(int $maxlength) : void
+    public function setMaxlength(int $maxlength): void
     {
         $this->maxlength = $maxlength;
     }
@@ -117,7 +118,7 @@ class TextAreaInputGUI extends ilTextAreaInputGUI
      * @return string
      * @throws LiveVotingException|ilTemplateException
      */
-    public function render() : string
+    public function render(): string
     {
         try {
             $tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/customUI/textAreaInput/tpl.text_area_helper.html', false, false);
@@ -132,7 +133,7 @@ class TextAreaInputGUI extends ilTextAreaInputGUI
 
     public function getCanonicalName(): string
     {
-       return "";
+        return "";
     }
 
     public function getTableFilterHTML(): string

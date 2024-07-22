@@ -18,6 +18,7 @@ declare(strict_types=1);
  * info@surlabs.es
  *
  */
+
 namespace LiveVoting\UI\QuestionsResults;
 
 
@@ -105,7 +106,7 @@ class LiveVotingInputNumberRangeUI extends LiveVotingInputResultsGUI
         $modes = [];
 
         foreach ($votes as $vote) {
-            $value = (int) $vote->getFreeInput();
+            $value = (int)$vote->getFreeInput();
 
             $values[] = $value;
 
@@ -160,7 +161,7 @@ class LiveVotingInputNumberRangeUI extends LiveVotingInputResultsGUI
         $median->setDark(true);
         $info->addBar($median);
 
-        $mode = new LiveVotingBarInfoGUI(ilLiveVotingPlugin::getInstance()->txt("qtype_6_mode"), (string) $mode);
+        $mode = new LiveVotingBarInfoGUI(ilLiveVotingPlugin::getInstance()->txt("qtype_6_mode"), (string)$mode);
         $mode->setBig(true);
         $mode->setDark(true);
         $mode->setCenter(true);
@@ -220,7 +221,7 @@ class LiveVotingInputNumberRangeUI extends LiveVotingInputResultsGUI
      */
     private function getAllVoteValues(): array
     {
-        $percentage = ((int) $this->player->getActiveVotingObject()->isPercentage() === 1) ? ' %' : '';
+        $percentage = ((int)$this->player->getActiveVotingObject()->isPercentage() === 1) ? ' %' : '';
 
         //generate array which is equal in its length to the range from start to end
         $start = $this->player->getActiveVotingObject()->getStartRange();
@@ -235,7 +236,7 @@ class LiveVotingInputNumberRangeUI extends LiveVotingInputResultsGUI
          * @var LiveVotingVote $vote
          */
         foreach ($votes as $vote) {
-            $value = (int) $vote->getFreeInput();
+            $value = (int)$vote->getFreeInput();
             $values[$value]++;
         }
 

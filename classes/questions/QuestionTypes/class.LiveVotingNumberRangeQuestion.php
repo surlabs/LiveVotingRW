@@ -35,29 +35,32 @@ class LiveVotingNumberRangeQuestion extends LiveVotingQuestion
     private int $step_range = 1;
     private ?int $alt_result_display_mode = null;
 
-    public function __construct(?array $data = null) {
+    public function __construct(?array $data = null)
+    {
         parent::__construct($data);
 
         if ($data !== null) {
-            $this->percentage = (bool) $data["percentage"];
-            $this->start_range = (int) $data["start_range"];
-            $this->end_range = (int) $data["end_range"];
-            $this->step_range = (int) $data["step_range"];
-            $this->alt_result_display_mode = isset($data["alt_result_display_mode"]) ? (int) $data["alt_result_display_mode"] : null;
+            $this->percentage = (bool)$data["percentage"];
+            $this->start_range = (int)$data["start_range"];
+            $this->end_range = (int)$data["end_range"];
+            $this->step_range = (int)$data["step_range"];
+            $this->alt_result_display_mode = isset($data["alt_result_display_mode"]) ? (int)$data["alt_result_display_mode"] : null;
         }
     }
 
-    public function getQuestionType(): string {
+    public function getQuestionType(): string
+    {
         return "NumberRange";
     }
 
-    public function save(): int {
+    public function save(): int
+    {
         $id = parent::save();
 
         $database = new LiveVotingDatabase();
 
         $database->update("rep_robj_xlvo_voting_n", array(
-            "percentage" => (int) $this->percentage,
+            "percentage" => (int)$this->percentage,
             "start_range" => $this->start_range,
             "end_range" => $this->end_range,
             "step_range" => $this->step_range,
@@ -66,7 +69,7 @@ class LiveVotingNumberRangeQuestion extends LiveVotingQuestion
             "id" => $id
         ));
 
-        return  $id;
+        return $id;
     }
 
     public function isPercentage(): bool

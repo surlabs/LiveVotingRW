@@ -78,7 +78,7 @@ class LiveVotingRangeUI
         $this->factory = $DIC->ui()->factory();
         $this->renderer = $DIC->ui()->renderer();
 
-        if($question_id) {
+        if ($question_id) {
             $this->question = LiveVotingQuestion::loadQuestionById($question_id);
         }
     }
@@ -102,7 +102,7 @@ class LiveVotingRangeUI
                 ->withValue(isset($this->question) ? $this->question->getQuestion() : "")
                 ->withRequired(true);
 
-         
+
             $section_questions = $this->factory->input()->field()->section($form_questions, $this->plugin->txt("player_voting_list"), $this->plugin->txt("voting_type_6"));
 
 
@@ -117,7 +117,7 @@ class LiveVotingRangeUI
                 ->withOption('0', $this->plugin->txt('qtype_6_display_mode_nr_0'))
                 ->withOption('2', $this->plugin->txt('qtype_6_display_mode_nr_2'))
                 ->withOption('1', $this->plugin->txt('qtype_6_display_mode_nr_1'))
-                ->withValue(isset($this->question) ? (string) $this->question->getAltResultDisplayMode() : "0");
+                ->withValue(isset($this->question) ? (string)$this->question->getAltResultDisplayMode() : "0");
 
             $form_answers["minimum"] = $this->factory->input()->field()->numeric(
                 $this->plugin->txt('qtype_6_option_range_start'),
@@ -135,15 +135,14 @@ class LiveVotingRangeUI
                 ->withValue(isset($this->question) ? $this->question->getStepRange() : 1);
 
 
-
             $section_answers = $this->factory->input()->field()->section($form_answers, $this->plugin->txt("qtype_form_header"), "");
 
-            $sections =  [
+            $sections = [
                 "config_question" => $section_questions,
                 "config_answers" => $section_answers
             ];
 
-            if(isset($this->question)){
+            if (isset($this->question)) {
                 $this->control->setParameterByClass(ilObjLiveVotingGUI::class, "question_id", $this->question->getId());
                 $form_action = $this->control->getFormActionByClass(ilObjLiveVotingGUI::class, "edit");
 
@@ -236,11 +235,11 @@ class LiveVotingRangeUI
 
             $question->setTitle($question_data["title"] ?? null);
             $question->setQuestion($_POST["form/input_0/input_2"] ?? null);
-            $question->setPercentage($answers_data["percentages"] ? (bool) $answers_data["percentages"] : false);
-            $question->setAltResultDisplayMode($answers_data["display_mode"] ? (int) $answers_data["display_mode"] : 0);
-            $question->setStartRange($answers_data["minimum"] ? (int) $answers_data["minimum"] : 0);
-            $question->setEndRange($answers_data["maximum"] ? (int) $answers_data["maximum"] : 100);
-            $question->setStepRange($answers_data["step"] ? (int) $answers_data["step"] : 1);
+            $question->setPercentage($answers_data["percentages"] ? (bool)$answers_data["percentages"] : false);
+            $question->setAltResultDisplayMode($answers_data["display_mode"] ? (int)$answers_data["display_mode"] : 0);
+            $question->setStartRange($answers_data["minimum"] ? (int)$answers_data["minimum"] : 0);
+            $question->setEndRange($answers_data["maximum"] ? (int)$answers_data["maximum"] : 100);
+            $question->setStepRange($answers_data["step"] ? (int)$answers_data["step"] : 1);
 
             $id = ilObject::_lookupObjId((int)$_GET['ref_id']);
             $question->setObjId($id);

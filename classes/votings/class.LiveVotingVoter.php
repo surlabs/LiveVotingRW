@@ -92,7 +92,8 @@ class LiveVotingVoter
     /**
      * @throws LiveVotingException
      */
-    public function save(): int {
+    public function save(): int
+    {
         $database = new LiveVotingDatabase();
 
         if (isset($this->id) && $this->id != 0) {
@@ -127,10 +128,10 @@ class LiveVotingVoter
         $result = $database->select("xlvo_voter", ["id" => $this->getId()]);
 
         if (isset($result[0])) {
-            $this->setId((int) $result[0]["id"]);
-            $this->setPlayerId((int) $result[0]["player_id"]);
+            $this->setId((int)$result[0]["id"]);
+            $this->setPlayerId((int)$result[0]["player_id"]);
             $this->setUserIdentifier($result[0]["user_identifier"]);
-            $this->setLastAccess((int) $result[0]["last_access"]);
+            $this->setLastAccess((int)$result[0]["last_access"]);
         }
     }
 
@@ -153,7 +154,7 @@ class LiveVotingVoter
         $delay = LiveVotingConfig::get("request_frequency");
 
         if (is_numeric($delay)) {
-            $delay = ((float) $delay);
+            $delay = ((float)$delay);
         } else {
             $delay = 1;
         }
@@ -162,7 +163,7 @@ class LiveVotingVoter
         $cutoff_time = LiveVotingUtils::getTime() - ($delay + $delay * 0.5);
 
         // Format the cutoff time to match the format used in sleep (Y-m-d H:i:s)
-        $formatted_cutoff_time = date('Y-m-d H:i:s', (int) $cutoff_time);
+        $formatted_cutoff_time = date('Y-m-d H:i:s', (int)$cutoff_time);
 
         $database = new LiveVotingDatabase();
 
@@ -185,7 +186,7 @@ class LiveVotingVoter
         ), ["id"]);
 
         if (isset($result[0])) {
-            $voter = new self((int) $result[0]["id"]);
+            $voter = new self((int)$result[0]["id"]);
         } else {
             $voter = new self();
             $voter->setPlayerId($player_id);

@@ -18,6 +18,7 @@ declare(strict_types=1);
  * info@surlabs.es
  *
  */
+
 namespace LiveVoting\UI\QuestionsResults;
 
 use ilLiveVotingPlugin;
@@ -49,7 +50,7 @@ class LiveVotingInputCorrectOrderUI extends LiveVotingSingleVoteResultsUI
 
         foreach (json_decode($correct_order_json) as $value) {
             foreach ($options as $option) {
-                if ($option->getId() == (int) $value) {
+                if ($option->getId() == (int)$value) {
                     $correct_order[] = $option;
                     break;
                 }
@@ -113,7 +114,7 @@ class LiveVotingInputCorrectOrderUI extends LiveVotingSingleVoteResultsUI
     {
         $states = $this->getButtonsStates();
 
-        return ((array_key_exists('display_correct_order',$states) && $states['display_correct_order']) && $this->player->isShowResults());
+        return ((array_key_exists('display_correct_order', $states) && $states['display_correct_order']) && $this->player->isShowResults());
     }
 
 
@@ -124,7 +125,7 @@ class LiveVotingInputCorrectOrderUI extends LiveVotingSingleVoteResultsUI
     {
         $states = $this->getButtonsStates();
 
-        return ($this->player->isShowResults() && (bool) (array_key_exists('toggle_percentage',$states) && $states['toggle_percentage']));
+        return ($this->player->isShowResults() && (bool)(array_key_exists('toggle_percentage', $states) && $states['toggle_percentage']));
     }
 
 }

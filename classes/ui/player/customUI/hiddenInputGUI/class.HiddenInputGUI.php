@@ -36,11 +36,12 @@ class HiddenInputGUI extends ilHiddenInputGUI
     {
         parent::__construct($a_postvar);
     }
+
     /**
      * @return string
      * @throws LiveVotingException|ilTemplateException
      */
-    public function render() : string
+    public function render(): string
     {
         try {
             $tpl = new ilTemplate('./Services/Form/templates/default/tpl.property_form.html', true, true);
@@ -54,7 +55,7 @@ class HiddenInputGUI extends ilHiddenInputGUI
 
     public function getCanonicalName(): string
     {
-       return "";
+        return "";
     }
 
     public function getTableFilterHTML(): string

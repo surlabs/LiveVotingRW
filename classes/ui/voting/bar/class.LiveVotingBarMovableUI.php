@@ -17,6 +17,7 @@ declare(strict_types=1);
  * info@surlabs.es
  *
  */
+
 namespace LiveVoting\UI\Voting\Bar;
 
 use ilLiveVotingPlugin;
@@ -55,7 +56,7 @@ class LiveVotingBarMovableUI implements LiveVotingGeneralBarUI
      * @param array $order
      * @param int|null $vote_id
      */
-    public function __construct(array $options, array $order = array(),?int $vote_id = null)
+    public function __construct(array $options, array $order = array(), ?int $vote_id = null)
     {
         $this->options = $options;
         $this->order = $order;

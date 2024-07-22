@@ -27,6 +27,7 @@ use ILIAS\UI\Renderer;
 use ilLiveVotingPlugin;
 use ilObjLiveVoting;
 use ilPlugin;
+
 /**
  * Class LiveVotingSettingsUI
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
@@ -69,7 +70,6 @@ class LiveVotingSettingsUI
         global $DIC;
 
 
-
         $sections = [];
 
         try {
@@ -100,7 +100,7 @@ class LiveVotingSettingsUI
                 ->withValue($this->object->getLiveVoting()->isOnline())
                 ->withAdditionalTransformation($DIC->refinery()->custom()->transformation(
                     function ($v) {
-                        $this->object->getLiveVoting()->setOnline((bool) $v);
+                        $this->object->getLiveVoting()->setOnline((bool)$v);
                     }
                 ));
             $formFields['online'] = $onlineCheckbox;
@@ -109,7 +109,7 @@ class LiveVotingSettingsUI
                 ->withValue($this->object->getLiveVoting()->isAnonymous())
                 ->withAdditionalTransformation($DIC->refinery()->custom()->transformation(
                     function ($v) {
-                        $this->object->getLiveVoting()->setAnonymous((bool) $v);
+                        $this->object->getLiveVoting()->setAnonymous((bool)$v);
                     }
                 ));
             $formFields['vote_login_check'] = $voteLoginCheck;
@@ -118,7 +118,7 @@ class LiveVotingSettingsUI
                 ->withValue($this->object->getLiveVoting()->isVotingHistory())
                 ->withAdditionalTransformation($DIC->refinery()->custom()->transformation(
                     function ($v) {
-                        $this->object->getLiveVoting()->setVotingHistory((bool) $v);
+                        $this->object->getLiveVoting()->setVotingHistory((bool)$v);
                     }
                 ));
             $formFields['vote_history_check'] = $voteHistoryCheck;
@@ -127,7 +127,7 @@ class LiveVotingSettingsUI
                 ->withValue($this->object->getLiveVoting()->isShowAttendees())
                 ->withAdditionalTransformation($DIC->refinery()->custom()->transformation(
                     function ($v) {
-                        $this->object->getLiveVoting()->setShowAttendees((bool) $v);
+                        $this->object->getLiveVoting()->setShowAttendees((bool)$v);
                     }
                 ));
             $formFields['show_attendees'] = $showAttendeesCheck;
@@ -145,7 +145,7 @@ class LiveVotingSettingsUI
                 ->withValue($this->object->getLiveVoting()->getFrozenBehaviour())
                 ->withAdditionalTransformation($DIC->refinery()->custom()->transformation(
                     function ($v) {
-                        $this->object->getLiveVoting()->setFrozenBehaviour((int) $v);
+                        $this->object->getLiveVoting()->setFrozenBehaviour((int)$v);
                     }
                 ));
 
@@ -158,7 +158,7 @@ class LiveVotingSettingsUI
                 ->withValue($this->object->getLiveVoting()->getResultsBehaviour())
                 ->withAdditionalTransformation($DIC->refinery()->custom()->transformation(
                     function ($v) {
-                        $this->object->getLiveVoting()->setResultsBehaviour((int) $v);
+                        $this->object->getLiveVoting()->setResultsBehaviour((int)$v);
                     }
                 ));
 
@@ -169,7 +169,7 @@ class LiveVotingSettingsUI
             $sections["frozen"] = $sectionFrozen;
 
 
-        } catch(Exception $e){
+        } catch (Exception $e) {
             $section = $DIC->ui()->factory()->messageBox()->failure($e->getMessage());
             $sections["object"] = $section;
         }
@@ -180,7 +180,7 @@ class LiveVotingSettingsUI
 
     public function renderForm(string $form_action, array $sections): string
     {
-        GLOBAL $DIC;
+        global $DIC;
         //Create the form
         $form = $DIC->ui()->factory()->input()->container()->form()->standard(
             $form_action,
@@ -195,7 +195,7 @@ class LiveVotingSettingsUI
         if ($request->getMethod() == "POST") {
             $form = $form->withRequest($request);
             $result = $form->getData();
-            if($result){
+            if ($result) {
                 $saving_info = $this->saveProperties();
             }
         }
@@ -203,9 +203,9 @@ class LiveVotingSettingsUI
         return $saving_info . $this->renderer->render($form);
     }
 
-    protected function saveProperties() : string
+    protected function saveProperties(): string
     {
-        GLOBAL $DIC;
+        global $DIC;
         $renderer = $DIC->ui()->renderer();
         $this->object->update();
 

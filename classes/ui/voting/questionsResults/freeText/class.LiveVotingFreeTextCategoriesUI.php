@@ -18,6 +18,7 @@ declare(strict_types=1);
  * info@surlabs.es
  *
  */
+
 namespace LiveVoting\UI\QuestionsResults;
 
 use ilLiveVotingPlugin;
@@ -68,7 +69,7 @@ class LiveVotingInputFreeTextCategoriesUI
             $bar_collection = new LiveVotingBarGroupingCollectionUI();
             $bar_collection->setRemovable($this->isRemovable());
 
-            $category = new LiveVotingCategory((int) $category["id"]);
+            $category = new LiveVotingCategory((int)$category["id"]);
 
             $this->categories[$category->getId()] = [
                 "title" => $category->getTitle(),
@@ -102,9 +103,9 @@ class LiveVotingInputFreeTextCategoriesUI
     public function getHTML(): string
     {
 
-        $tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory().'/templates/default/QuestionTypes/FreeInput/tpl.free_input_categories.html', true, true);
+        $tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/QuestionTypes/FreeInput/tpl.free_input_categories.html', true, true);
         foreach ($this->categories as $cat_id => $data) {
-            $cat_tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory().'/templates/default/QuestionTypes/FreeInput/tpl.free_input_category.html', true, true);
+            $cat_tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/QuestionTypes/FreeInput/tpl.free_input_category.html', true, true);
             /** @var LiveVotingCategory $category */
             $cat_tpl->setVariable('ID', $cat_id);
             $cat_tpl->setVariable('TITLE', $data['title']);

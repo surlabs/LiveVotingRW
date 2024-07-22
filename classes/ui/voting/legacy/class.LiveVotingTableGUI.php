@@ -179,7 +179,7 @@ class liveVotingTableGUI extends ilTable2GUI
 
         //$question = $this->shorten($question);
         $this->tpl->setVariable('QUESTION', htmlspecialchars($this->shorten($question->getQuestion())));
-        $this->tpl->setVariable('TYPE', $this->txt('voting_type_'.$a_set['voting_type']));
+        $this->tpl->setVariable('TYPE', $this->txt('voting_type_' . $a_set['voting_type']));
 
         $voting_status = $this->getVotingStatus("STATUS");
         //		$this->tpl->setVariable('STATUS', $voting_status); // deactivated at the moment
@@ -216,7 +216,7 @@ class liveVotingTableGUI extends ilTable2GUI
 
         $DIC->ctrl()->setParameter($this->voting_gui, 'question_id', $question->getId());
         if ($this->access->hasWriteAccess()) {
-            $current_selection_list->addItem($this->txt('voting_edit'), 'edit',$DIC->ctrl()
+            $current_selection_list->addItem($this->txt('voting_edit'), 'edit', $DIC->ctrl()
                 ->getLinkTarget($this->voting_gui, 'edit'));
             $current_selection_list->addItem($this->txt('voting_reset'), 'confirmResetQuestion', $DIC->ctrl()
                 ->getLinkTarget($this->voting_gui, 'confirmResetQuestion'));
@@ -261,7 +261,7 @@ class liveVotingTableGUI extends ilTable2GUI
             $where['voting_type'] = $this->filter['voting_type'];
         }
 
-        $collection = $database->select("rep_robj_xlvo_voting_n", $where, null, "ORDER BY ".$sorting_column." ".$sorting_direction." LIMIT ".$offset.", ".$num);
+        $collection = $database->select("rep_robj_xlvo_voting_n", $where, null, "ORDER BY " . $sorting_column . " " . $sorting_direction . " LIMIT " . $offset . ", " . $num);
 
         if (isset($this->filter['question']) && isset($this->filter['title']) && $this->filter['title'] != "" || (isset($this->filter['question']) && $this->filter['question'] != "")) {
             $filtered = array();

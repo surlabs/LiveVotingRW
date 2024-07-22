@@ -70,7 +70,8 @@ class LiveVotingManageUI
      * @throws ilException
      * @throws LiveVotingException
      */
-    public function showManage($parent): string{
+    public function showManage($parent): string
+    {
         global $DIC;
 
         $f = $DIC->ui()->factory();
@@ -83,22 +84,22 @@ class LiveVotingManageUI
         $glyph = $f->symbol()->glyph()->add("#");
         $glyph_reset = $f->symbol()->glyph()->reset("#");
 
-        $button = $f->button()->bulky($glyph, '<div style="margin-left:10px">'.$this->plugin->txt("voting_type_1").' <br/><small><muted>'.$this->plugin->txt("voting_type_1_info").'</muted></small></div>', $this->control->getLinkTargetByClass(ilObjLiveVotingGUI::class, 'selectedChoices'));
-        $button2 = $f->button()->bulky($glyph, '<div style="margin-left:10px">'.$this->plugin->txt("voting_type_2").' <br/><small><muted>'.$this->plugin->txt("voting_type_2_info").'</muted></small></div>', $this->control->getLinkTargetByClass(ilObjLiveVotingGUI::class, 'selectedFreeInput'));
-        $button3 = $f->button()->bulky($glyph, '<div style="margin-left:10px">'.$this->plugin->txt("voting_type_4").' <br/><small><muted>'.$this->plugin->txt("voting_type_4_info").'</muted></small></div>', $this->control->getLinkTargetByClass(ilObjLiveVotingGUI::class, 'selectedCorrectOrder'));
-        $button4 = $f->button()->bulky($glyph, '<div style="margin-left:10px">'.$this->plugin->txt("voting_type_5").' <br/><small><muted>'.$this->plugin->txt("voting_type_5_info").'</muted></small></div>', $this->control->getLinkTargetByClass(ilObjLiveVotingGUI::class, 'selectedPriorities'));
-        $button5 = $f->button()->bulky($glyph, '<div style="margin-left:10px">'.$this->plugin->txt("voting_type_6").' <br/><small><muted>'.$this->plugin->txt("voting_type_6_info").'</muted></small></div>', $this->control->getLinkTargetByClass(ilObjLiveVotingGUI::class, 'selectedRange'));
+        $button = $f->button()->bulky($glyph, '<div style="margin-left:10px">' . $this->plugin->txt("voting_type_1") . ' <br/><small><muted>' . $this->plugin->txt("voting_type_1_info") . '</muted></small></div>', $this->control->getLinkTargetByClass(ilObjLiveVotingGUI::class, 'selectedChoices'));
+        $button2 = $f->button()->bulky($glyph, '<div style="margin-left:10px">' . $this->plugin->txt("voting_type_2") . ' <br/><small><muted>' . $this->plugin->txt("voting_type_2_info") . '</muted></small></div>', $this->control->getLinkTargetByClass(ilObjLiveVotingGUI::class, 'selectedFreeInput'));
+        $button3 = $f->button()->bulky($glyph, '<div style="margin-left:10px">' . $this->plugin->txt("voting_type_4") . ' <br/><small><muted>' . $this->plugin->txt("voting_type_4_info") . '</muted></small></div>', $this->control->getLinkTargetByClass(ilObjLiveVotingGUI::class, 'selectedCorrectOrder'));
+        $button4 = $f->button()->bulky($glyph, '<div style="margin-left:10px">' . $this->plugin->txt("voting_type_5") . ' <br/><small><muted>' . $this->plugin->txt("voting_type_5_info") . '</muted></small></div>', $this->control->getLinkTargetByClass(ilObjLiveVotingGUI::class, 'selectedPriorities'));
+        $button5 = $f->button()->bulky($glyph, '<div style="margin-left:10px">' . $this->plugin->txt("voting_type_6") . ' <br/><small><muted>' . $this->plugin->txt("voting_type_6_info") . '</muted></small></div>', $this->control->getLinkTargetByClass(ilObjLiveVotingGUI::class, 'selectedRange'));
 
         $items = [
-            $f->menu()->sub('<div><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> '.$this->plugin->txt('voting_add').'</div>', [$button, $button2, $button3, $button4, $button5]),
+            $f->menu()->sub('<div><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> ' . $this->plugin->txt('voting_add') . '</div>', [$button, $button2, $button3, $button4, $button5]),
 
-            $f->button()->bulky($glyph_reset,'&nbsp;'. $this->plugin->txt('voting_reset_all'), $this->control->getLinkTargetByClass(ilObjLiveVotingGUI::class, 'confirmResetAll')),
+            $f->button()->bulky($glyph_reset, '&nbsp;' . $this->plugin->txt('voting_reset_all'), $this->control->getLinkTargetByClass(ilObjLiveVotingGUI::class, 'confirmResetAll')),
         ];
 
         $dd = $f->menu()->drilldown(ilLiveVotingPlugin::getInstance()->txt('voting_actions'), $items);
 
         $liveVotingTableGUI = new LiveVotingTableGUI($parent, 'manage');
 
-        return $renderer->render($dd).$liveVotingTableGUI->getHTML();
+        return $renderer->render($dd) . $liveVotingTableGUI->getHTML();
     }
 }

@@ -90,7 +90,8 @@ class LiveVotingRound
     /**
      * @throws LiveVotingException
      */
-    public function save(): int {
+    public function save(): int
+    {
         $database = new LiveVotingDatabase();
 
         if ($this->id != 0) {
@@ -129,10 +130,10 @@ class LiveVotingRound
         $result = $database->select("rep_robj_xlvo_round_n", ["id" => $this->getId()]);
 
         if (isset($result[0])) {
-            $this->setObjId((int) $result[0]["obj_id"]);
-            $this->setRoundNumber((int) $result[0]["round_number"]);
+            $this->setObjId((int)$result[0]["obj_id"]);
+            $this->setRoundNumber((int)$result[0]["round_number"]);
             if (isset($result[0]["title"])) {
-            	$this->setTitle($result[0]["title"]);
+                $this->setTitle($result[0]["title"]);
             }
         } else {
             throw new LiveVotingException("Round not found");
@@ -162,7 +163,7 @@ class LiveVotingRound
         $result = $database->select("rep_robj_xlvo_round_n", ["obj_id" => $obj_id], null, "ORDER BY id DESC LIMIT 1");
 
         if (isset($result[0])) {
-            return (int) $result[0]["id"];
+            return (int)$result[0]["id"];
         } else {
             $round = self::createFirstRound($obj_id);
 
@@ -221,11 +222,11 @@ class LiveVotingRound
 
         foreach ($result as $row) {
             $round = new self();
-            $round->setId((int) $row["id"]);
-            $round->setObjId((int) $row["obj_id"]);
-            $round->setRoundNumber((int) $row["round_number"]);
+            $round->setId((int)$row["id"]);
+            $round->setObjId((int)$row["obj_id"]);
+            $round->setRoundNumber((int)$row["round_number"]);
             if (isset($row["title"])) {
-            	$round->setTitle($row["title"]);
+                $round->setTitle($row["title"]);
             }
 
             $rounds[] = $round;

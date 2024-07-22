@@ -40,20 +40,20 @@ class LiveVotingQuestionOption
     public function __construct(?array $data = null)
     {
         if ($data !== null) {
-            $this->id = isset($data["id"]) ? (int) $data["id"] : 0;
-            $this->voting_id = isset($data["voting_id"]) ? (int) $data["voting_id"] : 0;
+            $this->id = isset($data["id"]) ? (int)$data["id"] : 0;
+            $this->voting_id = isset($data["voting_id"]) ? (int)$data["voting_id"] : 0;
             $this->text = $data["text"] ?? null;
-            $this->type = (int) $data["type"];
-            $this->status = isset($data["status"]) ? (int) $data["status"] : 1;
-            $this->position = isset($data["position"]) ? (int) $data["position"] : null;
-            $this->correct_position = isset($data["correct_position"]) ? (int) $data["correct_position"] : null;
+            $this->type = (int)$data["type"];
+            $this->status = isset($data["status"]) ? (int)$data["status"] : 1;
+            $this->position = isset($data["position"]) ? (int)$data["position"] : null;
+            $this->correct_position = isset($data["correct_position"]) ? (int)$data["correct_position"] : null;
         }
     }
 
     /**
      * @throws LiveVotingException
      */
-    public static function loadOptionById(int $id) : ?LiveVotingQuestionOption
+    public static function loadOptionById(int $id): ?LiveVotingQuestionOption
     {
         $option = null;
 
@@ -73,7 +73,7 @@ class LiveVotingQuestionOption
     /**
      * @throws LiveVotingException
      */
-    public static function loadAllOptionsByVotingId(int $voting_id, bool $correct_position = false) : array
+    public static function loadAllOptionsByVotingId(int $voting_id, bool $correct_position = false): array
     {
         $options = array();
 
@@ -92,7 +92,8 @@ class LiveVotingQuestionOption
         return $options;
     }
 
-    public static function loadNewOption(int $type) : ?LiveVotingQuestionOption {
+    public static function loadNewOption(int $type): ?LiveVotingQuestionOption
+    {
         $option = new LiveVotingQuestionOption();
 
         $option->setType($type);
@@ -115,7 +116,8 @@ class LiveVotingQuestionOption
     /**
      * @throws LiveVotingException
      */
-    public function save() : int {
+    public function save(): int
+    {
         $database = new LiveVotingDatabase();
 
         if ($this->id != 0) {

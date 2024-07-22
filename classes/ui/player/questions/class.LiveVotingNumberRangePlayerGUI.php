@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * This file is part of the LiveVoting Repository Object plugin for ILIAS.
  * This plugin allows to create real time votings within ILIAS.
@@ -25,7 +26,6 @@ use LiveVoting\Utils\ParamManager;
 use LiveVoting\votings\LiveVoting;
 use LiveVoting\votings\LiveVotingPlayer;
 use LiveVoting\votings\LiveVotingVote;
-
 
 
 /**
@@ -90,7 +90,7 @@ class LiveVotingNumberRangePlayerGUI extends LiveVotingQuestionTypesUI
                 $this->player->unvoteAll();
 
                 $this->player->input([
-                    'input'   => (string) $filteredInput,
+                    'input' => (string)$filteredInput,
                     'vote_id' => "0",
                 ]);
             }
@@ -123,9 +123,9 @@ class LiveVotingNumberRangePlayerGUI extends LiveVotingQuestionTypesUI
     {
         global $DIC;
 
-        $template = new IlTemplate(ilLiveVotingPlugin::getInstance()->getDirectory().'/templates/default/QuestionTypes/NumberRange/tpl.number_range.html', true, true);
+        $template = new IlTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/QuestionTypes/NumberRange/tpl.number_range.html', true, true);
         $template->setVariable('ACTION', $DIC->ctrl()->getFormAction($this));
-        $template->setVariable('SHOW_PERCENTAGE', (int) $this->getPlayer()->getActiveVotingObject()->isPercentage());
+        $template->setVariable('SHOW_PERCENTAGE', (int)$this->getPlayer()->getActiveVotingObject()->isPercentage());
 
         /**
          * @var LiveVotingVote[] $userVotes
@@ -138,7 +138,7 @@ class LiveVotingNumberRangePlayerGUI extends LiveVotingQuestionTypesUI
         $template->setVariable('SLIDER_STEP', $this->getStep());
         if (!empty($userVotes) && $userVotes[0] instanceof LiveVotingVote) {
             $user_has_voted = true;
-            $value = (int) $userVotes[0]->getFreeInput();
+            $value = (int)$userVotes[0]->getFreeInput();
         } else {
             $user_has_voted = false;
             $value = $this->getDefaultValue();
@@ -173,7 +173,7 @@ class LiveVotingNumberRangePlayerGUI extends LiveVotingQuestionTypesUI
      * @return bool
      * @throws LiveVotingException
      */
-    private function isVoteValid(int $start,int $end,float $value): bool
+    private function isVoteValid(int $start, int $end, float $value): bool
     {
         return ($value >= $start && $value <= $end && $value == $this->snapToStep($value));
     }
@@ -185,7 +185,7 @@ class LiveVotingNumberRangePlayerGUI extends LiveVotingQuestionTypesUI
      */
     private function getStart(): int
     {
-        return (int) $this->getPlayer()->getActiveVotingObject()->getStartRange();
+        return (int)$this->getPlayer()->getActiveVotingObject()->getStartRange();
     }
 
 
@@ -195,7 +195,7 @@ class LiveVotingNumberRangePlayerGUI extends LiveVotingQuestionTypesUI
      */
     private function getEnd(): int
     {
-        return (int) $this->getPlayer()->getActiveVotingObject()->getEndRange();
+        return (int)$this->getPlayer()->getActiveVotingObject()->getEndRange();
     }
 
 
@@ -205,7 +205,7 @@ class LiveVotingNumberRangePlayerGUI extends LiveVotingQuestionTypesUI
      */
     public function getStep(): int
     {
-        return (int) $this->getPlayer()->getActiveVotingObject()->getStepRange();
+        return (int)$this->getPlayer()->getActiveVotingObject()->getStepRange();
     }
 
 

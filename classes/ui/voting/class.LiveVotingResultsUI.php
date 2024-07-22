@@ -60,7 +60,7 @@ class LiveVotingResultsUI
     private function buildRound(): void
     {
         if ($_GET['round_id']) {
-            $this->round = new LiveVotingRound((int) $_GET['round_id']);
+            $this->round = new LiveVotingRound((int)$_GET['round_id']);
         } else {
             $this->round = LiveVotingRound::getLatestRound($this->liveVoting->getId());
         }

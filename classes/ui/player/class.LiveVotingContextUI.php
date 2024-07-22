@@ -45,7 +45,7 @@ class LiveVotingContextUI implements ilContextTemplate
     /**
      * @return bool
      */
-    public static function supportsRedirects():bool
+    public static function supportsRedirects(): bool
     {
         return false;
     }
@@ -54,7 +54,7 @@ class LiveVotingContextUI implements ilContextTemplate
     /**
      * @return bool
      */
-    public static function hasUser():bool
+    public static function hasUser(): bool
     {
         return true;
     }
@@ -63,7 +63,7 @@ class LiveVotingContextUI implements ilContextTemplate
     /**
      * @return bool
      */
-    public static function usesHTTP():bool
+    public static function usesHTTP(): bool
     {
         return true;
     }
@@ -72,7 +72,7 @@ class LiveVotingContextUI implements ilContextTemplate
     /**
      * @return bool
      */
-    public static function hasHTML():bool
+    public static function hasHTML(): bool
     {
         return true;
     }
@@ -90,7 +90,7 @@ class LiveVotingContextUI implements ilContextTemplate
     /**
      * @return bool
      */
-    public static function initClient():bool
+    public static function initClient(): bool
     {
         return true;
     }
@@ -99,7 +99,7 @@ class LiveVotingContextUI implements ilContextTemplate
     /**
      * @return bool
      */
-    public static function doAuthentication():bool
+    public static function doAuthentication(): bool
     {
         return false;
     }
@@ -109,7 +109,7 @@ class LiveVotingContextUI implements ilContextTemplate
      * Check if persistent sessions are supported
      * false for context cli
      */
-    public static function supportsPersistentSessions():bool
+    public static function supportsPersistentSessions(): bool
     {
         return false;
     }
@@ -120,7 +120,7 @@ class LiveVotingContextUI implements ilContextTemplate
      *
      * @return bool
      */
-    public static function supportsPushMessages():bool
+    public static function supportsPushMessages(): bool
     {
         return false;
     }

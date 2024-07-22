@@ -17,7 +17,9 @@ declare(strict_types=1);
  * info@surlabs.es
  *
  */
+
 namespace LiveVoting\UI\Player\CustomUI;
+
 use ilDateTime;
 use ilDateTimeException;
 use ilFormPropertyGUI;
@@ -86,7 +88,7 @@ class MultiLineNewInputGUI extends ilFormPropertyGUI implements ilTableFilterIte
     }
 
 
-    public static function init() : void
+    public static function init(): void
     {
 
         global $tpl;
@@ -94,8 +96,8 @@ class MultiLineNewInputGUI extends ilFormPropertyGUI implements ilTableFilterIte
 
         if (self::$init === false) {
             self::$init = true;
-            $tpl->addCss(ilLiveVotingPlugin::getInstance()->getDirectory()."/templates/customUI/MultiLineNewInputGUI/css/multi_line_new_input_gui.css");
-            $tpl->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory()."/templates/customUI/MultiLineNewInputGUI/js/multi_line_new_input_gui.min.js");
+            $tpl->addCss(ilLiveVotingPlugin::getInstance()->getDirectory() . "/templates/customUI/MultiLineNewInputGUI/css/multi_line_new_input_gui.css");
+            $tpl->addJavaScript(ilLiveVotingPlugin::getInstance()->getDirectory() . "/templates/customUI/MultiLineNewInputGUI/js/multi_line_new_input_gui.min.js");
         }
     }
 
@@ -103,7 +105,7 @@ class MultiLineNewInputGUI extends ilFormPropertyGUI implements ilTableFilterIte
     /**
      * @param ilFormPropertyGUI $input
      */
-    public function addInput(ilFormPropertyGUI $input) : void
+    public function addInput(ilFormPropertyGUI $input): void
     {
         $this->inputs[] = $input;
         $this->inputs_generated = null;
@@ -122,7 +124,7 @@ class MultiLineNewInputGUI extends ilFormPropertyGUI implements ilTableFilterIte
 
         $originalPost = $http->request()->getParsedBody();
 
-        if(count($this->getInputs($this->getRequired()))==0 || $this->getInputs($this->getRequired())==null){
+        if (count($this->getInputs($this->getRequired())) == 0 || $this->getInputs($this->getRequired()) == null) {
             $DIC->ui()->mainTemplate()->setOnScreenMessage('failure', $DIC->language()->txt("form_input_not_valid_key_missing", 'options'));
             $ok = false;
         }
@@ -172,7 +174,7 @@ class MultiLineNewInputGUI extends ilFormPropertyGUI implements ilTableFilterIte
      * @return ilFormPropertyGUI[][]
      * @throws ilDateTimeException
      */
-    public function getInputs(bool $need_one_line_at_least = true) : array
+    public function getInputs(bool $need_one_line_at_least = true): array
     {
         if ($this->inputs_generated === null) {
             $this->inputs_generated = [];
@@ -195,7 +197,7 @@ class MultiLineNewInputGUI extends ilFormPropertyGUI implements ilTableFilterIte
 
                           }*/
 
-                    self::setValueToItem($input, array_key_exists($org_post_var,$value) ? $value[$org_post_var] : '');
+                    self::setValueToItem($input, array_key_exists($org_post_var, $value) ? $value[$org_post_var] : '');
 
                     $post_var = $this->getPostVar() . "[" . $i . "][";
                     if (strpos($org_post_var, "[") !== false) {
@@ -219,7 +221,7 @@ class MultiLineNewInputGUI extends ilFormPropertyGUI implements ilTableFilterIte
     /**
      * @param ilFormPropertyGUI[] $inputs
      */
-    public function setInputs(array $inputs) : void
+    public function setInputs(array $inputs): void
     {
         $this->inputs = $inputs;
         $this->inputs_generated = null;
@@ -229,7 +231,7 @@ class MultiLineNewInputGUI extends ilFormPropertyGUI implements ilTableFilterIte
     /**
      * @return int
      */
-    public function getShowInputLabel() : int
+    public function getShowInputLabel(): int
     {
         return $this->show_input_label;
     }
@@ -238,7 +240,7 @@ class MultiLineNewInputGUI extends ilFormPropertyGUI implements ilTableFilterIte
     /**
      * @param int $show_input_label
      */
-    public function setShowInputLabel(int $show_input_label) : void
+    public function setShowInputLabel(int $show_input_label): void
     {
         $this->show_input_label = $show_input_label;
     }
@@ -247,7 +249,7 @@ class MultiLineNewInputGUI extends ilFormPropertyGUI implements ilTableFilterIte
     /**
      * @inheritDoc
      */
-    public function getTableFilterHTML() : string
+    public function getTableFilterHTML(): string
     {
         return $this->render();
     }
@@ -256,7 +258,7 @@ class MultiLineNewInputGUI extends ilFormPropertyGUI implements ilTableFilterIte
     /**
      * @inheritDoc
      */
-    public function getToolbarHTML() : string
+    public function getToolbarHTML(): string
     {
         return $this->render();
     }
@@ -267,7 +269,7 @@ class MultiLineNewInputGUI extends ilFormPropertyGUI implements ilTableFilterIte
      *
      * @return array
      */
-    public function getValue(bool $need_one_line_at_least = false) : array
+    public function getValue(bool $need_one_line_at_least = false): array
     {
         $values = $this->value;
 
@@ -282,7 +284,7 @@ class MultiLineNewInputGUI extends ilFormPropertyGUI implements ilTableFilterIte
     /**
      * @param array $value
      */
-    public function setValue(/*array*/ $value) : void
+    public function setValue(/*array*/ $value): void
     {
         if (is_array($value)) {
             $this->value = $value;
@@ -296,7 +298,7 @@ class MultiLineNewInputGUI extends ilFormPropertyGUI implements ilTableFilterIte
      * @param ilTemplate $tpl
      * @throws ilTemplateException
      */
-    public function insert(ilTemplate $tpl) : void
+    public function insert(ilTemplate $tpl): void
     {
         $html = $this->render();
 
@@ -309,7 +311,7 @@ class MultiLineNewInputGUI extends ilFormPropertyGUI implements ilTableFilterIte
     /**
      * @return bool
      */
-    public function isShowSort() : bool
+    public function isShowSort(): bool
     {
         return $this->show_sort;
     }
@@ -318,7 +320,7 @@ class MultiLineNewInputGUI extends ilFormPropertyGUI implements ilTableFilterIte
     /**
      * @param bool $show_sort
      */
-    public function setShowSort(bool $show_sort) : void
+    public function setShowSort(bool $show_sort): void
     {
         $this->show_sort = $show_sort;
     }
@@ -330,7 +332,7 @@ class MultiLineNewInputGUI extends ilFormPropertyGUI implements ilTableFilterIte
      * @throws ilDateTimeException
      * @throws ilSystemStyleException
      */
-    public function render() : string
+    public function render(): string
     {
         global $DIC;
         $counter = ++self::$counter;
@@ -352,7 +354,7 @@ class MultiLineNewInputGUI extends ilFormPropertyGUI implements ilTableFilterIte
                 $tpl->setVariable("HIDE_ADD_FIRST_LINE", $tpl_hidden->get());
             }
 
-            $tpl->setVariable("ADD_FIRST_LINE", $DIC->ui()->renderer()->renderAsync(($DIC->ui()->factory()->symbol()->glyph()->add()->withAdditionalOnLoadCode(function (string $id) use ($counter) : string {
+            $tpl->setVariable("ADD_FIRST_LINE", $DIC->ui()->renderer()->renderAsync(($DIC->ui()->factory()->symbol()->glyph()->add()->withAdditionalOnLoadCode(function (string $id) use ($counter): string {
                 return 'il.MultiLineNewInputGUI.clone_template = {};il.MultiLineNewInputGUI.init(' . $counter . ', $("#' . $id . '").parent().parent().parent(), true);';
             }))));
 
@@ -384,7 +386,7 @@ class MultiLineNewInputGUI extends ilFormPropertyGUI implements ilTableFilterIte
                 $tpl->setVariable("SORT", $sort_tpl->get());
             }
 
-            $tpl->setVariable("ADD", $DIC->ui()->renderer()->renderAsync($DIC->ui()->factory()->symbol()->glyph()->add()->withAdditionalOnLoadCode(function (string $id) use ($i, $counter) : string {
+            $tpl->setVariable("ADD", $DIC->ui()->renderer()->renderAsync($DIC->ui()->factory()->symbol()->glyph()->add()->withAdditionalOnLoadCode(function (string $id) use ($i, $counter): string {
                 return 'il.MultiLineNewInputGUI.init(' . $counter . ', $("#' . $id . '").parent().parent().parent())' . ($i === (count($this->getInputs()) - 1) ? ';il.MultiLineNewInputGUI.update('
                         . $counter . ', $("#'
                         . $id
@@ -406,10 +408,10 @@ class MultiLineNewInputGUI extends ilFormPropertyGUI implements ilTableFilterIte
     /**
      * @param array $values
      */
-    public function setValueByArray(array $values) : void
+    public function setValueByArray(array $values): void
     {
 
-        if(isset($values[$this->getPostVar()])){
+        if (isset($values[$this->getPostVar()])) {
             $this->setValue($values[$this->getPostVar()]);
 
         }
@@ -418,7 +420,7 @@ class MultiLineNewInputGUI extends ilFormPropertyGUI implements ilTableFilterIte
     /**
      * @throws ilDateTimeException
      */
-    public static function setValueToItem($item, $value) : void
+    public static function setValueToItem($item, $value): void
     {
         if ($item instanceof MultiLineNewInputGUI) {
             $item->setValueByArray([
@@ -459,7 +461,7 @@ class MultiLineNewInputGUI extends ilFormPropertyGUI implements ilTableFilterIte
      * @throws ilTemplateException
      * @throws ilSystemStyleException
      */
-    public static function renderInputs(array $inputs) : string
+    public static function renderInputs(array $inputs): string
     {
         global $DIC;
         self::init();
@@ -483,9 +485,7 @@ class MultiLineNewInputGUI extends ilFormPropertyGUI implements ilTableFilterIte
             }
 
 
-
-
-            $input_html =  $input->render();
+            $input_html = $input->render();
             $input_html = str_replace('<div class="control-label"></div>', "", $input_html);
             $input_tpl->setVariable("INPUT", $input_html);
 

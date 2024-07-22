@@ -78,7 +78,7 @@ class LiveVotingFreeInputUI
         $this->factory = $DIC->ui()->factory();
         $this->renderer = $DIC->ui()->renderer();
 
-        if($question_id) {
+        if ($question_id) {
             $this->question = LiveVotingQuestion::loadQuestionById($question_id);
         }
     }
@@ -120,15 +120,14 @@ class LiveVotingFreeInputUI
                 ->withValue(isset($this->question) ? $this->question->getAnswerField() : 1);
 
 
-
             $section_answers = $this->factory->input()->field()->section($form_answers, $this->plugin->txt("qtype_form_header"), "");
 
-            $sections =  [
+            $sections = [
                 "config_question" => $section_questions,
                 "config_answers" => $section_answers
             ];
 
-            if(isset($this->question)){
+            if (isset($this->question)) {
                 $this->control->setParameterByClass(ilObjLiveVotingGUI::class, "question_id", $this->question->getId());
                 $form_action = $this->control->getFormActionByClass(ilObjLiveVotingGUI::class, "edit");
 
@@ -222,8 +221,8 @@ class LiveVotingFreeInputUI
 
             $question->setTitle($question_data["title"] ?? null);
             $question->setQuestion($_POST["form/input_0/input_2"] ?? null);
-            $question->setMultiFreeInput($answers_data["multi_input"] ? (bool) $answers_data["multi_input"] : false);
-            $question->setAnswerField($answers_data["answer_field"] ? (int) $answers_data["answer_field"] : 1);
+            $question->setMultiFreeInput($answers_data["multi_input"] ? (bool)$answers_data["multi_input"] : false);
+            $question->setAnswerField($answers_data["answer_field"] ? (int)$answers_data["answer_field"] : 1);
 
             $id = ilObject::_lookupObjId((int)$_GET['ref_id']);
             $question->setObjId($id);
