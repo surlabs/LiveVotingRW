@@ -7,17 +7,22 @@
 
 .multiple-input .action-buttons, .order-input-container .action-buttons{
     display:flex;
-    align-items:end;
     gap:5px;
     flex-shrink: 0;
-    flex-direction: row !important;
-    justify-content: start !important;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
 }
 
 .order-input-container .action-buttons{
     padding-bottom:5px;
+    align-items: end;
+
 }
 
+.order-input-container .action-buttons button{
+    height: 26px;
+}
 
 .order-input-container{
     margin-bottom:10px;
