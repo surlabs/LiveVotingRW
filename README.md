@@ -8,7 +8,9 @@
 # LiveVoting Repository Object Plugin for ILIAS 8 (Beta)
 ## **This plugin is on public Beta since 23.07.2024**
 This plugin allows to create real time votings within ILIAS.
-It is compatible with the previous LiveVoting plugin for ILIAS < 7.0.
+It is compatible with the previous LiveVoting plugin for ILIAS < 7.0 information and objects.
+### Software Requirements
+This LiveVoting version 8.0 requires [PHP](https://php.net) version 8.0.x to work properly on your ILIAS 8 platform
 
 ## Installation & Update
 Please, notice that previous versions of the plugin were numbered with dates (e.g. 2021.01.01). This version is numbered with the ILIAS version it is compatible with (e.g. ilias8 -> 9.x).

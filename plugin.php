@@ -19,13 +19,13 @@
 
 $id = 'xlvo';
 
-$version = '1.9.0';
+$version = '8.0.1';
 
 $ilias_min_version = '8.0';
 $ilias_max_version = '8.999';
 
 $responsible = 'Jesus Copado';
-$responsible_mail = 'jcopado@surlabs.es';
+$responsible_mail = 'jcopado@surlabs.com';
 
 $supports_export = false;
 $supports_cli_setup = true;
