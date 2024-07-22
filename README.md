@@ -6,7 +6,7 @@
 </div>
 
 # LiveVoting Repository Object Plugin for ILIAS 8 (Beta)
-## **This plugin is on public Beta from 23.07.2024 to 23.09.2024**
+## **This plugin is on public Beta since 23.07.2024**
 This plugin allows to create real time votings within ILIAS.
 It is compatible with the previous LiveVoting plugin for ILIAS < 7.0.
 
