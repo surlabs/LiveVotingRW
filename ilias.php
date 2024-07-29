@@ -37,7 +37,8 @@ switch ($context) {
     case 2:
     default:
         LiveVotingInitialisation::init();
-        LiveVotingParticipant::getInstance()->setIdentifier(session_id())->setType(1);
+        global $DIC;
+        LiveVotingParticipant::getInstance()->setIdentifier((string) $DIC->user()->getId())->setType(1);
 
         break;
 }

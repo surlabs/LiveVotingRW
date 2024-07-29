@@ -406,7 +406,7 @@ class LiveVotingVote
             $vote->setLastUpdate(LiveVotingUtils::getTime());
         }
 
-        $vote->setUserIdType($participant->isILIASUser() ? 0 : 1);
+        $vote->setUserIdType($participant->isILIASUser() ? 1 : 2);
 
         if ($participant->isILIASUser()) {
             $vote->setUserId((int)$participant->getIdentifier());

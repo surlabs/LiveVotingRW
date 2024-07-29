@@ -750,12 +750,12 @@ class LiveVotingPlayer
             $vote = new LiveVotingVote((int)$item['vote_id']);
             $user = LiveVotingParticipant::getInstance();
 
-            if ($user->getType() == 1) {
+            if ($user->isILIASUser()) {
                 $vote->setUserId((int)$user->getIdentifier());
-                $vote->setUserIdType(0);
+                $vote->setUserIdType(1);
             } else {
                 $vote->setUserIdentifier($user->getIdentifier());
-                $vote->setUserIdType(1);
+                $vote->setUserIdType(2);
             }
 
             $vote->setVotingId($this->getActiveVoting());
