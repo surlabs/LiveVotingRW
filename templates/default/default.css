@@ -127,7 +127,13 @@ div.xlvo-preview-outer {
   cursor: move;
 }
 span.xlvo-label-url {
-  font-size: 3vw;
+  font-size: 24px !important;
+  line-break: anywhere;
+  background: grey;
+  color: white;
+  border-radius: 5px;
+  text-align: center;
+  padding: 0 5px;
 }
 #ilAdvSelListTable_xlvo_select {
   width: 220px !important;
