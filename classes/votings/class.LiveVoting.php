@@ -114,7 +114,7 @@ class LiveVoting
 
                 break;
             default:
-                $url = ilLink::_getStaticLink($ref_id, ilLiveVotingPlugin::PLUGIN_ID);
+                $url = ilLink::_getStaticLink($ref_id, ilLiveVotingPlugin::PLUGIN_ID, true, "pin_" . $this->getPin());
                 break;
         }
 

@@ -23,6 +23,8 @@ use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
 use LiveVoting\legacy\LiveVotingResultsTableGUI;
 use LiveVoting\legacy\liveVotingTableGUI;
+use LiveVoting\platform\ilias\LiveVotingInitialisation;
+use LiveVoting\platform\LiveVotingConfig;
 use LiveVoting\platform\LiveVotingDatabase;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\questions\LiveVotingQuestion;
@@ -1205,5 +1207,26 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
             $DIC->ctrl()->redirect($this, "manage");
         }
+    }
+
+    /**
+     * @throws ilCtrlException
+     * @throws Exception
+     */
+    public static function _goto(array $a_target): void
+    {
+        if (preg_match("/[\\d]*_pin_([\\w]*)/", $a_target[0], $matches)) {
+            global $DIC;
+
+            LiveVotingInitialisation::saveContext(2);
+
+            $param_manager = ParamManager::getInstance();
+            $param_manager->setPin($matches[1]);
+
+            $DIC->ctrl()->setTargetScript(ltrim(LiveVotingConfig::getFullApiURL(), './'));
+            $DIC->ctrl()->redirectByClass(["ilUIPluginRouterGUI", "LiveVotingPlayerGUI"], 'startVoterPlayer');
+        }
+
+        parent::_goto($a_target);
     }
 }
