@@ -491,7 +491,7 @@ class LiveVotingInitialisationUI
 
         if (!defined('ILIAS_MODULE')) {
             $path = pathinfo($rq_uri);
-            if (!$path['extension']) {
+            if (!isset($path['extension']) || !$path['extension']) {
                 $uri = $rq_uri;
             } else {
                 $uri = dirname($rq_uri);

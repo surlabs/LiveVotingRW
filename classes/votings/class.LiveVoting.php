@@ -107,7 +107,7 @@ class LiveVoting
 
                 if ($shortLinkEnabled) {
                     $url = LiveVotingConfig::get("allow_shortlink_link");
-                    $url = rtrim($url, "/") . "/";
+                    $url = rtrim($url, "/") . "/" . $this->pin;
                 } else {
                     $url = ILIAS_HTTP_PATH . '/' . ilLiveVotingPlugin::getInstance()->getDirectory() . '/pin.php?xlvo_pin=' . $this->getPin();
                 }
