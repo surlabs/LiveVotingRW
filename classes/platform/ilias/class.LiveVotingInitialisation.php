@@ -21,12 +21,15 @@ declare(strict_types=1);
 namespace LiveVoting\platform\ilias;
 
 use Exception;
+use ilGlobalTemplate;
 use ILIAS\DI\Container;
 use ilInitialisation;
 use iljQueryUtil;
 use ilLiveVotingPlugin;
 use ilLoggerFactory;
 use ilObjectDefinition;
+use ilTemplate;
+use ilTemplateException;
 use ilTree;
 use ilUIFramework;
 use LiveVoting\platform\LiveVotingConfig;
@@ -147,6 +150,7 @@ class LiveVotingInitialisation extends ilInitialisation
     /**
      *
      * @throws LiveVotingException
+     * @throws ilTemplateException
      */
     protected static function initHTML2(): void
     {
@@ -164,17 +168,15 @@ class LiveVotingInitialisation extends ilInitialisation
             $DIC->offsetUnset("styleDefinition");
         }
 
-        self::initHTML();
+        if (self::getContext() != 2) {
+            self::initHTML();
+        }
 
-        $tpl = ilLiveVotingPlugin::getInstance()->template("default/tpl.main.html");
+        $tpl = new ilGlobalTemplate("tpl.main.html", true, true, "Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting", "DEFAULT", true);
 
         $tpl->touchBlock("navbar");
         $tpl->addCss('./templates/default/delos.css');
         $tpl->addBlockFile("CONTENT", "content", "tpl.main_voter.html", ilLiveVotingPlugin::getInstance()->getDirectory());
-
-        if ($DIC->offsetExists("tpl")) {
-            $DIC->offsetUnset("tpl");
-        }
 
         self::initGlobal("tpl", $tpl);
 
