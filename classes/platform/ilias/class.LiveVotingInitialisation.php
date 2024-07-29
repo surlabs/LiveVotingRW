@@ -60,7 +60,13 @@ class LiveVotingInitialisation extends ilInitialisation
         if ($context) {
             self::saveContext($context);
         } else {
-            self::setContext(LiveVotingContext::getContext());
+            $context = (int) LiveVotingContext::getContext();
+
+            if ($context > 0 && $context < 3) {
+                self::setContext($context);
+            } else {
+                throw new LiveVotingException("Invalid context");
+            }
         }
 
         $this->run();
