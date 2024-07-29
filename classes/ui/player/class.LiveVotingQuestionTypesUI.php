@@ -52,7 +52,7 @@ abstract class LiveVotingQuestionTypesUI
         switch ($nextClass) {
             default:
                 $cmd = null;
-                if (array_key_exists('cmd', $_POST)) {
+                if (isset($_POST['cmd'])) {
                     $cmd = $_POST['cmd'];
                     if (!empty($cmd)) {
                         if (is_array($cmd)) {
