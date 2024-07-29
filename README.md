@@ -27,6 +27,7 @@ cd Customizing/global/plugins/Services/Repository/RepositoryObject
 
 ```bash
 git clone https://github.com/surlabs/LiveVotingRW.git ./LiveVoting
+cd LiveVoting
 git checkout ilias9
 ```
 
