@@ -54,4 +54,9 @@ class ilLiveVotingPlugin extends ilRepositoryObjectPlugin
 
         return self::$instance;
     }
+
+    public function allowCopy(): bool
+    {
+        return true;
+    }
 }
