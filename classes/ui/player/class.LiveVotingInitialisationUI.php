@@ -29,6 +29,7 @@ use ilErrorHandling;
 use ilGlobalTemplate;
 use ilGSProviderFactory;
 use ilHelp;
+use ilHelpUITextRetriever;
 use ilHTTPS;
 use ILIAS\DI\Container;
 use ILIAS\DI\Exceptions\Exception;
@@ -166,6 +167,7 @@ class LiveVotingInitialisationUI
         $this->initTabs();
         $this->initNavigationHistory();
         $this->initHelp();
+        $this->initHelpTextRetriever();
 
         LiveVotingInitialisation::initUIFramework($DIC);
     }
@@ -785,6 +787,15 @@ class LiveVotingInitialisationUI
     private function initHelp(): void
     {
         $this->makeGlobal('ilHelp', new ilHelp());
+    }
+
+    /**
+     * Initialise a fake help text retriever service to satisfy the help system module.
+     * @return void
+     */
+    private function initHelpTextRetriever(): void
+    {
+        $this->makeGlobal('help.text_retriever', new ilHelpUITextRetriever());
     }
 
     /**
