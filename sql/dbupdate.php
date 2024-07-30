@@ -673,3 +673,11 @@ if (!$db->tableExists('xlvo_voter')) {
 <?php
 //Current Version
 ?>
+<#43>
+<?php
+global $DIC;
+$db = $DIC->database();
+if (!$db->tableExists('xlvo_voter_seq')) {
+    $db->createSequence('xlvo_voter');
+}
+?>
