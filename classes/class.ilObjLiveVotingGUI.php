@@ -136,6 +136,11 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
     public function showContent(): void
     {
+        if (!ilObjLiveVotingAccess::hasWriteAccess()) {
+            $this->tpl->setContent($this->renderer->render($this->factory->messageBox()->failure($this->plugin->txt("permission_denied"))));
+            return;
+        }
+
         $liveVotingUI = new LiveVotingUI($this->object->getLiveVoting());
 
         $this->tabs->activateTab("tab_content");
@@ -340,23 +345,25 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
      */
     protected function setTabs(): void
     {
-        $this->tabs->addTab("tab_content", $this->lng->txt("tab_content"), $this->ctrl->getLinkTarget($this, "index"));
-        $this->tabs->addTab("tab_manage", $this->plugin->txt("tab_manage"), $this->ctrl->getLinkTarget($this, "manage"));
-        $this->tabs->addTab("tab_results", $this->plugin->txt("tab_results"), $this->ctrl->getLinkTarget($this, "results"));
-        $this->tabs->addTab("info_short", $this->lng->txt('info_short'), $this->ctrl->getLinkTargetByClass(array(
-            get_class($this),
-            "ilInfoScreenGUI",
-        ), "showSummary"));
-
-        if ($this->checkPermissionBool("write")) {
-            $this->tabs->addTab("tab_edit", $this->plugin->txt("tab_edit"), $this->ctrl->getLinkTarget($this, "editProperties"));
-        }
-
-        if ($this->checkPermissionBool("edit_permission")) {
-            $this->tabs->addTab("perm_settings", $this->lng->txt("perm_settings"), $this->ctrl->getLinkTargetByClass(array(
+        if (ilObjLiveVotingAccess::hasWriteAccess()) {
+            $this->tabs->addTab("tab_content", $this->lng->txt("tab_content"), $this->ctrl->getLinkTarget($this, "index"));
+            $this->tabs->addTab("tab_manage", $this->plugin->txt("tab_manage"), $this->ctrl->getLinkTarget($this, "manage"));
+            $this->tabs->addTab("tab_results", $this->plugin->txt("tab_results"), $this->ctrl->getLinkTarget($this, "results"));
+            $this->tabs->addTab("info_short", $this->lng->txt('info_short'), $this->ctrl->getLinkTargetByClass(array(
                 get_class($this),
-                "ilPermissionGUI",
-            ), "perm"));
+                "ilInfoScreenGUI",
+            ), "showSummary"));
+
+            if ($this->checkPermissionBool("write")) {
+                $this->tabs->addTab("tab_edit", $this->plugin->txt("tab_edit"), $this->ctrl->getLinkTarget($this, "editProperties"));
+            }
+
+            if ($this->checkPermissionBool("edit_permission")) {
+                $this->tabs->addTab("perm_settings", $this->lng->txt("perm_settings"), $this->ctrl->getLinkTargetByClass(array(
+                    get_class($this),
+                    "ilPermissionGUI",
+                ), "perm"));
+            }
         }
     }
 
