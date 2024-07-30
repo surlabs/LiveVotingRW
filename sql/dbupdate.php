@@ -505,8 +505,8 @@ if (!$db->tableExists('xlvo_voter')) {
 
     $db->createTable('xlvo_voter', $fields);
     $db->addPrimaryKey('xlvo_voter', ['id']);
-    $db->addIndex('xlvo_voter', ['player_id', 'user_identifier'], 'xlvoin1');
     $db->createSequence('xlvo_voter');
+    $db->addIndex('xlvo_voter', ['player_id', 'user_identifier'], 'xlvoin1');
 }
 ?>
 <#2>
@@ -672,4 +672,12 @@ if (!$db->tableExists('xlvo_voter')) {
 <#42>
 <?php
 //Current Version
+?>
+<#43>
+<?php
+global $DIC;
+$db = $DIC->database();
+if (!$db->tableExists('xlvo_voter_seq')) {
+    $db->createSequence('xlvo_voter');
+}
 ?>
