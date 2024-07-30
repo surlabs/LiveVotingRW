@@ -224,7 +224,6 @@ class LiveVotingPlayerGUI
      */
     public function getHTML(): void
     {
-        global $DIC;
         $tpl_voting = new ilTemplate($this->getPluginObject()->getDirectory() . '/templates/default/Voter/tpl.inner_screen.html', true, true);
         $this->setVotingTemplate($tpl_voting);
 
