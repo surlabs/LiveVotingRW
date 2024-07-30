@@ -51,7 +51,7 @@ php setup/setup.php update
 
 # Bug Reports & Discussion
 - Bug Reports: [Mantis](https://www.ilias.de/mantis) (Choose project "ILIAS plugins" and filter by category "LiveVoting")
-- SIG Panopto [Forum](https://docu.ilias.de/goto_docu_frm_13755.html)
+- SIG LiveVoting: [Forum](https://docu.ilias.de/goto_docu_frm_13535.html)
 
 # Version History
 * The version 9.x.x for **ILIAS 9** maintained by SURLABS can be found in the Github branch **ilias9**
