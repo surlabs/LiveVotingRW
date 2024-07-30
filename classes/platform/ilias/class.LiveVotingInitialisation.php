@@ -174,6 +174,7 @@ class LiveVotingInitialisation extends ilInitialisation
         $tpl = new ilGlobalTemplate("tpl.main.html", true, true, "Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting", "DEFAULT", true);
 
         $tpl->touchBlock("navbar");
+        $tpl->addCss('./templates/default/delos.css');
         $tpl->addCss(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/css/old_delos.css');
         $tpl->addCss(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/default.css');
         //$tpl->addCss('/templates/default/030-tools/legacy-bootstrap-mixins/_nav-divider.scss');
