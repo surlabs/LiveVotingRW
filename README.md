@@ -44,6 +44,15 @@ php setup/setup.php update
 
 **Ensure you don't ignore plugins at the ilias .gitignore files and don't use --no-plugins option at ILIAS setup**
 
+## Configuration
+If you want to use the Shortlink mode, you need to rewrite the rule in .htaccess or Apache-Config
+```apacheconf
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+	RewriteRule ^/?vote(/\w*)? /Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/pin.php?xlvo_pin=$1 [L]
+</IfModule>
+```
+
 # Authors
 * A previous version of this plugin was developed and maintained by Fluxlabs, and it is no longer maintained.
 * This plugin is maintained by Jesús Copado, Saúl Díaz and Daniel Cazalla through [SURLABS](https://surlabs.com)
