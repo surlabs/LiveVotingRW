@@ -54,10 +54,10 @@ class LiveVotingConfig
     /**
      * Set the plugin configuration value for a given key to a given value
      * @param string $key
-     * @param mixed $value
+     * @param $value
      * @return void
      */
-    public static function set(string $key, mixed $value): void
+    public static function set(string $key, $value): void
     {
         if (is_bool($value)) {
             $value = (int)$value;
@@ -72,10 +72,10 @@ class LiveVotingConfig
     /**
      * Gets the plugin configuration value for a given key
      * @param string $key
-     * @return mixed
+     * @return mixed|string
      * @throws LiveVotingException
      */
-    public static function get(string $key): mixed
+    public static function get(string $key)
     {
         return self::$config[$key] ?? self::getFromDB($key);
     }
@@ -83,10 +83,10 @@ class LiveVotingConfig
     /**
      * Gets the plugin configuration value for a given key from the database
      * @param string $key
-     * @return mixed
+     * @return mixed|string
      * @throws LiveVotingException
      */
-    public static function getFromDB(string $key): mixed
+    public static function getFromDB(string $key)
     {
         $config = (new LiveVotingDatabase)->select('xlvo_config', array(
             'name' => $key

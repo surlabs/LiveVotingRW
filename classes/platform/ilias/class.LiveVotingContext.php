@@ -52,9 +52,6 @@ class LiveVotingContext extends ilContext
         return true;
     }
 
-    /**
-     * @return mixed
-     */
     public static function getContext()
     {
         if (!empty($_COOKIE['xlvo_context'])) {
