@@ -30,7 +30,8 @@ class DummyUser extends ilObjUser
      */
     public function __construct()
     {
-
+        $this->prefs = array();
+        $this->prefs["language"] = "en";
     }
 
     /**
