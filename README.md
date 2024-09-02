@@ -13,7 +13,7 @@ It is compatible with the previous LiveVoting plugin for ILIAS < 7.0 information
 This LiveVoting version 8.0 requires [PHP](https://php.net) version 8.0.x to work properly on your ILIAS 8 platform
 
 ## Installation & Update
-Please, notice that previous versions of the plugin were numbered with dates (e.g. 2021.01.01). This version is numbered with the ILIAS version it is compatible with (e.g. ilias8 -> 9.x).
+Please, notice that previous versions of the plugin were numbered with dates (e.g. 2021.01.01). This version is numbered with the ILIAS version it is compatible with (e.g. ilias8 -> 8.x).
 **You need to change the plugin version in the il_plugin table of the database to something lower than 8.0.0 before running the following commands.**
 
 1. **Ensure you delete any previous LiveVoting folder** in Customizing/global/plugins/Services/Repository/RepositoryObject/
