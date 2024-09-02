@@ -54,8 +54,9 @@ If you want to use the Shortlink mode, you need to rewrite the rule in .htaccess
 ```
 
 # Authors
-* A previous version of this plugin was developed and maintained by Fluxlabs, and it is no longer maintained.
-* This plugin is maintained by Jesús Copado, Saúl Díaz and Daniel Cazalla through [SURLABS](https://surlabs.com)
+* Initially created by studer + raimann ag, switzerland
+* Further maintained by fluxlabs ag, switzerland
+* Revamped and currently maintained by SURLABS, spain [SURLABS](https://surlabs.com)
 
 # Bug Reports & Discussion
 - Bug Reports: [Mantis](https://www.ilias.de/mantis) (Choose project "ILIAS plugins" and filter by category "LiveVoting")
