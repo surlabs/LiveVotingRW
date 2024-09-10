@@ -83,13 +83,6 @@ class LiveVotingResultsUI
         $liveVotingTableGUI->initFilter();
         $liveVotingTableGUI->buildData($this->liveVoting->getId(), $this->round->getId());
 
-        if (isset($_SESSION['onscreen_message'])) {
-            $message = $_SESSION['onscreen_message'];
-            $DIC->ui()->mainTemplate()->setOnScreenMessage($message['type'], $message['msg']);
-            unset($_SESSION['onscreen_message']);
-        }
-
-
         return $liveVotingTableGUI->getHTML();
     }
 

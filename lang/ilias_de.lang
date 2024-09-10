@@ -313,3 +313,6 @@ btn_add_answer#:#Eingabe hinzufügen
 category_title#:#Titel der Kategorie
 add_type_error#:#Bitte wählen Sie einen Typen aus.
 permission_denied#:#Berechtigungen verweigert
+voting_msg_all_reset#:#Alle Resultate wurden zurückgesetzt
+voting_msg_reset#:#Resultate wurden zurückgesetzt
+sorting_msg_saved#:#Reihenfolge gespeichert

@@ -677,7 +677,11 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
                 $question->reset();
             }
 
-            $_SESSION['onscreen_message'] = array('type' => 'success', 'msg' => $this->txt('voting_msg_duplicated'));
+            foreach (LiveVotingRound::getRounds($this->obj_id) as $round) {
+                $round->delete();
+            }
+
+            $DIC->ui()->mainTemplate()->setOnScreenMessage("success", $this->txt('voting_msg_all_reset'), true);
 
             $DIC->ctrl()->redirect($this, "manage");
         }
@@ -734,7 +738,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             if ($question->getObjId() == $this->getObjId()) {
                 $question->reset();
 
-                $_SESSION['onscreen_message'] = array('type' => 'success', 'msg' => $this->txt('voting_msg_duplicated'));
+                $DIC->ui()->mainTemplate()->setOnScreenMessage("success", $this->txt('voting_msg_reset'), true);
 
                 $DIC->ctrl()->redirect($this, "manage");
             } else {
@@ -756,7 +760,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
 
         $question->fullClone(true, true);
 
-        $_SESSION['onscreen_message'] = array('type' => 'success', 'msg' => $this->txt('voting_msg_duplicated'));
+        $DIC->ui()->mainTemplate()->setOnScreenMessage("success", $this->txt('voting_msg_duplicated'), true);
 
         $DIC->ctrl()->redirect($this, "manage");
     }
@@ -979,7 +983,9 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
         $newRound->save();
 
         $DIC->ctrl()->setParameter($this, 'round_id', LiveVotingRound::getLatestRound($obj_id)->getId());
-        $_SESSION['onscreen_message'] = array('type' => 'success', 'msg' => $this->plugin->txt("common_new_round_created"));
+
+        $DIC->ui()->mainTemplate()->setOnScreenMessage("success", $this->txt('common_new_round_created'), true);
+
         $DIC->ctrl()->redirect($this, "results");
     }
 
@@ -1210,7 +1216,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
                 $question->save();
             }
 
-            $_SESSION['onscreen_message'] = array('type' => 'success', 'msg' => $this->plugin->txt('msg_success_sorting'));
+            $DIC->ui()->mainTemplate()->setOnScreenMessage("success", $this->txt('sorting_msg_saved'), true);
 
             $DIC->ctrl()->redirect($this, "manage");
         }
