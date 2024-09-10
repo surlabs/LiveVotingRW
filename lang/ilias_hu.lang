@@ -300,3 +300,6 @@ btn_add_answer#:#MISSING
 category_title#:#MISSING
 add_type_error#:#Válassza ki a kérdés típusát.
 permission_denied#:#Engedélyek megtagadva.
+voting_msg_all_reset#:#Az összes válasz törölve
+voting_msg_reset#:#Válasz törölve
+sorting_msg_saved#:#Sorrend mentve

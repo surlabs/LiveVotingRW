@@ -314,3 +314,6 @@ btn_add_answer#:#Add input
 category_title#:#Category Title
 add_type_error#:#Please select a question type.
 permission_denied#:#Permission denied
+voting_msg_all_reset#:#All results have been reset
+voting_msg_reset#:#Results have been reset
+sorting_msg_saved#:#Order has been saved
