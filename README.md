@@ -33,8 +33,9 @@ git checkout ilias9
 
 Ensure you run npm and composer install at platform root before you install/update the plugin
 ```bash
-npm install
 composer install --no-dev
+
+npm install
 ```
 
 Run ILIAS update script at platform root
