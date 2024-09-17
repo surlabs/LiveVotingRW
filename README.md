@@ -31,7 +31,7 @@ cd LiveVoting
 git checkout ilias9
 ```
 
-Ensure you run npm and composer install at platform root before you install/update the plugin
+Ensure you run composer and npm install at platform root before you install/update the plugin
 ```bash
 composer install --no-dev
 
