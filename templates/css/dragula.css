@@ -20,3 +20,6 @@
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
     filter: alpha(opacity=20);
 }
+#categories .col-md-4, .xlvo-vote-free-input{
+    position:relative;
+}
