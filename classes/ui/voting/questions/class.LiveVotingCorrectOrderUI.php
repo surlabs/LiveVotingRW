@@ -138,7 +138,7 @@ class LiveVotingCorrectOrderUI
             $form_answers["input"] = $this->factory->input()->field()->text(
                 $this->plugin->txt('qtype_1_options'))
                 ->withOnLoadCode(function ($id) {
-                    return "xlvoForms.initCorrectOrder('" . $id . "')";
+                    return "xlvoForms.initCorrectOrder('" . $id . "', '" . $this->plugin->txt('qtype_4_option_correct_position') . "', '" . $this->plugin->txt('qtype_4_option_text') . "')";
                 })
                 ->withMaxLength(255)
                 ->withRequired(true);
