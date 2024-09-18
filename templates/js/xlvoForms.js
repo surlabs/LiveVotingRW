@@ -28,7 +28,7 @@ const xlvoForms = {
 
     },
 
-    initCorrectOrder: function (id) {
+    initCorrectOrder: function (id, number_input_label, text_input_label) {
         xlvoForms.parent = $("#" + id).parent();
         const input = $("#"+id);
 
@@ -38,7 +38,7 @@ const xlvoForms = {
             for(let i = 0; i < xlvoForms.inputs.length; i++){
                 const data =  xlvoForms.inputs[i];
 
-                const newInput = xlvoForms.addCorrectOrderInput(input, i+1, parseInt(data.order) ?? 1);
+                const newInput = xlvoForms.addCorrectOrderInput(input, i+1, parseInt(data.order) ?? 1, number_input_label, text_input_label);
 
                 xlvoForms.parent.append(newInput);
 
@@ -46,7 +46,7 @@ const xlvoForms = {
                 $(".order-input").last().val(data.order ?? 1);
             }
         } else {
-            const newInput = xlvoForms.addCorrectOrderInput(input, $(".option-input").length + 1, 1);
+            const newInput = xlvoForms.addCorrectOrderInput(input, $(".option-input").length + 1, 1, number_input_label, text_input_label);
 
             xlvoForms.parent.append(newInput);
         }
@@ -139,7 +139,7 @@ const xlvoForms = {
         `;
     },
 
-    addCorrectOrderInput: function (input, index, option_id) {
+    addCorrectOrderInput: function (input, index, option_id, number_input_label, text_input_label) {
         const currentId = input.attr('id');
         const newId = currentId + '_' + index;
 
@@ -156,11 +156,11 @@ const xlvoForms = {
                 <div class="inputs">
                     <div class="d-flex gap-1">
                         <div class="flex-col shrink-0">
-                            Correct position
+                            ${number_input_label}
                             <input type="number" class="form-control form-control-sm order-input" size="2" min="1" max="999" value="${option_id}">
                         </div>
                         <div class="flex-col term-input">
-                            Term
+                            ${text_input_label}
                             ${newInputHtml.prop("outerHTML")}  
                         </div>
                     </div>

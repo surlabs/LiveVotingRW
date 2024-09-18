@@ -135,10 +135,11 @@ class LiveVotingCorrectOrderUI
                 })
                 ->withLabel('options');
 
+            ["number_input_label" => $number_input_label, "text_input_label" => $text_input_label] = $this->getInputTranslatedLabels();
             $form_answers["input"] = $this->factory->input()->field()->text(
                 $this->plugin->txt('qtype_1_options'))
-                ->withOnLoadCode(function ($id) {
-                    return "xlvoForms.initCorrectOrder('" . $id . "')";
+                ->withOnLoadCode(function ($id) use($number_input_label, $text_input_label) {
+                    return "xlvoForms.initCorrectOrder('" . $id . "', '" . $number_input_label . "', '" . $text_input_label . "')";
                 })
                 ->withMaxLength(255)
                 ->withRequired(true);
@@ -337,5 +338,15 @@ class LiveVotingCorrectOrderUI
         } else {
             return 0;
         }
+    }
+
+    public function getInputTranslatedLabels(): array {
+        $number_input_label = $this->plugin->txt('qtype_4_option_correct_position');
+        $text_input_label = $this->plugin->txt('qtype_4_option_text');
+
+        return [
+            "number_input_label" => $number_input_label,
+            "text_input_label" => $text_input_label
+        ];
     }
 }
