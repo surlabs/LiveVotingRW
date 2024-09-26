@@ -263,7 +263,7 @@ class LiveVotingCorrectOrderUI
             if (!empty($options_data)) {
                 $question = $question_id ? LiveVotingQuestion::loadQuestionById($question_id) : LiveVotingQuestion::loadNewQuestion("CorrectOrder");
                 $question->setTitle($question_data["title"] ?? null);
-                $question->setQuestion($question_data["question"] ?? null);
+                $question->setQuestion($_POST["form/input_0/input_2"] ?? null);
                 $question->setColumns((int)($question_data["columns"] ?? 0));
                 $question->setRandomiseOptionSequence($answers_data["shuffle"] ?? false);
 

@@ -234,7 +234,7 @@ class LiveVotingRangeUI
             $question = $question_id ? LiveVotingQuestion::loadQuestionById($question_id) : LiveVotingQuestion::loadNewQuestion("NumberRange");
 
             $question->setTitle($question_data["title"] ?? null);
-            $question->setQuestion($question_data["question"] ?? null);
+            $question->setQuestion($_POST["form/input_0/input_2"] ?? null);
             $question->setPercentage($answers_data["percentages"] ? (bool)$answers_data["percentages"] : false);
             $question->setAltResultDisplayMode($answers_data["display_mode"] ? (int)$answers_data["display_mode"] : 0);
             $question->setStartRange($answers_data["minimum"] ? (int)$answers_data["minimum"] : 0);
