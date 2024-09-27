@@ -681,3 +681,11 @@ if (!$db->tableExists('xlvo_voter_seq')) {
     $db->createSequence('xlvo_voter');
 }
 ?>
+<#44>
+<?php
+global $DIC;
+$db = $DIC->database();
+if ($db->tableExists('rep_robj_xlvo_voting_n')) {
+    $db->manipulate("ALTER TABLE rep_robj_xlvo_voting_n MODIFY COLUMN question LONGTEXT");
+}
+?>
