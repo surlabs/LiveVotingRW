@@ -33,6 +33,7 @@ use ilObject;
 use ilObjLiveVotingGUI;
 use ilPlugin;
 use ilPropertyFormGUI;
+use ilRTE;
 use ilTextAreaInputGUI;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\questions\LiveVotingQuestion;
@@ -99,7 +100,7 @@ class LiveVotingPrioritiesUI
 
             $form_questions["question"] = $this->factory->input()->field()->textarea(
                 $this->plugin->txt('voting_question'))
-                ->withValue(isset($this->question) ? $this->question->getQuestion() : "")
+                ->withValue(isset($this->question) ? ilRTE::_replaceMediaObjectImageSrc($this->question->getQuestion(), 1) : "")
                 ->withRequired(true);
 
             $form_questions["columns"] = $this->factory->input()->field()->select(
@@ -240,7 +241,7 @@ class LiveVotingPrioritiesUI
                 $question = $question_id ? LiveVotingQuestion::loadQuestionById($question_id) : LiveVotingQuestion::loadNewQuestion("Priorities");
 
                 $question->setTitle($question_data["title"] ?? null);
-                $question->setQuestion($_POST["form/input_0/input_2"] ?? null);
+                $question->setQuestion($_POST["form/input_0/input_2"] ? ilRTE::_replaceMediaObjectImageSrc($_POST["form/input_0/input_2"]) : null);
                 $question->setColumns((int)($question_data["columns"] ?? 0));
 
                 $old_options = $question->getOptions();

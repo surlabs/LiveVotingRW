@@ -529,24 +529,10 @@ class LiveVotingInitialisationUI
     /**
      * @return void
      */
-    private function initErrorHandling()
+    private function initErrorHandling(): void
     {
-        /*error_reporting(E_ALL&~E_DEPRECATED&~E_STRICT&~E_NOTICE);
-
-        $this->requireCommonIncludes();
-
-        require_once "./libs/composer/vendor/filp/whoops/src/Whoops/Util/SystemFacade.php";
-        require_once "./libs/composer/vendor/filp/whoops/src/Whoops/RunInterface.php";
-        require_once "./libs/composer/vendor/filp/whoops/src/Whoops/Run.php";
-        require_once "./libs/composer/vendor/filp/whoops/src/Whoops/Handler/HandlerInterface.php";
-        require_once "./libs/composer/vendor/filp/whoops/src/Whoops/Handler/Handler.php";
-        require_once "./libs/composer/vendor/filp/whoops/src/Whoops/Handler/CallbackHandler.php";
-
-        require_once "./Services/Init/classes/class.ilErrorHandling.php";
         $ilErr = new ilErrorHandling();
-        //$this->makeGlobal("ilErr", $ilErr);
-        $ilErr->setErrorHandling(PEAR_ERROR_CALLBACK, array($ilErr, 'errorHandler'));*/
-        //TODO: Descomentar e implementar esto
+        $this->makeGlobal("ilErr", $ilErr);
     }
 
     /**
