@@ -33,6 +33,7 @@ use ilObject;
 use ilObjLiveVotingGUI;
 use ilPlugin;
 use ilPropertyFormGUI;
+use ilRTE;
 use ilTextAreaInputGUI;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\questions\LiveVotingQuestion;
