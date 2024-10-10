@@ -445,6 +445,7 @@ abstract class LiveVotingQuestion
     {
         $newObj = clone $this;
         $newObj->setId(0);
+        $newObj->setOptions(array());
 
         return $newObj;
     }
