@@ -203,7 +203,7 @@ class LiveVotingDisplayPlayerUI
         $this->tpl->setCurrentBlock('option');
         $this->tpl->setVariable('OPTION_LETTER', $option->getCipher());
         $this->tpl->setVariable('OPTION_COL', $question->getComputedColums());
-        $this->tpl->setVariable('OPTION_TEXT', $option->getText());
+        $this->tpl->setVariable('OPTION_TEXT', $option->getTextForPresentation());
         $this->tpl->parseCurrentBlock();
     }
 

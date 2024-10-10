@@ -87,7 +87,7 @@ class LiveVotingBarMovableUI implements LiveVotingGeneralBarUI
                 if ($this->getShowOptionLetter()) {
                     $this->tpl->setVariable('OPTION_LETTER', $xlvoOption->getCipher());
                 }
-                $this->tpl->setVariable('OPTION', $xlvoOption->getText());
+                $this->tpl->setVariable('OPTION', $xlvoOption->getTextForPresentation());
                 $this->tpl->parseCurrentBlock();
                 $i++;
             }
@@ -98,7 +98,7 @@ class LiveVotingBarMovableUI implements LiveVotingGeneralBarUI
                 if ($this->getShowOptionLetter()) {
                     $this->tpl->setVariable('OPTION_LETTER', $xlvoOption->getCipher());
                 }
-                $this->tpl->setVariable('OPTION', $xlvoOption->getText());
+                $this->tpl->setVariable('OPTION', $xlvoOption->getTextForPresentation());
                 $this->tpl->parseCurrentBlock();
                 $i++;
             }
