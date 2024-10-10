@@ -99,7 +99,7 @@ class LiveVotingCorrectOrderUI
 
             $form_questions["question"] = $this->factory->input()->field()->textarea(
                 $this->plugin->txt('voting_question'))
-                ->withValue(isset($this->question) ? $this->question->getQuestion() : "")
+                ->withValue(isset($this->question) ? ilRTE::_replaceMediaObjectImageSrc($this->question->getQuestion(), 1) : "")
                 ->withRequired(true);
 
             $form_questions["columns"] = $this->factory->input()->field()->select(
@@ -263,7 +263,7 @@ class LiveVotingCorrectOrderUI
             if (!empty($options_data)) {
                 $question = $question_id ? LiveVotingQuestion::loadQuestionById($question_id) : LiveVotingQuestion::loadNewQuestion("CorrectOrder");
                 $question->setTitle($question_data["title"] ?? null);
-                $question->setQuestion($_POST["form/input_0/input_2"] ?? null);
+                $question->setQuestion($_POST["form/input_0/input_2"] ? ilRTE::_replaceMediaObjectImageSrc($_POST["form/input_0/input_2"]) : null);
                 $question->setColumns((int)($question_data["columns"] ?? 0));
                 $question->setRandomiseOptionSequence($answers_data["shuffle"] ?? false);
 

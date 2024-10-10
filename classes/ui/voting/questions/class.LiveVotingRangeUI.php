@@ -33,6 +33,7 @@ use ilObject;
 use ilObjLiveVotingGUI;
 use ilPlugin;
 use ilPropertyFormGUI;
+use ilRTE;
 use ilTextAreaInputGUI;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\questions\LiveVotingQuestion;
@@ -99,7 +100,7 @@ class LiveVotingRangeUI
 
             $form_questions["question"] = $this->factory->input()->field()->textarea(
                 $this->plugin->txt('voting_question'))
-                ->withValue(isset($this->question) ? $this->question->getQuestion() : "")
+                ->withValue(isset($this->question) ? ilRTE::_replaceMediaObjectImageSrc($this->question->getQuestion(), 1) : "")
                 ->withRequired(true);
 
 
@@ -234,7 +235,7 @@ class LiveVotingRangeUI
             $question = $question_id ? LiveVotingQuestion::loadQuestionById($question_id) : LiveVotingQuestion::loadNewQuestion("NumberRange");
 
             $question->setTitle($question_data["title"] ?? null);
-            $question->setQuestion($_POST["form/input_0/input_2"] ?? null);
+            $question->setQuestion($_POST["form/input_0/input_2"] ? ilRTE::_replaceMediaObjectImageSrc($_POST["form/input_0/input_2"]) : null);
             $question->setPercentage($answers_data["percentages"] ? (bool)$answers_data["percentages"] : false);
             $question->setAltResultDisplayMode($answers_data["display_mode"] ? (int)$answers_data["display_mode"] : 0);
             $question->setStartRange($answers_data["minimum"] ? (int)$answers_data["minimum"] : 0);
