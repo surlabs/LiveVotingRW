@@ -84,7 +84,7 @@ class LiveVotingInputPrioritiesUI extends LiveVotingInputCorrectOrderUI
             $xlvoBarPercentageGUI->setRound(2);
             $xlvoBarPercentageGUI->setShowInPercent(false);
             $xlvoBarPercentageGUI->setMaxVotes($possible_max);
-            $xlvoBarPercentageGUI->setTitle($xlvoOption->getText());
+            $xlvoBarPercentageGUI->setTitle($xlvoOption->getTextForPresentation());
             if ($total_voters == 0) {
                 $xlvoBarPercentageGUI->setVotes($total_voters);
             } else {

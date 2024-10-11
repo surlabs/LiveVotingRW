@@ -131,7 +131,7 @@ class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
             $answer_count++;
             $DIC->ctrl()->setParameter($this, 'option_id', $xlvoOption->getId());
             $tpl->setCurrentBlock('option');
-            $tpl->setVariable('TITLE', $xlvoOption->getText());
+            $tpl->setVariable('TITLE', $xlvoOption->getTextForPresentation());
             $tpl->setVariable('LINK', $DIC->ctrl()->getLinkTarget($this, 'submit'));
             $tpl->setVariable('OPTION_LETTER', chr($answer_count));
             if ($this->player->hasUserVotedForOption($xlvoOption->getId())) {
