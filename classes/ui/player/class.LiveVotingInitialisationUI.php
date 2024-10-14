@@ -153,6 +153,7 @@ class LiveVotingInitialisationUI
         $this->initFilesystem();
         $this->initResourceStorage();
         $this->initGlobalScreen($GLOBALS["DIC"]);
+        $this->initRbacAdmin();
         $this->initTemplate();
         $this->initTabs();
         $this->initNavigationHistory();
@@ -188,6 +189,14 @@ class LiveVotingInitialisationUI
                 $_GET[$k] = strip_tags($_GET[$k]);
             }
         }
+    }
+
+    /**
+     * Initialize a fake rbacadmin service to satisfy the help system module
+     */
+    private function initRbacAdmin(): void
+    {
+        $this->makeGlobal('rbacadmin', new \ilRbacAdmin());
     }
 
     /**
