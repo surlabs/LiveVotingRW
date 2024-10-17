@@ -29,9 +29,6 @@ const xlvoForms = {
     },
 
     initCorrectOrder: function (id, number_input_label, text_input_label) {
-        console.log(id);
-        console.log(number_input_label);
-        console.log(number_input_label);
 
         xlvoForms.parent = $("#" + id).parent();
         const input = $("#"+id);
@@ -62,7 +59,6 @@ const xlvoForms = {
         $(document).on("keyup" ,".option-input", function(){
             xlvoForms.updateOrderInputs();
         });
-
 
     },
 
@@ -170,8 +166,8 @@ const xlvoForms = {
                     </div>
                 </div>
                 <div class="action-buttons shrink-0">
-                    <button type="button" name="Add" class="btn btn-link" onclick="xlvoForms.manageCorrectOrder('add', $(this).parent().parent().parent())"><span class="sr-only">Add</span><span class="glyphicon glyphicon-plus"></span></button>
-                    <button type="button" name="Remove" class="btn btn-link" onclick="xlvoForms.manageCorrectOrder('remove', $(this).parent().parent())"><span class="sr-only">Remove</span><span class="glyphicon glyphicon-minus"></span></button>
+                    <button type="button" name="Add" class="btn btn-link" onclick="xlvoForms.manageCorrectOrder('add', $(this).parent().parent().parent(), '${number_input_label}', '${text_input_label}')"><span class="sr-only">Add</span><span class="glyphicon glyphicon-plus"></span></button>
+                    <button type="button" name="Remove" class="btn btn-link" onclick="xlvoForms.manageCorrectOrder('remove', $(this).parent().parent(), '${number_input_label}', '${text_input_label}')"><span class="sr-only">Remove</span><span class="glyphicon glyphicon-minus"></span></button>
                 </div>
             </div>
         `;
@@ -217,14 +213,15 @@ const xlvoForms = {
                 break;
         }
     },
-    manageCorrectOrder: function (action, parent) {
+
+    manageCorrectOrder: function (action, parent, number_input_label, text_input_label) {
         switch (action) {
             case 'add':
                 const firstInput = parent.find(".option-input").first();
                 const newIndex = $(".order-input").length + 1;
                 const newInputHTML = firstInput.clone();
                 newInputHTML.attr('value', "");
-                const newInput = xlvoForms.addCorrectOrderInput(newInputHTML, newIndex, newIndex);
+                const newInput = xlvoForms.addCorrectOrderInput(newInputHTML, newIndex, newIndex, number_input_label, text_input_label);
                 parent.append(newInput);
                 xlvoForms.updateOrderInputs();
                 break;
