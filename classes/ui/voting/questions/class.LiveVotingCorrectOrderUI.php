@@ -326,6 +326,15 @@ class LiveVotingCorrectOrderUI
                     }
                 }
 
+                usort($old_options, function($a, $b) {
+                    return $a->getCorrectPosition() - $b->getCorrectPosition();
+                });
+
+                foreach ($old_options as $index => $option) {
+                    $option->setPosition($index + 1);
+                    $option->save();
+                }
+
                 $question->setOptions($old_options);
                 $id = ilObject::_lookupObjId((int)$_GET['ref_id']);
                 $question->setObjId($id);
