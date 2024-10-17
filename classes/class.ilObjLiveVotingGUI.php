@@ -141,6 +141,8 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             return;
         }
 
+        $this->setTitleAndDescription();
+
         $liveVotingUI = new LiveVotingUI($this->object->getLiveVoting());
 
         $this->tabs->activateTab("tab_content");
