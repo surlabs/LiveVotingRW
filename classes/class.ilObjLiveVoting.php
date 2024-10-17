@@ -71,6 +71,25 @@ class ilObjLiveVoting extends ilObjectPlugin
         $this->liveVoting->save();
     }
 
+    /**
+     * @throws LiveVotingException
+     */
+    protected function doCloneObject(ilObject2 $new_obj, int $a_target_id, ?int $a_copy_id = null): void
+    {
+        $liveVoting = $this->getLiveVoting();
+
+        /** @var LiveVoting $new_obj_lv */
+        $new_obj_lv = $new_obj->getLiveVoting();
+
+        $questions = array();
+
+        foreach ($liveVoting->getQuestions() as $question) {
+            $questions[] = $question->fullClone(false, true, $new_obj_lv->getId());
+        }
+
+        $new_obj_lv->setQuestions($questions);
+    }
+
     protected function initType(): void
     {
         $this->setType("xlvo");

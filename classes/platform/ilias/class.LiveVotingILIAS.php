@@ -19,7 +19,10 @@ declare(strict_types=1);
  */
 
 namespace LiveVoting\platform\ilias;
-class LiveVotingILIAS
+use ilException;
+use ILIAS;
+
+class LiveVotingILIAS extends ILIAS
 {
     public function __construct()
     {
@@ -28,14 +31,14 @@ class LiveVotingILIAS
 
 
     /**
-     * @param $key
-     *
+     * @param string $a_keyword
+     * @param string|null $a_default_value
      * @return string|null
      */
-    public function getSetting($key): ?string
+    public function getSetting(string $a_keyword, ?string $a_default_value = null): ?string
     {
         global $DIC;
-        return $DIC->settings()->get($key);
+        return $DIC->settings()->get($a_keyword);
     }
 
 
@@ -44,7 +47,7 @@ class LiveVotingILIAS
      *
      * @throws ilException
      */
-    public function raiseError($a_msg)
+    public function raiseError(string $a_msg, int $a_err_obj): void
     {
         throw new ilException($a_msg);
     }

@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace LiveVoting\questions;
 
+use ilLegacyFormElementsUtil;
 use LiveVoting\platform\LiveVotingDatabase;
 use LiveVoting\platform\LiveVotingException;
 
@@ -171,6 +172,11 @@ class LiveVotingQuestionOption
     public function getText(): ?string
     {
         return $this->text;
+    }
+
+    public function getTextForPresentation(): string
+    {
+        return ilLegacyFormElementsUtil::prepareTextareaOutput($this->text, true);
     }
 
     public function setText(?string $text): void

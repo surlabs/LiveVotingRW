@@ -71,7 +71,7 @@ class LiveVotingInputCorrectOrderUI extends LiveVotingSingleVoteResultsUI
         $correct_option = new LiveVotingQuestionOption();
         $correct_option->setText(ilLiveVotingPlugin::getInstance()->txt('qtype_4_correct'));
         $bar = new LiveVotingBarPercentageUI();
-        $bar->setTitle($correct_option->getText());
+        $bar->setTitle($correct_option->getTextForPresentation());
         $bar->setVotes($correct_votes);
         $bar->setMaxVotes(LiveVotingVote::countVoters($this->player->getActiveVoting(), $this->player->getRoundId()));
         $bar->setShowInPercent(!$this->isShowAbsolute());
@@ -83,7 +83,7 @@ class LiveVotingInputCorrectOrderUI extends LiveVotingSingleVoteResultsUI
 
         $bar = new LiveVotingBarPercentageUI();
         $bar->setMaxVotes(LiveVotingVote::countVoters($this->player->getActiveVoting(), $this->player->getRoundId()));
-        $bar->setTitle($wrong_option->getText());
+        $bar->setTitle($wrong_option->getTextForPresentation());
         $bar->setVotes($wrong_votes);
         $bar->setShowInPercent(!$this->isShowAbsolute());
 
@@ -98,7 +98,7 @@ class LiveVotingInputCorrectOrderUI extends LiveVotingSingleVoteResultsUI
              */
             foreach ($correct_order as $item) {
                 $solution_html .= ' <p><div class="xlvo-option"><span class="label label-primary xlvo-option_letter">' . $item->getCipher()
-                    . '</span> <span class="option_text">' . $item->getText() . '</span></div></p>';
+                    . '</span> <span class="option_text">' . $item->getTextForPresentation() . '</span></div></p>';
             }
             $bars->addSolution($solution_html);
         }

@@ -33,6 +33,7 @@ use ilObject;
 use ilObjLiveVotingGUI;
 use ilPlugin;
 use ilPropertyFormGUI;
+use ilRTE;
 use ilTextAreaInputGUI;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\questions\LiveVotingQuestion;
@@ -99,7 +100,7 @@ class LiveVotingFreeInputUI
 
             $form_questions["question"] = $this->factory->input()->field()->textarea(
                 $this->plugin->txt('voting_question'))
-                ->withValue(isset($this->question) ? $this->question->getQuestion() : "")
+                ->withValue(isset($this->question) ? ilRTE::_replaceMediaObjectImageSrc($this->question->getQuestion(), 1) : "")
                 ->withRequired(true);
 
 
@@ -220,7 +221,7 @@ class LiveVotingFreeInputUI
             $question = $question_id ? LiveVotingQuestion::loadQuestionById($question_id) : LiveVotingQuestion::loadNewQuestion("FreeText");
 
             $question->setTitle($question_data["title"] ?? null);
-            $question->setQuestion($_POST["form/input_0/input_2"] ?? null);
+            $question->setQuestion($_POST["form/input_0/input_2"] ? ilRTE::_replaceMediaObjectImageSrc($_POST["form/input_0/input_2"]) : null);
             $question->setMultiFreeInput($answers_data["multi_input"] ? (bool)$answers_data["multi_input"] : false);
             $question->setAnswerField($answers_data["answer_field"] ? (int)$answers_data["answer_field"] : 1);
 
