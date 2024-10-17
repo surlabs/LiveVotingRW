@@ -247,7 +247,6 @@ var xlvoFreeInputCategorize = {
 	 */
 	recalculatePlayerHeight: function () {
 		var node = $('#xlvo-display-player').children();
-		$('#xlvo-display-player').css('height', node.css('height'));
 	},
 
 	startRequest: function () {

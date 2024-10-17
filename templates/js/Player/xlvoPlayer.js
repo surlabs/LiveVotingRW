@@ -11,10 +11,6 @@ var xlvoPlayer = {
         this.ready = true;
         xlvoPlayer.log(this.config);
 
-        //set the height for safari
-        var node = $("#xlvo-display-player").children();
-        $("#xlvo-display-player").css("height", node.css("height"));
-
         if (
             xlvoPlayer.config.use_mathjax &&
             !!MathJax &&
@@ -99,12 +95,6 @@ var xlvoPlayer = {
                             self.btn_close_fullscreen.parent().show();
                         }
 
-                        //set the height for safari
-                        var node = $("#xlvo-display-player").children();
-                        $("#xlvo-display-player").css(
-                            "height",
-                            node.css("height")
-                        );
                     }
                 );
             }
@@ -304,12 +294,6 @@ var xlvoPlayer = {
 
                         //append new child
                         $("#xlvo-display-player").append(node);
-
-                        //set height because some browser ignore the height of the absolute content of the player
-                        $("#xlvo-display-player").css(
-                            "height",
-                            node.css("height")
-                        );
 
                         //fade out old child and remove child afterwards
                         oldNode.fadeOut(
