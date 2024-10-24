@@ -87,6 +87,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
     public function performCommand(string $cmd): void
     {
         global $DIC;
+        $this->setTitleAndDescription();
         $DIC->help()->setScreenIdComponent(ilLiveVotingPlugin::PLUGIN_ID);
 
         $DIC->ui()->mainTemplate()->setPermanentLink(ilLiveVotingPlugin::PLUGIN_ID, $this->ref_id);
@@ -140,8 +141,6 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
             $this->tpl->setContent($this->renderer->render($this->factory->messageBox()->failure($this->plugin->txt("permission_denied"))));
             return;
         }
-
-        $this->setTitleAndDescription();
 
         $liveVotingUI = new LiveVotingUI($this->object->getLiveVoting());
 
