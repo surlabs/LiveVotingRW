@@ -116,7 +116,7 @@ class LiveVotingInitialisationUI
      * @return LiveVotingInitialisationUI
      * @throws \Exception
      */
-    public static function init(int $context = null): LiveVotingInitialisationUI
+    public static function init(?int $context = null): LiveVotingInitialisationUI
     {
         return new self($context);
     }
@@ -173,7 +173,6 @@ class LiveVotingInitialisationUI
         $this->initHelp();
         $this->initHelpTextRetriever();
 
-        LiveVotingInitialisation::initUIFramework($DIC);
     }
 
     /**

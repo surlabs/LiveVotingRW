@@ -23,7 +23,6 @@ namespace LiveVoting\UI;
 use ilButtonToSplitButtonMenuItemAdapter;
 use ilCtrlException;
 use ilException;
-use ilGlyphGUI;
 use ILIAS\UI\Component\Dropdown\Standard;
 use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
@@ -325,13 +324,13 @@ class LiveVotingUI
             $param_manager = ParamManager::getInstance();
             if (!$param_manager->isPpt()) {
                 $prevBtn = ilLinkButton::getInstance();
-                $prevBtn->setCaption(ilGlyphGUI::get(ilGlyphGUI::PREVIOUS), false);
+                $prevBtn->setCaption('<span class="glyphicon glyphicon-chevron-left"></span>', false);
                 $prevBtn->setId('btn-previous');
                 $prevBtn->setDisabled(true);
                 $DIC->toolbar()->addButtonInstance($prevBtn);
 
                 $nextBtn = ilLinkButton::getInstance();
-                $nextBtn->setCaption(ilGlyphGUI::get(ilGlyphGUI::NEXT), false);
+                $nextBtn->setCaption('<span class="glyphicon glyphicon-chevron-right"></span>', false);
                 $nextBtn->setId('btn-next');
                 $nextBtn->setDisabled(true);
                 $DIC->toolbar()->addButtonInstance($nextBtn);
@@ -367,7 +366,7 @@ class LiveVotingUI
             $DIC->toolbar()->addButtonInstance($nextBtn);
         } else {
             $suspendButton = ilLinkButton::getInstance();
-            $suspendButton->setCaption(ilGlyphGUI::get(ilGlyphGUI::CLOSE) . $this->pl->txt('player_terminate'), false);
+            $suspendButton->setCaption('<span class="glyphicon glyphicon-remove"></span> ' . $this->pl->txt('player_terminate'), false);
             $suspendButton->setUrl($DIC->ctrl()->getLinkTarget(new ilObjLiveVotingGUI(), 'terminate'));
             $suspendButton->setId('btn-terminate');
             $DIC->toolbar()->addButtonInstance($suspendButton);

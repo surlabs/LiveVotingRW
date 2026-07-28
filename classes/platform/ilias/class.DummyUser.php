@@ -32,6 +32,8 @@ class DummyUser extends ilObjUser
     {
         $this->prefs = array();
         $this->prefs["language"] = "en";
+        $this->prefs["skin"] = "default";
+        $this->prefs["style"] = "";
     }
 
     /**
@@ -43,8 +45,7 @@ class DummyUser extends ilObjUser
      */
     public function getLanguage(): string
     {
-        global $DIC;
-        return $DIC->language()->getLangKey();
+        return 'en';
     }
 
 
@@ -54,6 +55,36 @@ class DummyUser extends ilObjUser
     public function getId(): int
     {
         return 13;
+    }
+
+    public function getLogin(): string
+    {
+        return 'livevoting-anonymous';
+    }
+
+    public function getFirstname(): string
+    {
+        return '';
+    }
+
+    public function getLastname(): string
+    {
+        return '';
+    }
+
+    public function getFullname(int $max_strlen = 0): string
+    {
+        return '';
+    }
+
+    public function getSkin(): string
+    {
+        return 'default';
+    }
+
+    public function getStyle(): string
+    {
+        return '';
     }
 
 

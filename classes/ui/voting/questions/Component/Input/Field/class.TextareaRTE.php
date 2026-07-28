@@ -30,6 +30,8 @@ use ILIAS\Refinery\Constraint;
 use ILIAS\UI\Component\Input\Field\Textarea;
 use ILIAS\UI\Component\Signal;
 use ILIAS\UI\Implementation\Component\Input\Input;
+use ILIAS\UI\Implementation\Component\Input\Field\HasMustacheVariables;
+use ILIAS\UI\Implementation\Component\Input\Field\HasMustacheVariablesInternal;
 use ILIAS\UI\Implementation\Component\JavaScriptBindable;
 use ILIAS\UI\Implementation\Component\Triggerer;
 
@@ -37,8 +39,9 @@ use ILIAS\UI\Implementation\Component\Triggerer;
 /**
  * Class TextareaRTE
  */
-class TextareaRTE extends Input implements Textarea {
+class TextareaRTE extends Input implements Textarea, HasMustacheVariablesInternal {
     use JavaScriptBindable;
+    use HasMustacheVariables;
     use Triggerer;
 
     protected string $label;

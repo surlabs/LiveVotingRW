@@ -81,7 +81,7 @@ class LiveVotingResultsTableGUI implements DataRetrieval
     /**
      * @throws LiveVotingException
      */
-    public function getRows(DataRowBuilder $row_builder, array $visible_column_ids, Range $range, Order $order, ?array $filter_data, ?array $additional_parameters): Generator
+    public function getRows(DataRowBuilder $row_builder, array $visible_column_ids, Range $range, Order $order, mixed $additional_viewcontrol_data, mixed $filter_data, mixed $additional_parameters): Generator
     {
         $records = $this->getRecords($filter_data, $order);
 
@@ -93,7 +93,7 @@ class LiveVotingResultsTableGUI implements DataRetrieval
     /**
      * @throws LiveVotingException
      */
-    public function getTotalRowCount(?array $filter_data, ?array $additional_parameters): ?int
+    public function getTotalRowCount(mixed $additional_viewcontrol_data, mixed $filter_data, mixed $additional_parameters): ?int
     {
         $records = $this->getRecords($filter_data);
 
@@ -134,9 +134,9 @@ class LiveVotingResultsTableGUI implements DataRetrieval
         );
 
         $table = $this->factory->table()->data(
+            $this,
             $this->plugin->txt('results_title'),
-            $this->getColumns(),
-            $this
+            $this->getColumns()
         )->withRequest($this->request)->withFilter($this->ui_service->filter()->getData($filter));
 
         return $this->renderer->render($filter) . $this->renderer->render($table);

@@ -25,7 +25,7 @@ use ilCtrl;
 use ilCtrlException;
 use ILIAS\Data\URI;
 use ILIAS\HTTP\Wrapper\WrapperFactory;
-use ILIAS\UI\Component\Table\OrderingBinding;
+use ILIAS\UI\Component\Table\OrderingRetrieval;
 use ILIAS\UI\Component\Table\OrderingRowBuilder;
 use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
@@ -41,7 +41,7 @@ use LiveVoting\questions\LiveVotingQuestion;
  * Class LiveVotingTableGUI
  * @authors Jesús Copado, Daniel Cazalla, Saúl Díaz, Juan Aguilar <info@surlabs.es>
  */
-class LiveVotingTableGUI  implements OrderingBinding
+class LiveVotingTableGUI  implements OrderingRetrieval
 {
     private ilObjLiveVotingGUI $parent_obj;
     private string $parent_cmd;
@@ -109,10 +109,10 @@ class LiveVotingTableGUI  implements OrderingBinding
         $this->parseData($this->ui_service->filter()->getData($filter));
 
         $table = $this->factory->table()->ordering(
+            $this,
+            (new URI((string) $this->request->getUri()))->withParameter('saveOrder', 1),
             "",
             $this->getColumns(),
-            $this,
-            (new URI((string) $this->request->getUri()))->withParameter('saveOrder', 1)
         )->withRequest($this->request)
             ->withActions($this->getActions());
 

@@ -203,7 +203,7 @@ class LiveVotingLog
      *
      * @throws ilLogException
      */
-    public function write(string $a_msg, int $a_log_level = null): void
+    public function write(string $a_msg, ?int $a_log_level = null): void
     {
         if ($this->enabled and $this->current_log_level >= $this->checkLogLevel($a_log_level)) {
             $this->open();

@@ -141,11 +141,17 @@ final class LiveVotingJs
     protected function resolveLib(): void
     {
         $base_path = './Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/js/';
-        $category = ($this->category ? $this->category . '/' : '') . $this->name . '/';
+        $category = $this->category ? $this->category . '/' : '';
         $file_name = ilLiveVotingPlugin::PLUGIN_ID . $this->name . '.js';
         $file_name_min = ilLiveVotingPlugin::PLUGIN_ID . $this->name . '.min.js';
         $full_path_min = $base_path . $category . $file_name_min;
         $full_path = $base_path . $category . $file_name;
+        if (!is_file($full_path) && !is_file($full_path_min) && $this->category === '') {
+            $category = $this->name . '/';
+            $full_path_min = $base_path . $category . $file_name_min;
+            $full_path = $base_path . $category . $file_name;
+        }
+
         if (is_file($full_path_min)) {
             $this->lib = $full_path_min;
         } else {
@@ -238,11 +244,10 @@ final class LiveVotingJs
      */
     public function initMathJax(): void
     {
-        $mathJaxSetting = new ilSetting("MathJax");
-        if (strpos($mathJaxSetting->get('path_to_mathjax'), 'mathjax@3') !== false) { // not sure if this check will work with >v3
-            // mathjax v3 needs to be configured differently
-            $this->addLibToHeader('mathjax_config.js');
-        }
-        ilMathJax::getInstance()->includeMathJax();
+        global $DIC;
+
+        $template = $DIC->ui()->mainTemplate();
+        $template->addJavaScript('assets/js/mathjax_config.js');
+        $template->addJavaScript('node_modules/mathjax/es5/tex-chtml-full.js');
     }
 }

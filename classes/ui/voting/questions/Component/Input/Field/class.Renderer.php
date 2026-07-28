@@ -139,7 +139,7 @@ class Renderer extends RendererILIAS
         return $name;
     }
 
-    protected function applyValue(FormInput $component, ilTemplate|Template $tpl, callable $escape = null): void
+    protected function applyValue(FormInput $component, ilTemplate|Template $tpl, ?callable $escape = null): void
     {
         $value = $component->getValue();
         if (!is_null($escape)) {
@@ -245,6 +245,8 @@ class Renderer extends RendererILIAS
 
     protected function getPreparedTextareaRTETemplate(TextareaRTE $component): ilTemplate
     {
+        global $ilUser, $lng;
+
         $tpl = $this->getTemplateCustom("tpl.textareaRte.html");
 
         if (0 < $component->getMaxLimit()) {
@@ -274,7 +276,7 @@ class Renderer extends RendererILIAS
         $rteSupport = $component->getRTESupport();
 
         if (!empty($rteSupport)) {
-            $rte->addRTESupport($rteSupport["obj_id"], $rteSupport["obj_type"], $rteSupport["module"], false, $rteSupport['cfg_template']);
+            $rte->addRTESupport($lng, $ilUser, $rteSupport["obj_id"], $rteSupport["obj_type"], $rteSupport["module"], false, $rteSupport['cfg_template']);
 
             $tpl->setVariable('RTE_EDITOR', "RTEditor");
         }

@@ -53,7 +53,7 @@ class LiveVotingQRModal
 
         $this->modal = $this->factory->modal()->roundtrip(
             vsprintf(ilLiveVotingPlugin::getInstance()->txt("player_pin"), [$liveVoting->getPin()]) . $link,
-            $this->factory->legacy($modal_body)
+            $this->factory->legacy()->content($modal_body)
         );
     }
 

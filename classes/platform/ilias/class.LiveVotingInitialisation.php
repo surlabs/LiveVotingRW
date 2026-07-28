@@ -60,7 +60,7 @@ class LiveVotingInitialisation extends ilInitialisation
      * @param int|null $context
      * @throws Exception
      */
-    protected function __construct(int $context = null)
+    protected function __construct(?int $context = null)
     {
         if ($context) {
             self::saveContext($context);
@@ -130,7 +130,7 @@ class LiveVotingInitialisation extends ilInitialisation
      * @return LiveVotingInitialisation
      * @throws Exception
      */
-    public static function init(int $context = null): LiveVotingInitialisation
+    public static function init(?int $context = null): LiveVotingInitialisation
     {
         return new self($context);
     }

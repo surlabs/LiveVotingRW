@@ -659,7 +659,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
                 $DIC->ctrl()->setParameter($this, "question_id", $prev_id);
                 $prev = ilLinkButton::getInstance();
                 $prev->setUrl($DIC->ctrl()->getLinkTarget($this, "edit"));
-                $prev->setCaption(ilGlyphGUI::get(ilGlyphGUI::PREVIOUS), false);
+                $prev->setCaption('<span class="glyphicon glyphicon-chevron-left"></span>', false);
                 $DIC->toolbar()->addButtonInstance($prev);
             }
 
@@ -667,7 +667,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
                 $DIC->ctrl()->setParameter($this, "question_id", $next_id);
                 $next = ilLinkButton::getInstance();
                 $next->setUrl($DIC->ctrl()->getLinkTarget($this, "edit"));
-                $next->setCaption(ilGlyphGUI::get(ilGlyphGUI::NEXT), false);
+                $next->setCaption('<span class="glyphicon glyphicon-chevron-right"></span>', false);
                 $DIC->toolbar()->addButtonInstance($next);
             }
         } else {
