@@ -64,7 +64,7 @@ class LiveVotingPlayerGUI
      */
     public function executeCommand(): void
     {
-        global $DIC, $tpl;
+        global $DIC;
 
         $this->setPluginObject(ilLiveVotingPlugin::getInstance());
         $param_manager = ParamManager::getInstance();
@@ -168,7 +168,6 @@ class LiveVotingPlayerGUI
 
         $DIC->ui()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/default/default.css');
 
-        $DIC->ui()->mainTemplate()->addJavaScript('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/js/xlvoMain.js');
         $DIC->ui()->mainTemplate()->addJavaScript('https://code.jquery.com/ui/1.14.1/jquery-ui.min.js');
 
         LiveVotingJs::getInstance()->name('Main')->init()->setRunCode();
@@ -212,14 +211,8 @@ class LiveVotingPlayerGUI
         $DIC->ui()->mainTemplate()->addCss("Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/customUI/MultiLineNewInputGUI/css/multi_line_new_input_gui.css");
         $DIC->ui()->mainTemplate()->addJavaScript("Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/customUI/MultiLineNewInputGUI/js/multi_line_new_input_gui.js");
 
-        $DIC->ui()->mainTemplate()->addJavaScript('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/js/xlvoVoter.js');
-
         $DIC->ui()->mainTemplate()->addJavaScript('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/js/QuestionTypes/NumberRange/xlvoNumberRange.js');
-        $DIC->ui()->mainTemplate()->addJavaScript('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/js/QuestionTypes/SingleVote/xlvoSingleVote.js');
-        $DIC->ui()->mainTemplate()->addJavaScript('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/js/QuestionTypes/FreeOrder/xlvoFreeOrder.js');
-        $DIC->ui()->mainTemplate()->addJavaScript('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/js/QuestionTypes/FreeInput/xlvoFreeInput.js');
-        $DIC->ui()->mainTemplate()->addJavaScript('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/js/QuestionTypes/CorrectOrder/xlvoCorrectOrder.js');
-        LiveVotingJs::getInstance()->api($this)->addLibToHeader('bootstrap-slider.js');
+        LiveVotingJs::getInstance()->addLibToHeader('bootstrap-slider.js');
         LiveVotingJs::getInstance()->api($this)->name('CorrectOrder')->category('QuestionTypes/CorrectOrder')->init();
         LiveVotingJs::getInstance()->api($this)->name('FreeInput')->category('QuestionTypes/FreeInput')->init();
         LiveVotingJs::getInstance()->api($this)->name('FreeOrder')->category('QuestionTypes/FreeOrder')->init();
@@ -304,23 +297,8 @@ class LiveVotingPlayerGUI
                         $this->getVotingTemplate()->setVariable('GLYPH', '<span class="glyphicon glyphicon-stop"></span>');
                     } else {
                         $this->getVotingTemplate()->setVariable('TITLE', $this->txt('voter_header_end'));
-                        $this->getVotingTemplate()->setVariable('DESCRIPTION', $this->txt('voter_info_end'));;
-
-                        $tpl_scoreboard = new ilTemplate($this->getPluginObject()->getDirectory() . '/templates/default/Voter/tpl.scoreboard.html', true, false);
-
-                        $players = LiveVotingPlayer::getPlayersForScoreboard($this->live_voting->getPlayer());
-
-                        $html = '';
-                        foreach ($players as $player) {
-                            $tpl_scoreboard_points = new ilTemplate($this->getPluginObject()->getDirectory() . '/templates/default/Voter/tpl.scoreboard_score.html', true    , false);
-                            $tpl_scoreboard_points->setVariable('PLAYER', $player['nickname']);
-                            $tpl_scoreboard_points->setVariable('POINTS', $player['points']);
-                            $html .= $tpl_scoreboard_points->get();
-                        }
-
-                        $tpl_scoreboard->setVariable('POINTS', $html);
-
-                        $this->getVotingTemplate()->setVariable('QUESTION', $tpl_scoreboard->get());
+                        $this->getVotingTemplate()->setVariable('DESCRIPTION', $this->txt('voter_info_end'));
+                        $this->getVotingTemplate()->setVariable('QUESTION', $this->getScoreboardHtml());
                     }
 
                     break;
@@ -334,22 +312,7 @@ class LiveVotingPlayerGUI
                     break;
                 case LiveVotingPlayer::STAT_SCOREBOARD:
                     $this->getVotingTemplate()->setVariable('TITLE', $this->txt('voter_header_scoreboard'));
-
-                    $tpl_scoreboard = new ilTemplate($this->getPluginObject()->getDirectory() . '/templates/default/Voter/tpl.scoreboard.html', true, false);
-
-                    $players = LiveVotingPlayer::getPlayersForScoreboard($this->live_voting->getPlayer());
-
-                    $html = '';
-                    foreach ($players as $player) {
-                        $tpl_scoreboard_points = new ilTemplate($this->getPluginObject()->getDirectory() . '/templates/default/Voter/tpl.scoreboard_score.html', true    , false);
-                        $tpl_scoreboard_points->setVariable('PLAYER', $player['nickname']);
-                        $tpl_scoreboard_points->setVariable('POINTS', $player['points']);
-                        $html .= $tpl_scoreboard_points->get();
-                    }
-
-                    $tpl_scoreboard->setVariable('POINTS', $html);
-                    
-                    $this->getVotingTemplate()->setVariable('QUESTION', $tpl_scoreboard->get());
+                    $this->getVotingTemplate()->setVariable('QUESTION', $this->getScoreboardHtml());
 
                     break;
 
@@ -358,6 +321,24 @@ class LiveVotingPlayerGUI
             echo $this->getVotingTemplate()->get();
             exit();
         }
+    }
+
+    private function getScoreboardHtml(): string
+    {
+        $directory = $this->getPluginObject()->getDirectory() . '/templates/default/Voter/';
+        $scoreboard = new ilTemplate($directory . 'tpl.scoreboard.html', true, false);
+        $points = '';
+
+        foreach (LiveVotingPlayer::getPlayersForScoreboard($this->live_voting->getPlayer()) as $player) {
+            $score = new ilTemplate($directory . 'tpl.scoreboard_score.html', true, false);
+            $score->setVariable('PLAYER', $player['nickname']);
+            $score->setVariable('POINTS', $player['points']);
+            $points .= $score->get();
+        }
+
+        $scoreboard->setVariable('POINTS', $points);
+
+        return $scoreboard->get();
     }
 
     /**

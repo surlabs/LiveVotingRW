@@ -85,7 +85,7 @@ class LiveVotingResultsTableGUI implements DataRetrieval
     {
         $records = $this->getRecords($filter_data, $order);
 
-        foreach ($records as $record) {
+        foreach (array_slice($records, $range->getStart(), $range->getLength()) as $record) {
             yield $row_builder->buildDataRow((string) $record['id'], $record);
         }
     }
@@ -233,7 +233,7 @@ class LiveVotingResultsTableGUI implements DataRetrieval
                     "answer_ids" => $this->concatAnswersIds($answers),
                     "voting_id" => $question->getId(),
                     "round_id" => $this->round_id,
-                    "id" => $vote->getId(),
+                    "id" => $vote->getId() . '_' . $question->getId(),
                     "points" => LiveVotingPlayer::getPlayerPoints($vote->getUserIdType() == 1 ? (string) $vote->getUserId() : (string) $vote->getUserIdentifier(), $this->obj_id, $question->getId(), $this->round_id)
                 );
             }

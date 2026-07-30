@@ -84,7 +84,7 @@ class LiveVotingInitialisation extends ilInitialisation
     {
         switch (self::getContext()) {
             case 2:
-                ilInitialisation::initILIAS();
+                self::bootstrapLegacyContext();
                 self::initHTML2();
                 break;
             case 1:
@@ -92,6 +92,16 @@ class LiveVotingInitialisation extends ilInitialisation
                 self::initILIAS2();
                 break;
         }
+    }
+
+    private static function bootstrapLegacyContext(): void
+    {
+        if (isset($GLOBALS['DIC'])) {
+            return;
+        }
+
+        require_once dirname(__DIR__, 11) . '/components/ILIAS/Init/artifacts/bootstrap_default.php';
+        entry_point('ILIAS Legacy Initialisation Adapter');
     }
 
     /**
@@ -184,8 +194,6 @@ class LiveVotingInitialisation extends ilInitialisation
             $tpl->addCss('public/Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/css/new_style.css');
         }
 
-        //$tpl->addCss('/templates/default/030-tools/legacy-bootstrap-mixins/_nav-divider.scss');
-
         $tpl->addBlockFile("CONTENT", "content", "tpl.main_voter.html", "public/Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting");
 
         $tpl->setVariable("BASE", LiveVotingConfig::getBaseVoteUrl());
@@ -193,11 +201,6 @@ class LiveVotingInitialisation extends ilInitialisation
         self::initGlobal("tpl", $tpl);
 
         iljQueryUtil::initjQuery();
-    }
-
-    public static function initUIFramework(Container $c): void
-    {
-        parent::initUIFramework($c);
     }
 
     /**

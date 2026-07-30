@@ -22,9 +22,7 @@ namespace LiveVoting\Utils;
 
 use ilCtrlException;
 use ilLiveVotingPlugin;
-use ilMathJax;
 use ilObjLiveVotingGUI;
-use ilSetting;
 use LiveVotingPlayerGUI;
 
 /**
@@ -140,7 +138,7 @@ final class LiveVotingJs
 
     protected function resolveLib(): void
     {
-        $base_path = './Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/js/';
+        $base_path = 'Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/js/';
         $category = $this->category ? $this->category . '/' : '';
         $file_name = ilLiveVotingPlugin::PLUGIN_ID . $this->name . '.js';
         $file_name_min = ilLiveVotingPlugin::PLUGIN_ID . $this->name . '.min.js';

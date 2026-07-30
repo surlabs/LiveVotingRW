@@ -1378,7 +1378,7 @@ class ilObjLiveVotingGUI extends ilObjectPluginGUI
                 $normalize_csv_value((string) $record['answer'])
             ];
 
-            fputcsv($output, $row, ';');
+            fputcsv($output, $row, ';', '"', '');
         }
 
         fclose($output);

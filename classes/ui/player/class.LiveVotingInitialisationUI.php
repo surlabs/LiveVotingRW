@@ -240,8 +240,6 @@ class LiveVotingInitialisationUI
             $tpl->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/css/new_style.css');
         }
 
-        //$tpl->addCss('/templates/default/030-tools/legacy-bootstrap-mixins/_nav-divider.scss');
-
         $tpl->addBlockFile("CONTENT", "content", "tpl.main_voter.html", "public/Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting");
 
         $tpl->setVariable("BASE", LiveVotingConfig::getBaseVoteUrl());
@@ -572,14 +570,6 @@ class LiveVotingInitialisationUI
         }
 
         return "classic";
-    }
-
-    /**
-     * Init ilias data cache.
-     */
-    private function initDataCache()
-    {
-        $this->makeGlobal("ilObjDataCache", new ilObjectDataCache());
     }
 
     /**

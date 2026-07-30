@@ -1,21 +1,20 @@
 <?php
 
 /**
- * This file is part of the STACK Question plugin for ILIAS, an advanced STEM assessment tool.
- *  This plugin is developed and maintained by SURLABS and is a port of STACK Question for Moodle,
- *  originally created by Chris Sangwin.
+ * This file is part of the LiveVoting Repository Object plugin for ILIAS.
+ * This plugin allows to create real time votings within ILIAS.
  *
- *  The STACK Question plugin for ILIAS is open-source and licensed under GPL-3.0.
- *  For license details, visit https://www.gnu.org/licenses/gpl-3.0.en.html.
+ * The LiveVoting Repository Object plugin for ILIAS is open-source and licensed under GPL-3.0.
+ * For license details, visit https://www.gnu.org/licenses/gpl-3.0.en.html.
  *
- *  To report bugs or participate in discussions, visit the Mantis system and filter by
- *  the category "STACK Question" at https://mantis.ilias.de.
+ * To report bugs or participate in discussions, visit the Mantis system and filter by
+ * the category "LiveVoting" at https://mantis.ilias.de.
  *
- *  More information and source code are available at:
- *  https://github.com/surlabs/STACK
+ * More information and source code are available at:
+ * https://github.com/surlabs/LiveVoting
  *
- *  If you need support, please contact the maintainer of this software at:
- *  stack@surlabs.es
+ * If you need support, please contact the maintainer of this software at:
+ * info@surlabs.es
  *
  */
 
