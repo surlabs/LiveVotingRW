@@ -151,6 +151,9 @@ class LiveVotingPlayerGUI
         $DIC->ui()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/default/Voter/voter.css', '');
         $DIC->ui()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/default/QuestionTypes/NumberRange/bootstrap-slider.min.css', '');
         $DIC->ui()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/default/QuestionTypes/NumberRange/number_range.css', '');
+        if ($this->live_voting->getMode()->getMode() === LiveVotingMode::BASIC_MODE && $this->live_voting->usesNewUI()) {
+            $DIC->ui()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/css/new_ui.css', '');
+        }
     }
 
     /**
@@ -248,7 +251,15 @@ class LiveVotingPlayerGUI
      */
     public function getHTML(): void
     {
-        $tpl_voting = new ilTemplate($this->getPluginObject()->getDirectory() . '/templates/default/Voter/tpl.' . $this->live_voting->getMode()->getInnerTemplate() . '.html', true, true);
+        $template = $this->live_voting->getMode()->getInnerTemplate();
+        if (
+            $this->live_voting->getMode()->getMode() === LiveVotingMode::BASIC_MODE
+            && $this->live_voting->usesNewUI()
+        ) {
+            $template .= '_new';
+        }
+
+        $tpl_voting = new ilTemplate($this->getPluginObject()->getDirectory() . '/templates/default/Voter/tpl.' . $template . '.html', true, true);
         $this->setVotingTemplate($tpl_voting);
 
         if ($this->getLiveVoting()->getPlayer()->isFrozen()) {

@@ -151,7 +151,12 @@ class LiveVotingUI
             $DIC->toolbar()->addButtonInstance($b);
         }
 
-        $template = new ilTemplate($this->pl->getDirectory() . "/templates/default/Player/tpl." . $this->liveVoting->getMode()->getStartTemplate() . ".html", true, true);
+        $start_template = $this->liveVoting->getMode()->getStartTemplate();
+        if ($this->liveVoting->getMode()->getMode() === LiveVotingMode::BASIC_MODE && $this->liveVoting->usesNewUI()) {
+            $start_template .= '_new';
+        }
+
+        $template = new ilTemplate($this->pl->getDirectory() . "/templates/default/Player/tpl." . $start_template . ".html", true, true);
         $DIC->ui()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/default/default.css');
 
 
@@ -227,6 +232,9 @@ class LiveVotingUI
 
         $DIC->ui()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/css/player.css');
         $DIC->ui()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/css/bar.css');
+        if ($this->liveVoting->getMode()->getMode() === LiveVotingMode::BASIC_MODE && $this->liveVoting->usesNewUI()) {
+            $DIC->ui()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/css/new_ui.css');
+        }
 
         LiveVotingInputFreeTextUI::addJsAndCss();
         /*xlvoCorrectOrderResultsGUI::addJsAndCss();

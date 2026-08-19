@@ -336,6 +336,11 @@ class LiveVoting
         $this->voting_style = $voting_style;
     }
 
+    public function usesNewUI(): bool
+    {
+        return $this->voting_style === 'new';
+    }
+
     /**
      * @throws LiveVotingException
      */
@@ -387,7 +392,7 @@ class LiveVoting
             $this->setMode(LiveVotingMode::new((int) $result[0]["mode"]));
             $this->setNicknames((bool)$result[0]["nicknames"]);
             $this->setScoreboard((bool)$result[0]["scoreboard"]);
-            $this->setVotingStyle($result[0]["voting_style"]);
+            $this->setVotingStyle($result[0]['voting_style'] ?? 'classic');
         } else {
             $this->loadDefaultValues();
         }

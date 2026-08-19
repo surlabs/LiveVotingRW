@@ -55,6 +55,10 @@ class LiveVotingBarPercentageUI implements LiveVotingGeneralBarUI
      * @var int
      */
     protected int $round = 2;
+    /**
+     * @var bool
+     */
+    protected bool $use_new_ui = false;
 
 
     /**
@@ -73,7 +77,8 @@ class LiveVotingBarPercentageUI implements LiveVotingGeneralBarUI
      */
     public function getHTML(): string
     {
-        $tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/Bar/tpl.bar_percentage.html', true, true);
+        $template = $this->isUseNewUI() ? 'tpl.bar_percentage_new.html' : 'tpl.bar_percentage.html';
+        $tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/Bar/' . $template, true, true);
 
         $tpl->setVariable('TITLE', $this->getTitle());
 
@@ -228,6 +233,24 @@ class LiveVotingBarPercentageUI implements LiveVotingGeneralBarUI
     public function setRound(int $round)
     {
         $this->round = $round;
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function isUseNewUI(): bool
+    {
+        return $this->use_new_ui;
+    }
+
+
+    /**
+     * @param bool $use_new_ui
+     */
+    public function setUseNewUI(bool $use_new_ui)
+    {
+        $this->use_new_ui = $use_new_ui;
     }
 }
 

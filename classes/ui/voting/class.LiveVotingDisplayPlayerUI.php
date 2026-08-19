@@ -93,7 +93,8 @@ class LiveVotingDisplayPlayerUI
             if ($this->liveVoting->getMode()->getMode() == LiveVotingMode::CHALLENGE_MODE) {
                 $this->buildTpl();
             } else {
-                $this->tpl = new ilTemplate($this->pl->getDirectory() . "/templates/default/Player/tpl.player.html", true, true);
+                $template = $this->liveVoting->usesNewUI() ? 'player_new' : 'player';
+                $this->tpl = new ilTemplate($this->pl->getDirectory() . "/templates/default/Player/tpl.$template.html", true, true);
             }
 
             $DIC->ui()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/default/default.css');
