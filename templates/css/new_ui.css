@@ -427,6 +427,137 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
     width: 100%;
 }
 
+/* PIN entry screen (shown before any voting is known) */
+
+.xlvo-new-ui-page #xlvo-voter-pin {
+    display: flex;
+    justify-content: center;
+    padding: 40px 16px 24px;
+}
+
+.xlvo-new-ui-page:has(#xlvo-voter-pin) .xlvo-new-ui-navbar .xlvo-pin {
+    display: none;
+}
+
+.xlvo-pin-screen .xlvo-pin-card {
+    background: var(--xlvo-new-surface);
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+    max-width: 420px;
+    padding: 36px 28px 28px;
+    width: 100%;
+}
+
+.xlvo-pin-screen .xlvo-pin-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 0 26px;
+    text-align: center;
+}
+
+.xlvo-pin-screen .ilFormHeader,
+.xlvo-pin-screen .ilFormRequired,
+.xlvo-pin-screen .ilFormRequired--top {
+    display: none;
+}
+
+.xlvo-pin-screen form,
+.xlvo-pin-screen .form-horizontal {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    margin: 0;
+    padding: 0;
+}
+
+.xlvo-pin-screen .form-group {
+    margin: 0;
+}
+
+.xlvo-pin-screen #il_prop_cont_pin_input > label {
+    color: var(--xlvo-new-muted);
+    display: block;
+    float: none;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    margin: 0 0 10px;
+    padding: 0;
+    text-align: center;
+    text-transform: uppercase;
+    width: 100%;
+}
+
+.xlvo-pin-screen #il_prop_cont_pin_input > div {
+    padding: 0;
+    width: 100%;
+}
+
+.xlvo-pin-screen #il_prop_cont_pin_input input#pin_input {
+    background: var(--xlvo-new-surface);
+    border: 2px solid var(--xlvo-new-border);
+    border-radius: 14px;
+    box-shadow: none;
+    color: var(--xlvo-new-ink);
+    font-size: 40px;
+    font-weight: 700;
+    height: auto;
+    letter-spacing: 0.35em;
+    line-height: 1.2;
+    margin: 0;
+    padding: 18px 10px;
+    text-align: center;
+    text-indent: 0.35em;
+    text-transform: uppercase;
+    width: 100%;
+}
+
+.xlvo-pin-screen #il_prop_cont_pin_input input#pin_input:focus {
+    border-color: var(--xlvo-new-accent);
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12);
+}
+
+.xlvo-pin-screen .ilFormFooter {
+    background: transparent;
+    border: 0;
+    margin: 26px 0 0;
+    padding: 0;
+}
+
+.xlvo-pin-screen .ilFormCmds {
+    display: flex;
+    flex-direction: column;
+    float: none;
+    padding: 0;
+    width: 100%;
+}
+
+.xlvo-pin-screen .ilFormCmds input[type='submit'] {
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    padding: 15px 18px;
+    width: 100%;
+}
+
+.xlvo-pin-screen .ilFormCmds input[name='cmd[checkPin]'] {
+    background: var(--xlvo-new-accent);
+    border: 0;
+    box-shadow: 0 4px 6px rgba(79, 70, 229, 0.25);
+    color: #fff;
+    order: 1;
+}
+
+.xlvo-pin-screen .ilFormCmds #pinBackButton {
+    background: transparent;
+    border: 2px solid var(--xlvo-new-accent);
+    box-shadow: none;
+    color: var(--xlvo-new-accent);
+    margin-top: 12px;
+    order: 2;
+}
+
 /* Number range voting */
 .xlvo-new-ui .xlvo-number-range {
     margin: 0 0 30px;

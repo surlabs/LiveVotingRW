@@ -148,12 +148,16 @@ class LiveVotingPlayerGUI
     {
         global $DIC;
 
-        $is_new_ui = $this->live_voting->getMode()->getMode() === LiveVotingMode::BASIC_MODE
-            && $this->live_voting->usesNewUI();
+        // requestPin() renders this frame before any voting is known. There is no voting style to read
+        // yet, so the PIN gate always uses the new look.
+        $has_voting = isset($this->live_voting);
+        $is_new_ui = !$has_voting
+            || ($this->live_voting->getMode()->getMode() === LiveVotingMode::BASIC_MODE
+                && $this->live_voting->usesNewUI());
         $main_template = $DIC->ui()->mainTemplate();
         $main_template->setVariable('BODY_CLASS', $is_new_ui ? 'xlvo-new-ui-page' : '');
         $main_template->setVariable('NAVBAR_CLASS', $is_new_ui ? 'xlvo-new-ui-navbar' : '');
-        $main_template->setVariable('PIN_LABEL', $is_new_ui ? 'PIN: ' . $this->live_voting->getPin() : 'PIN');
+        $main_template->setVariable('PIN_LABEL', $has_voting && $is_new_ui ? 'PIN: ' . $this->live_voting->getPin() : 'PIN');
 
         $DIC->ui()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/default/Voter/voter.css', '');
         $DIC->ui()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/default/QuestionTypes/NumberRange/bootstrap-slider.min.css', '');
