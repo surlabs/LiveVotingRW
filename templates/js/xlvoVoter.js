@@ -4,13 +4,14 @@
  */
 var xlvoVoter = {
 	notificationCounter: 0,
+	notified_voting_id: null,
 	init: function (json) {
 		var config = json;
 		var replacer = new RegExp('amp;', 'g');
 		config.base_url = config.base_url.replace(replacer, '');
 		this.config = config;
 		this.ready = true;
-		if (xlvoVoter.config.use_mathjax && !!MathJax && MathJax.version && (MathJax.version.charAt(0) !== '3')) {
+		if (xlvoVoter.config.use_mathjax && typeof MathJax !== 'undefined' && MathJax.version && (MathJax.version.charAt(0) !== '3')) {
 			MathJax.Hub.Config({
 				"HTML-CSS": {scale: 80}
 			});
@@ -86,8 +87,13 @@ var xlvoVoter = {
 					show_correct_order_changed = (xlvoVoter.player.show_correct_order !== data.show_correct_order); // Show Correct Order has changed
 
 
-				if (xlvoVoter.player.active_voting_id !== data.active_voting_id && xlvoVoter.player.active_voting_id !== 0) {
-					xlvoVoter.showNotification(xlvoVoter.config.lng.new_voting, xlvoVoter.config.lng.new_voting_message);
+				// Only announce a voting once it is actually open: while it is frozen the voter
+				// is shown the "not yet active" screen, and both messages together contradict each other.
+				if (!data.frozen && xlvoVoter.notified_voting_id !== data.active_voting_id) {
+					if (xlvoVoter.notified_voting_id !== null) {
+						xlvoVoter.showNotification(xlvoVoter.config.lng.new_voting, xlvoVoter.config.lng.new_voting_message);
+					}
+					xlvoVoter.notified_voting_id = data.active_voting_id;
 				}
 
 				if (status_has_changed) {

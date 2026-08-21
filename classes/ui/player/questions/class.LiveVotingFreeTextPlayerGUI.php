@@ -180,6 +180,11 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
         if ($vote instanceof LiveVotingVote) {
             if ($vote->isActive()) {
                 $an->setValue($vote->getFreeInput());
+
+                // Same confirmation the multi-input variant shows, so the voter knows the answer was stored.
+                $saved = new ilNonEditableValueGUI();
+                $saved->setValue(ilLiveVotingPlugin::getInstance()->txt('qtype_2_your_input'));
+                $form->addItem($saved);
             }
             $hi2->setValue((string)$vote->getId());
             //$form->addCommandButton(self::CMD_CLEAR, $this->txt(self::CMD_CLEAR));
@@ -214,6 +219,7 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
         }
 
         $mli = new MultiLineNewInputGUI(ilLiveVotingPlugin::getInstance()->txt('qtype_2_answers'), 'vote_multi_line_input');
+        $mli->setShowInputLabel(MultiLineNewInputGUI::SHOW_INPUT_LABEL_NONE);
         $te = $this->getTextInputGUI(ilLiveVotingPlugin::getInstance()->txt('qtype_2_text'), 'free_input');
 
         $hi2 = new HiddenInputGUI('vote_id');
@@ -227,6 +233,14 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
             $array[] = array(
                 'free_input' => $xlvoVote->getFreeInput(),
                 'vote_id' => $xlvoVote->getId(),
+            );
+        }
+
+        if (empty($array)) {
+            // Without a seeded line the widget only renders a bare "+" glyph and the voter has no field to type in.
+            $array[] = array(
+                'free_input' => '',
+                'vote_id' => '',
             );
         }
 

@@ -148,10 +148,17 @@ class LiveVotingPlayerGUI
     {
         global $DIC;
 
+        $is_new_ui = $this->live_voting->getMode()->getMode() === LiveVotingMode::BASIC_MODE
+            && $this->live_voting->usesNewUI();
+        $main_template = $DIC->ui()->mainTemplate();
+        $main_template->setVariable('BODY_CLASS', $is_new_ui ? 'xlvo-new-ui-page' : '');
+        $main_template->setVariable('NAVBAR_CLASS', $is_new_ui ? 'xlvo-new-ui-navbar' : '');
+        $main_template->setVariable('PIN_LABEL', $is_new_ui ? 'PIN: ' . $this->live_voting->getPin() : 'PIN');
+
         $DIC->ui()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/default/Voter/voter.css', '');
         $DIC->ui()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/default/QuestionTypes/NumberRange/bootstrap-slider.min.css', '');
         $DIC->ui()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/default/QuestionTypes/NumberRange/number_range.css', '');
-        if ($this->live_voting->getMode()->getMode() === LiveVotingMode::BASIC_MODE && $this->live_voting->usesNewUI()) {
+        if ($is_new_ui) {
             $DIC->ui()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/LiveVoting/templates/css/new_ui.css', '');
         }
     }
@@ -165,7 +172,10 @@ class LiveVotingPlayerGUI
     {
         global $DIC;
 
-        $tpl_voter_player = new ilTemplate($this->getPluginObject()->getDirectory() . '/templates/default/Voter/tpl.voter_player.html', false, false);
+        $is_new_ui = $this->live_voting->getMode()->getMode() === LiveVotingMode::BASIC_MODE
+            && $this->live_voting->usesNewUI();
+        $template = $is_new_ui ? 'tpl.voter_player_new.html' : 'tpl.voter_player.html';
+        $tpl_voter_player = new ilTemplate($this->getPluginObject()->getDirectory() . '/templates/default/Voter/' . $template, false, false);
 
         $this->setVoterPlayerTemplate($tpl_voter_player);
 
@@ -281,19 +291,25 @@ class LiveVotingPlayerGUI
                     $this->getVotingTemplate()->setVariable('PIN', $this->getLiveVoting()->getPin());
                     break;
                 case LiveVotingPlayer::STAT_RUNNING:
-                    $this->getVotingTemplate()->setVariable('TITLE', $this->getLiveVoting()->getPlayer()->getActiveVotingObject()->getTitle());
+                    $question = $this->getLiveVoting()->getPlayer()->getActiveVotingObject();
+                    if ($this->live_voting->getMode()->getMode() === LiveVotingMode::BASIC_MODE && $this->live_voting->usesNewUI()) {
+                        $this->getVotingTemplate()->setVariable('TITLE', $question->getTitle());
+                        $this->getVotingTemplate()->setVariable('DESCRIPTION', strip_tags($question->getQuestionForPresentation()));
+                    } else {
+                        $this->getVotingTemplate()->setVariable('TITLE', $question->getTitle());
+                    }
                     $this->getVotingTemplate()->setVariable('COUNT', (string)$this->getLiveVoting()->countQuestions());
                     $this->getVotingTemplate()->setVariable('POSITION', (string)$this->getLiveVoting()->getQuestionPosition());
                     $this->getVotingTemplate()->setVariable('PIN', $this->getLiveVoting()->getPin());
 
                     $xlvoQuestionTypesGUI = LiveVotingQuestionTypesUI::getInstance($this->getLiveVoting()->getPlayer());
-                    if ($xlvoQuestionTypesGUI->isShowQuestion()) {
+                    if (!$this->live_voting->usesNewUI() && $xlvoQuestionTypesGUI->isShowQuestion()) {
                         $this->getVotingTemplate()->setCurrentBlock('question_text');
-                        $this->getVotingTemplate()->setVariable('QUESTION_TEXT', $this->live_voting->getPlayer()->getActiveVotingObject()->getQuestionForPresentation());
+                        $this->getVotingTemplate()->setVariable('QUESTION_TEXT', $question->getQuestionForPresentation());
                         $this->getVotingTemplate()->parseCurrentBlock();
                     }
                     $this->getVotingTemplate()->setVariable('QUESTION', $xlvoQuestionTypesGUI->getMobileHTML());
-                    $this->getVotingTemplate()->setVariable('QTYPE', $this->getLiveVoting()->getPlayer()->getActiveVotingObject()->getQuestionTypeLabel());
+                    $this->getVotingTemplate()->setVariable('QTYPE', $question->getQuestionTypeLabel());
                     $this->getVotingTemplate()->setVariable('QTYPE_DISPLAY', 'display');
                     break;
                 case LiveVotingPlayer::STAT_START_VOTING:

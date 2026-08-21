@@ -46,7 +46,8 @@ class LiveVotingCorrectOrderPlayerGUI extends LiveVotingQuestionTypesUI
      */
     public function getMobileHTML(): string
     {
-        return $this->getFormContent() . LiveVotingJs::getInstance()->name('CorrectOrder')->category('QuestionTypes/CorrectOrder')->getRunCode();
+        return '<div class="xlvo-correct-order">' . $this->getFormContent() . '</div>'
+            . LiveVotingJs::getInstance()->name('CorrectOrder')->category('QuestionTypes/CorrectOrder')->getRunCode();
     }
 
 
@@ -102,7 +103,7 @@ class LiveVotingCorrectOrderPlayerGUI extends LiveVotingQuestionTypesUI
     protected function getFormContent(): string
     {
         global $DIC;
-        $tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/QuestionTypes/FreeOrder/tpl.free_order.html', true, false);
+        $tpl = new ilTemplate($this->getFormTemplatePath(), true, false);
         $tpl->setVariable('ACTION', $DIC->ctrl()->getFormAction($this));
         $tpl->setVariable('ID', 'xlvo_sortable');
         $tpl->setVariable('BTN_RESET', ilLiveVotingPlugin::getInstance()->txt('qtype_4_clear'));
@@ -141,6 +142,16 @@ class LiveVotingCorrectOrderPlayerGUI extends LiveVotingQuestionTypesUI
         }
 
         return $tpl->get();
+    }
+
+
+    /**
+     * @return string
+     */
+    protected function getFormTemplatePath(): string
+    {
+        return ilLiveVotingPlugin::getInstance()->getDirectory()
+            . '/templates/default/QuestionTypes/FreeOrder/tpl.free_order.html';
     }
 
 

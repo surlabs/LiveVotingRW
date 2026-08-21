@@ -46,7 +46,18 @@ class LiveVotingPrioritiesPlayerGUI extends LiveVotingCorrectOrderPlayerGUI
      */
     public function getMobileHTML(): string
     {
-        return $this->getFormContent() . LiveVotingJs::getInstance()->name('FreeOrder')->category('QuestionTypes/FreeOrder')->getRunCode();
+        return '<div class="xlvo-priorities">' . $this->getFormContent() . '</div>'
+            . LiveVotingJs::getInstance()->name('FreeOrder')->category('QuestionTypes/FreeOrder')->getRunCode();
+    }
+
+
+    /**
+     * @return string
+     */
+    protected function getFormTemplatePath(): string
+    {
+        return ilLiveVotingPlugin::getInstance()->getDirectory()
+            . '/templates/default/QuestionTypes/Priorities/tpl.priorities.html';
     }
 
 
