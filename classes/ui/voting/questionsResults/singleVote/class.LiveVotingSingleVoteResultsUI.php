@@ -127,18 +127,8 @@ class LiveVotingSingleVoteResultsUI extends LiveVotingInputResultsGUI
     protected function isShowAbsolute(): bool
     {
         $states = $this->getButtonsStates();
-        return ($this->player->isShowResults() && (bool)in_array('toggle_percentage', $states));
+        return ($this->player->isShowResults() && (bool)(array_key_exists('toggle_percentage', $states) && $states['toggle_percentage']));
     }
 
-
-    /**
-     * @throws LiveVotingException
-     */
-    protected function isUsingNewUI(): bool
-    {
-        $live_voting = new LiveVoting($this->player->getObjId(), false);
-
-        return $live_voting->getMode()->getMode() === LiveVotingMode::BASIC_MODE && $live_voting->usesNewUI();
-    }
 
 }

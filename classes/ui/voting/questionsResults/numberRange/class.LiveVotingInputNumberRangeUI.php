@@ -76,11 +76,12 @@ class LiveVotingInputNumberRangeUI extends LiveVotingInputResultsGUI
     {
         $values = $this->getAllVoteValues();
 
-        $bars = new LiveVotingBarCollectionUI();
+        $bars = new LiveVotingBarCollectionUI($this->isUsingNewUI());
         $voteSum = array_sum($values);
 
         foreach ($values as $key => $value) {
             $bar = new LiveVotingBarPercentageUI();
+            $bar->setUseNewUI($this->isUsingNewUI());
             $bar->setMaxVotes($voteSum);
             $bar->setVotes((int)$value);
             $bar->setTitle($key);

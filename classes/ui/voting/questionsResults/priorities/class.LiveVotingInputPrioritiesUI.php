@@ -39,7 +39,7 @@ class LiveVotingInputPrioritiesUI extends LiveVotingInputCorrectOrderUI
      */
     public function getHTML(): string
     {
-        $bars = new LiveVotingBarCollectionUI();
+        $bars = new LiveVotingBarCollectionUI($this->isUsingNewUI());
         $total_voters = LiveVotingVote::countVoters($this->player->getActiveVoting(), $this->player->getRoundId());
         $bars->setTotalVoters($total_voters);
         $bars->setShowTotalVoters(false);
@@ -81,6 +81,7 @@ class LiveVotingInputPrioritiesUI extends LiveVotingInputCorrectOrderUI
         // Add bars
         foreach ($options as $xlvoOption) {
             $xlvoBarPercentageGUI = new LiveVotingBarPercentageUI();
+            $xlvoBarPercentageGUI->setUseNewUI($this->isUsingNewUI());
             $xlvoBarPercentageGUI->setRound(2);
             $xlvoBarPercentageGUI->setShowInPercent(false);
             $xlvoBarPercentageGUI->setMaxVotes($possible_max);
