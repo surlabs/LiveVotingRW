@@ -315,6 +315,7 @@ var xlvoPlayer = {
 
                 if (
                     xlvoPlayer.counter > xlvoPlayer.forced_update_interval || // Forced update of HTML
+                    data.player_html !== xlvoPlayer.player_html || // Rendered player changed (e.g. a toolbar toggle)
                     data.player.last_update !== xlvoPlayer.player.last_update || // Player is out of sync
                     data.player.show_results !==
                     xlvoPlayer.player.show_results || // Show Results has changed

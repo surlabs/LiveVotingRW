@@ -105,7 +105,7 @@ class LiveVotingSingleVotePlayerGUI extends LiveVotingQuestionTypesUI
         $states = $this->getButtonsStates();
         $t = ilLinkButton::getInstance();
         $t->setId(self::BUTTON_TOGGLE_PERCENTAGE);
-        if (in_array(self::BUTTON_TOGGLE_PERCENTAGE, $states)) {
+        if (array_key_exists(self::BUTTON_TOGGLE_PERCENTAGE, $states) && $states[self::BUTTON_TOGGLE_PERCENTAGE]) {
             $t->setCaption(' %', false);
         } else {
             $t->setCaption('<span class="glyphicon glyphicon-user" aria-hidden="true"></span>', false);
