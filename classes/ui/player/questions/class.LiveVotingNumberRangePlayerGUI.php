@@ -20,6 +20,7 @@ declare(strict_types=1);
  */
 
 
+use LiveVoting\objects\modes\LiveVotingMode;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\Utils\LiveVotingJs;
 use LiveVoting\Utils\ParamManager;
@@ -124,6 +125,9 @@ class LiveVotingNumberRangePlayerGUI extends LiveVotingQuestionTypesUI
         global $DIC;
 
         $template = new IlTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/QuestionTypes/NumberRange/tpl.number_range.html', true, true);
+        $live_voting = new LiveVoting($this->player->getObjId(), false);
+        $is_new_ui = $live_voting->getMode()->getMode() === LiveVotingMode::BASIC_MODE
+            && $live_voting->usesNewUI();
         $template->setVariable('ACTION', $DIC->ctrl()->getFormAction($this));
         $template->setVariable('SHOW_PERCENTAGE', (int)$this->getPlayer()->getActiveVotingObject()->isPercentage());
 
@@ -145,7 +149,16 @@ class LiveVotingNumberRangePlayerGUI extends LiveVotingQuestionTypesUI
         }
         $template->setVariable('SLIDER_VALUE', $value);
         $template->setVariable('BTN_SAVE', ilLiveVotingPlugin::getInstance()->txt(self::SAVE_BUTTON_VOTE));
-        $template->setVariable('BTN_CLEAR', ilLiveVotingPlugin::getInstance()->txt(self::CLEAR_BUTTON));
+        $template->setVariable(
+            'BTN_CLEAR',
+            $is_new_ui
+                ? $DIC->language()->txt('edit')
+                : ilLiveVotingPlugin::getInstance()->txt(self::CLEAR_BUTTON)
+        );
+
+        if ($is_new_ui && $user_has_voted) {
+            $template->setVariable('STATE_CLASS', 'xlvo-has-voted');
+        }
 
         if (!$user_has_voted) {
             $template->setVariable('BTN_RESET_DISABLED', 'disabled="disabled"');

@@ -20,6 +20,7 @@ declare(strict_types=1);
  */
 
 
+use LiveVoting\objects\modes\LiveVotingMode;
 use LiveVoting\platform\LiveVotingException;
 use LiveVoting\UI\Player\CustomUI\HiddenInputGUI\HiddenInputGUI;
 use LiveVoting\UI\Player\CustomUI\MultiLineNewInputGUI;
@@ -103,6 +104,18 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
     }
 
     /**
+     * @throws LiveVotingException
+     * @throws ilCtrlException
+     */
+    protected function clear(): void
+    {
+        $live_voting = LiveVoting::getLiveVotingFromPin(ParamManager::getInstance()->getPin());
+        $this->player = $live_voting->getPlayer();
+        $this->player->unvoteAll();
+        $this->afterSubmit();
+    }
+
+    /**
      * @return string
      * @throws ilTemplateException
      * @throws ilSystemStyleException
@@ -110,11 +123,31 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
      */
     public function getMobileHTML(): string
     {
-
         $this->tpl = new ilTemplate(ilLiveVotingPlugin::getInstance()->getDirectory() . '/templates/default/QuestionTypes/FreeInput/tpl.free_input.html', true, true);
         $this->render();
 
+        if ($this->isUsingNewUI()) {
+            $is_multi_input = $this->player->getActiveVotingObject()->isMultiFreeInput();
+            if ($is_multi_input) {
+                $this->tpl->setVariable(
+                    'VOTER_HINT',
+                    ilLiveVotingPlugin::getInstance()->txt('qtype_2_multi_free_input_info')
+                );
+            }
+            if (count($this->player->getVotesOfUser()) > 0) {
+                $this->tpl->setVariable('STATE_CLASS', 'xlvo-has-voted');
+            }
+        }
+
         return $this->tpl->get() . LiveVotingJs::getInstance()->name('FreeInput')->category('QuestionTypes')->getRunCode();
+    }
+
+    private function isUsingNewUI(): bool
+    {
+        $live_voting = new LiveVoting($this->player->getObjId(), false);
+
+        return $live_voting->getMode()->getMode() === LiveVotingMode::BASIC_MODE
+            && $live_voting->usesNewUI();
     }
 
 
@@ -193,6 +226,9 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
         $form->addItem($an);
         $form->addItem($hi2);
         $form->addCommandButton('submit', ilLiveVotingPlugin::getInstance()->txt('qtype_2_send'));
+        if ($vote instanceof LiveVotingVote && $vote->isActive() && $this->isUsingNewUI()) {
+            $form->addCommandButton('clear', $DIC->language()->txt('edit'));
+        }
 
         return $form;
     }
@@ -246,6 +282,9 @@ class LiveVotingFreeTextPlayerGUI extends LiveVotingQuestionTypesUI
 
         $form->setValuesByArray(array('vote_multi_line_input' => $array));
         $form->addCommandButton('submit', ilLiveVotingPlugin::getInstance()->txt('qtype_2_send'));
+        if (count($xlvoVotes) > 0 && $this->isUsingNewUI()) {
+            $form->addCommandButton('clear', $DIC->language()->txt('edit'));
+        }
 
         return $form;
     }

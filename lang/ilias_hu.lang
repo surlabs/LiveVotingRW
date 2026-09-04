@@ -275,6 +275,8 @@ voting_short_link#:#Rövid URL
 voting_permanent_link#:#MISSING voting_permanent_link
 rbac_create_xlvo#:#MISSING rbac_create_xlvo
 player_pin#:#MISSING player_pin
+player_session_controls#:#MISSING player_session_controls
+qr_modal_title#:#Csatlakozás a LiveVotinghoz
 qtype_6_option_range_step#:#MISSING qtype_6_option_range_step
 qtype_6_option_range_step_info#:#MISSING qtype_6_option_range_step_info
 config_use_serif_font_for_pins#:#MISSING config_use_serif_font_for_pins

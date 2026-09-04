@@ -145,7 +145,7 @@ class LiveVotingInputNumberRangeUI extends LiveVotingInputResultsGUI
             }
         };
 
-        $info = new LiveVotingBarCollectionUI();
+        $info = new LiveVotingBarCollectionUI($this->isUsingNewUI());
         $value = $vote_count > 0 ? round($vote_sum / $vote_count, 2) : 0;
         $mean = new LiveVotingBarInfoGUI(ilLiveVotingPlugin::getInstance()->txt("qtype_6_mean"), (string)$value);
         $mean->setBig(true);
@@ -164,7 +164,7 @@ class LiveVotingInputNumberRangeUI extends LiveVotingInputResultsGUI
         $mode->setDark(true);
         $mode->setCenter(true);
         $info->addBar($mode);
-        return $info->getHTML() . "<div class='row'><br></div>" . $this->renderGroupedTextResult();
+        return $info->getHTML() . $this->renderGroupedTextResult();
     }
 
 
@@ -178,7 +178,7 @@ class LiveVotingInputNumberRangeUI extends LiveVotingInputResultsGUI
      */
     private function renderGroupedTextResult(): string
     {
-        $bars = new LiveVotingBarGroupingCollectionUI();
+        $bars = new LiveVotingBarGroupingCollectionUI($this->isUsingNewUI());
         //$bars->sorted(true);
         $votes = LiveVotingVote::getVotesOfQuestion($this->player->getActiveVoting(), $this->player->getRoundId());
         usort($votes, function (LiveVotingVote $v1, LiveVotingVote $v2) {

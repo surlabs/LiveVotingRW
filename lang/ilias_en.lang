@@ -275,6 +275,8 @@ voting_short_link#:#Short URL
 voting_permanent_link#:#Permanent-Link
 rbac_create_xlvo#:#Create LiveVoting
 player_pin#:#PIN: %s
+player_session_controls#:#Session controls
+qr_modal_title#:#Join LiveVoting
 qtype_6_option_range_step#:#Step
 qtype_6_option_range_step_info#:#The step of the number range.
 config_use_serif_font_for_pins#:#Use serif font for PIN's

@@ -125,6 +125,8 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
     border: 0;
     border-radius: 0;
     box-shadow: none;
+    margin: 0 auto;
+    max-width: 640px;
 }
 
 .xlvo-new-ui#xlvo-voter-header .panel-heading,
@@ -268,6 +270,18 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
 }
 
 /* Free text voting */
+.xlvo-new-ui .xlvo-voter-type-hint {
+    color: var(--xlvo-new-muted);
+    font-size: 15px;
+    line-height: 1.5;
+    margin: -12px 0 20px;
+    text-align: center;
+}
+
+.xlvo-new-ui .xlvo-voter-type-hint:empty {
+    display: none;
+}
+
 .xlvo-new-ui .xlvo-free-input {
     float: none;
     padding-left: 0;
@@ -343,6 +357,37 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
     min-height: 52px;
     padding: 14px 18px;
     width: 100%;
+}
+
+.xlvo-new-ui .xlvo-free-input input[name='cmd[clear]'],
+.xlvo-new-ui .xlvo-number-range-form input[name='cmd[clear]'] {
+    background: #fca5a5;
+    box-shadow: none;
+    color: #7f1d1d;
+}
+
+.xlvo-new-ui .xlvo-free-input input[name='cmd[clear]']:hover,
+.xlvo-new-ui .xlvo-free-input input[name='cmd[clear]']:focus,
+.xlvo-new-ui .xlvo-number-range-form input[name='cmd[clear]']:hover,
+.xlvo-new-ui .xlvo-number-range-form input[name='cmd[clear]']:focus {
+    background: #f87171;
+    color: #7f1d1d;
+}
+
+.xlvo-new-ui .xlvo-free-input.xlvo-has-voted input[name='cmd[submit]'],
+.xlvo-new-ui .xlvo-number-range.xlvo-has-voted input[name='cmd[submit]'] {
+    display: none;
+}
+
+.xlvo-new-ui .xlvo-free-input.xlvo-has-voted .form-control {
+    background: #f3f4f6;
+    border-color: #e5e7eb;
+    color: #6b7280;
+    pointer-events: none;
+}
+
+.xlvo-new-ui .xlvo-free-input.xlvo-has-voted [data-actions] {
+    display: none;
 }
 
 .xlvo-new-ui .xlvo-free-input .ilFormFooter {
@@ -616,6 +661,10 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
     padding: 0 16px;
 }
 
+.xlvo-new-ui .xlvo-number-range .slider.slider-horizontal {
+    width: 100%;
+}
+
 .xlvo-new-ui .xlvo-number-range .slider-track {
     background: #f3f4f6;
     height: 8px;
@@ -664,6 +713,25 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
 .xlvo-new-ui .xlvo-number-range-form input[name='cmd[clear]'] {
     margin-top: 12px;
     order: 2;
+}
+
+.xlvo-new-ui .xlvo-number-range-form input[name='cmd[clear]'][disabled] {
+    background: #f3f4f6;
+    color: #9ca3af;
+}
+
+.xlvo-new-ui .xlvo-number-range.xlvo-has-voted .xlvo-number-range-panel {
+    background: #f9fafb;
+}
+
+.xlvo-new-ui .xlvo-number-range.xlvo-has-voted .slider,
+.xlvo-new-ui .xlvo-number-range.xlvo-has-voted .xlvo-number-range-steppers {
+    opacity: 0.55;
+    pointer-events: none;
+}
+
+.xlvo-new-ui .xlvo-number-range.xlvo-has-voted #number-display {
+    color: var(--xlvo-new-ink);
 }
 
 /* Priorities voting */
@@ -1124,4 +1192,306 @@ body.xlvo-new-ui-page .xlvo-voter-loading .xlvo_loader {
 .xlvo-new-ui .xlvo-bar-row-wrap:nth-of-type(4n + 4) .xlvo-color-dot,
 .xlvo-new-ui .xlvo-bar-row-wrap:nth-of-type(4n + 4) .xlvo-bar-fill {
     background: #ef4444;
+}
+
+/* QR join modal */
+
+.xlvo-qr-join {
+    align-items: center;
+    display: grid;
+    gap: 48px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin: 0 auto;
+    max-width: 1200px;
+    padding: 12px 0;
+}
+
+.xlvo-qr-access-details {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    justify-content: center;
+    min-width: 0;
+}
+
+.xlvo-qr-pin {
+    align-items: baseline;
+    display: flex;
+    gap: 10px;
+}
+
+.xlvo-qr-pin strong {
+    color: #111827;
+    font-family: monospace;
+    font-size: 2.5rem;
+    letter-spacing: 0.12em;
+}
+
+.xlvo-qr-code {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.12);
+    padding: 16px;
+}
+
+.xlvo-qr-code img {
+    display: block;
+    height: auto;
+    max-height: min(70vh, 700px);
+    max-width: 100%;
+    width: 600px;
+}
+
+.xlvo-qr-link {
+    background: #eef2ff;
+    border-radius: 8px;
+    color: #4338ca;
+    font-family: monospace;
+    font-size: 0.9rem;
+    line-break: anywhere;
+    margin-top: 32px;
+    max-width: 100%;
+    padding: 10px 14px;
+    text-align: left;
+    width: 100%;
+}
+
+.xlvo-qr-link:hover,
+.xlvo-qr-link:focus {
+    background: #e0e7ff;
+    color: #3730a3;
+    text-decoration: none;
+}
+
+.c-modal:has(.xlvo-qr-join) .modal-header,
+.c-modal:has(.xlvo-qr-join) .modal-footer {
+    border-color: #e2e8f0;
+}
+
+.c-modal:has(.xlvo-qr-join) .modal-title {
+    color: #111827;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+@media (max-width: 767px) {
+    .xlvo-qr-join {
+        gap: 20px;
+        grid-template-columns: 1fr;
+    }
+
+    .xlvo-qr-link {
+        text-align: center;
+    }
+}
+
+/* Free text and grouped number-range results */
+
+.xlvo-new-ui .xlvo-free-text-results #categories {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin: 0 0 20px;
+    padding: 0;
+}
+
+.xlvo-new-ui .xlvo-free-text-results #answers {
+    margin: 0;
+}
+
+.xlvo-new-ui .xlvo-free-text-results .inputs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.xlvo-new-ui .xlvo-free-text-results .input-group {
+    display: flex;
+    flex: 1 1 260px;
+    margin: 0;
+    padding: 0;
+}
+
+.xlvo-new-ui .xlvo-free-text-results .form-control {
+    border: 1px solid var(--xlvo-new-border);
+    border-radius: 10px 0 0 10px;
+    box-shadow: none;
+    min-height: 44px;
+}
+
+.xlvo-new-ui .xlvo-free-text-results .input-group-append {
+    display: flex;
+}
+
+.xlvo-new-ui .xlvo-free-text-results .input-group-append .btn {
+    background: var(--xlvo-new-wash);
+    border: 1px solid var(--xlvo-new-border);
+    border-left: 0;
+    border-radius: 0 10px 10px 0;
+    color: var(--xlvo-new-accent);
+    font-weight: 600;
+}
+
+.xlvo-new-ui .xlvo-bars + .xlvo-bars {
+    margin-top: 20px;
+}
+
+@media (max-width: 767px) {
+    .xlvo-new-ui .xlvo-free-text-results #categories {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Moderator question management */
+
+.xlvo-new-manage {
+    --xlvo-new-accent: #4f46e5;
+    --xlvo-new-border: #e2e8f0;
+    --xlvo-new-ink: #111827;
+    --xlvo-new-muted: #64748b;
+    --xlvo-new-surface: #fff;
+    background: #f8fafc;
+    border-radius: 16px;
+    color: var(--xlvo-new-ink);
+    padding: 24px;
+}
+
+.xlvo-new-manage .xlvo-manage-actions {
+    align-items: center;
+    background: var(--xlvo-new-surface);
+    border: 1px solid var(--xlvo-new-border);
+    border-radius: 12px;
+    display: flex;
+    margin-bottom: 20px;
+    padding: 12px;
+}
+
+.xlvo-new-manage .xlvo-manage-actions .btn {
+    background: var(--xlvo-new-accent);
+    border-color: var(--xlvo-new-accent);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(79, 70, 229, 0.18);
+    color: #fff;
+    font-weight: 600;
+}
+
+.xlvo-new-manage .xlvo-manage-actions .btn:hover,
+.xlvo-new-manage .xlvo-manage-actions .btn:focus {
+    background: #4338ca;
+    border-color: #4338ca;
+    color: #fff;
+}
+
+.xlvo-new-manage .xlvo-manage-table {
+    background: var(--xlvo-new-surface);
+    border: 1px solid var(--xlvo-new-border);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.xlvo-new-results-history {
+    --xlvo-new-accent: #4f46e5;
+    --xlvo-new-border: #e2e8f0;
+    --xlvo-new-ink: #111827;
+    --xlvo-new-muted: #64748b;
+    --xlvo-new-surface: #fff;
+    background: #f8fafc;
+    border-radius: 16px;
+    color: var(--xlvo-new-ink);
+    padding: 24px;
+}
+
+.xlvo-new-results-history .xlvo-results-history-table {
+    background: var(--xlvo-new-surface);
+    border: 1px solid var(--xlvo-new-border);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.xlvo-new-manage .xlvo-manage-table .ilTableHeaderTitle,
+.xlvo-new-manage .xlvo-manage-table th,
+.xlvo-new-results-history .xlvo-results-history-table .ilTableHeaderTitle,
+.xlvo-new-results-history .xlvo-results-history-table th {
+    color: var(--xlvo-new-muted);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.xlvo-new-manage .xlvo-manage-table td,
+.xlvo-new-results-history .xlvo-results-history-table td {
+    border-color: var(--xlvo-new-border);
+    color: var(--xlvo-new-ink);
+    vertical-align: middle;
+}
+
+.xlvo-new-manage .xlvo-manage-table tbody tr,
+.xlvo-new-results-history .xlvo-results-history-table tbody tr {
+    transition: background-color 160ms ease;
+}
+
+.xlvo-new-manage .xlvo-manage-table tbody tr:hover,
+.xlvo-new-results-history .xlvo-results-history-table tbody tr:hover {
+    background: #f8faff;
+}
+
+.xlvo-new-manage .xlvo-manage-table input[type='text'],
+.xlvo-new-manage .xlvo-manage-table select {
+    border-color: var(--xlvo-new-border);
+    border-radius: 8px;
+    box-shadow: none;
+}
+
+.xlvo-new-manage .xlvo-manage-table input[type='text']:focus,
+.xlvo-new-manage .xlvo-manage-table select:focus {
+    border-color: var(--xlvo-new-accent);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+}
+
+.l-bar__space-keeper #xlvo-export-results,
+.l-bar__space-keeper #xlvo-new-round,
+.l-bar__space-keeper #xlvo-change-round {
+    border-radius: 8px;
+    box-shadow: none;
+    font-weight: 600;
+}
+
+.l-bar__space-keeper #xlvo-export-results {
+    background: #eef2ff;
+    border-color: #c7d2fe;
+    color: #4f46e5;
+}
+
+.l-bar__space-keeper #xlvo-new-round,
+.l-bar__space-keeper #xlvo-change-round {
+    background: #4f46e5;
+    border-color: #4f46e5;
+    color: #fff;
+}
+
+.l-bar__space-keeper #xlvo-new-round:hover,
+.l-bar__space-keeper #xlvo-change-round:hover {
+    background: #4338ca;
+    border-color: #4338ca;
+    color: #fff;
+}
+
+@media (max-width: 767px) {
+    .xlvo-new-manage {
+        border-radius: 0;
+        margin-left: -15px;
+        margin-right: -15px;
+        padding: 16px;
+    }
+
+    .xlvo-new-results-history {
+        border-radius: 0;
+        margin-left: -15px;
+        margin-right: -15px;
+        padding: 16px;
+    }
 }
